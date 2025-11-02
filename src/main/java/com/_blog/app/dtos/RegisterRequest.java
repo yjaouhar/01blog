@@ -7,7 +7,7 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 
-public record UserRegister(
+public record RegisterRequest(
         @NotNull(message = "First Name is required")
         @Size(min = 3, max = 20, message = "First Name must be between 3 and 20 characters")
         String firstName,
@@ -18,11 +18,11 @@ public record UserRegister(
                 
         @NotNull(message = "Age is required")
         @Min(value = 10, message = "Age must be at least 10")
-        @Max(value = 300, message = "Age must be less than 100")
+        @Max(value = 300, message = "Age must be less than 300")
         Short age,
                 
         @NotNull(message = "Gender is required")
-        @Pattern(regexp = "mal|famel", message = "gender must ")
+        @Pattern(regexp = "male|female", message = "Gender must be 'male' or 'female'")
         String gender,
                 
         @Pattern(regexp = "^[A-Za-z][A-Za-z0-9_]*$", message = "Nickname must start with a letter and contain only letters, numbers or underscores")
@@ -36,7 +36,12 @@ public record UserRegister(
         String email,
                 
         @NotNull(message = "Password is required")
-        @Size(min = 6, max = 20, message = "Password must be between 6 and 20 characters")
+                @Size(min = 3, max = 20, message = "Password must be between 6 and 20 characters")
+        // @Pattern(
+        //         regexp = "^(?=.*[A-Z])(?=.*[a-z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{6,20}$",
+        //         message = "Password must contain uppercase, lowercase, number and special character"
+        // )
+
         String password
         ) {
 
