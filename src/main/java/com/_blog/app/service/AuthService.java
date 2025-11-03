@@ -1,5 +1,7 @@
 package com._blog.app.service;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -7,6 +9,7 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com._blog.app.config.JwtHelper;
 import com._blog.app.dtos.LoginRequest;
 import com._blog.app.dtos.RegisterRequest;
 import com._blog.app.entities.UserAccount;
@@ -18,6 +21,8 @@ public class AuthService {
 
     @Autowired
     private UserRepo userRepo;
+    @Autowired
+    JwtHelper jwtHelper;
     private final BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
 
     public void createUser(RegisterRequest dto) {
@@ -57,8 +62,11 @@ public class AuthService {
         UserAccount user = existUser.orElseThrow(() -> new CustomResponseException(401, "Invalid Credentials"));
         if (!encoder.matches(request.password(), user.getPassword())) {
             throw new CustomResponseException(401, "Invalid Credentials");
-        } 
-        return "";
+        }
+        Map<String, Object> customClaims = new HashMap<>();
+        customClaims.put("userId", user.getId());
+        customClaims.put("role", user.getRole());
+        return jwtHelper.generateToken(customClaims, user);
     }
 
 }
