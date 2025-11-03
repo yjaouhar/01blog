@@ -37,6 +37,7 @@ public class AuthService {
         user.setLastName(dto.lastName());
         user.setAge(dto.age());
         user.setGender(dto.gender());
+        user.setRole("USER");
         try {
             userRepo.save(user);
         } catch (DataIntegrityViolationException e) {
@@ -44,7 +45,7 @@ public class AuthService {
         }
     }
 
-    public UserAccount login(LoginRequest request) {
+    public String login(LoginRequest request) {
 
         Optional<UserAccount> existUser;
 
@@ -56,8 +57,8 @@ public class AuthService {
         UserAccount user = existUser.orElseThrow(() -> new CustomResponseException(401, "Invalid Credentials"));
         if (!encoder.matches(request.password(), user.getPassword())) {
             throw new CustomResponseException(401, "Invalid Credentials");
-        } ;
-        return user;
+        } 
+        return "";
     }
 
 }

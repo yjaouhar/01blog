@@ -21,12 +21,13 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 public class UserAccount {
+
     @Id
     @GeneratedValue(generator = "UUID")
     @UuidGenerator
     private UUID id;
 
-    @Column(name="first_name" , nullable=false )
+    @Column(name = "first_name", nullable = false)
     private String firstName;
 
     @Column(name = "last_name", nullable = false)
@@ -38,7 +39,7 @@ public class UserAccount {
     @Column(name = "gender", nullable = false)
     private String gender;
 
-    @Column(name = "username", nullable = false, unique=true)
+    @Column(name = "username", nullable = false, unique = true)
     private String username;
 
     @Column(name = "email", nullable = false, unique = true)
@@ -46,7 +47,6 @@ public class UserAccount {
 
     @Column(name = "password", nullable = false)
     private String password;
-
-}   
-
-
+    @Column(name = "role", nullable = false )
+    private String role;
+}
