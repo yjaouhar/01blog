@@ -3,6 +3,7 @@ package com._blog.app.config;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -23,7 +24,9 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> {
                     auth.requestMatchers("/api/auth/register", "/api/auth/login").permitAll()
-                            .requestMatchers("/api/auth/test").hasAnyRole("ADMIN");
+                            .requestMatchers(HttpMethod.POST, "/api/post/create").hasAnyRole("USER", "ADMIN")
+                            .requestMatchers(HttpMethod.DELETE, "/api/post/delete").hasAnyRole("USER", "ADMIN")
+                            .requestMatchers(HttpMethod.PUT, "/api/post/update").hasAnyRole("USER", "ADMIN");
                 }).addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();
 

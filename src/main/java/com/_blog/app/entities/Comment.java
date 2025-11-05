@@ -1,6 +1,6 @@
 package com._blog.app.entities;
 
-import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.UUID;
 
 import org.hibernate.annotations.UuidGenerator;
@@ -19,34 +19,24 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
-@Table(name = "postes")
+@Table(name = "comment")
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class Postes {
-    @Id
+public class Comment {
+     @Id
     @GeneratedValue(generator = "UUID")
     @UuidGenerator
-    private UUID id;
-    @Column(length = 100)
-    private String title;
-    @Column(length = 500)
-    private String description;
-
-
-    private String media_url;
-    
-    @Column(nullable = false)
-    private String media_type;
-    
-    @Column(nullable = false)
-    private LocalDateTime creat_at = LocalDateTime.now();
-    
-    @Column(nullable = false)
-    private LocalDateTime update_at = LocalDateTime.now();
-    private boolean hide = false ;
-    @ManyToOne(fetch= FetchType.LAZY , optional=false)
+     private UUID id;
+      @Column(length = 500)
+     private String contente;
+     private LocalTime crat_at = LocalTime.now();
+     private LocalTime edit_at = LocalTime.now();
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "post_id", nullable = false)
+    private Postes post;
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "user_id", nullable = false)
     private UserAccount user;
 }
