@@ -21,9 +21,12 @@ public class GlobalResponse<T> {
         this.data = null;
         this.errors = error;
     }
+
     public GlobalResponse(T data) {
         this.status = SUCCESS;
         this.data = data;
         this.errors = null;
     }
+
+
 }

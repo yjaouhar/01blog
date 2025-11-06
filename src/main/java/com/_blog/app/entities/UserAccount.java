@@ -28,29 +28,29 @@ public class UserAccount {
     private UUID id;
 
     @Column(name = "first_name", nullable = false)
-    private String firstName;
+    private String firstName;//
 
     @Column(name = "last_name", nullable = false)
-    private String lastName;
+    private String lastName;//
 
     @Column(name = "age", nullable = false)
-    private short age;
+    private short age;//
 
     @Column(name = "gender", nullable = false)
-    private String gender;
+    private String gender;//
 
     @Column(name = "username", nullable = false, unique = true)
-    private String username;
+    private String username;//
 
     @Column(name = "email", nullable = false, unique = true)
-    private String email;
+    private String email;//
 
     @Column(name = "bio" , length=100)
-    private String bio;
+    private String bio;//
 
     @Column(name = "avatar")
-    private String avatar;
-    @Column(name = "activ")
+    private String avatar;//
+    @Column(name = "activ" )
     private boolean active = true;
     @Column(name = "password", nullable = false)
     private String password;
