@@ -1,12 +1,20 @@
 import { Component, signal } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
+import { RouterOutlet, RouterLink } from '@angular/router';
+import { NavSelecl } from "./directives/nav-selecl";
+import { single } from 'rxjs';
+import { Home } from "./page/home/home";
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet],
+  imports: [RouterOutlet, RouterLink, NavSelecl, Home],
   templateUrl: './app.html',
   styleUrl: './app.css'
 })
 export class App {
-  protected readonly title = signal('frontend');
+  active = signal('h')
+  changeIcone(icon: string) {
+    this.active.update(() => icon);
+  }
+
+
 }

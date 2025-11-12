@@ -63,6 +63,7 @@ public class PostesService {
         List<GlobalDataResponse.PostResponse> posts = postPage.getContent().stream().map(post -> {
             boolean liked = likeRepo.existsByUserIdAndPostId(user.getId(), post.getId());
             long totaLike = likeRepo.countByPostId(post.getId());
+          
             long totalComment = commentRepo.countByPostId(post.getId());
             GlobalDataResponse.PostResponse respo = new GlobalDataResponse.PostResponse();
             respo.setId(post.getId());

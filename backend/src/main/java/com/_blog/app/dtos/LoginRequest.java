@@ -1,13 +1,13 @@
 package com._blog.app.dtos;
 
-import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotBlank;
 
 public record LoginRequest(
      
-        @NotNull(message = "Email or Username is required")
+        @NotBlank(message = "Email or Username is required")
         String email,
        
-        @NotNull(message = "Password is required")
+        @NotBlank(message = "Password is required")
         String password
         ) {
 
