@@ -1,0 +1,6 @@
+/* Optional: add hover effect for better UX */
+div.d-flex.mb-3:hover {
+  background-color: #f8f9fa;
+  border-radius: 8px;
+  padding: 4px;
+}

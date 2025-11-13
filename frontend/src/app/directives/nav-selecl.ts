@@ -10,11 +10,10 @@ export class NavSelecl {
   styleEffect = effect(() => {
     console.log(this.isActive());
     if (this.isActive()) {
-      this.el.nativeElement.classList.add('text-primary');
-      this.el.nativeElement.classList.remove('text-muted');
+      this.el.nativeElement.style.color = '#059669';  
     } else {
-      this.el.nativeElement.classList.add('text-muted');
-      this.el.nativeElement.classList.remove('text-primary');
+      this.el.nativeElement.style.color = '#9ca3af';  
+
     }
   })
 

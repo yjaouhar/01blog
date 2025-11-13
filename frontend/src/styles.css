@@ -1,1 +1,4 @@
-/* You can add global styles to this file, and also import other style files */
+:root {
+  --main-color: #13b998; /* hna color li ghadi t3ml variable */
+  --secondary-color: #9ca3af;
+}

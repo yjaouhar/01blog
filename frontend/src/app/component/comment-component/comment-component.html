@@ -1,0 +1,22 @@
+<div class="d-flex gap-2 m-3 p-2 ">
+  <!-- Avatar -->
+  <img
+    [src]="comment.avatar || '/default-avatar.png'"
+    alt="avatar"
+    class="rounded-circle"
+    width="40" height="40">
+
+  <!-- Content -->
+  <div class="flex-grow-1">
+    <div class="d-flex justify-content-between align-items-center">
+      <span class="fw-semibold">{{ comment.author }}</span>
+      <small class="text-muted">{{ comment.time }}</small>
+    </div>
+    <p class="mb-1">{{ comment.text }}</p>
+
+    <!-- Actions -->
+    <div class="d-flex gap-2">
+      <button class="btn btn-sm btn-outline-success">edit</button>
+    </div>
+  </div>
+</div>
