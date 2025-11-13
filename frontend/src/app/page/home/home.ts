@@ -1,10 +1,11 @@
 import { Component } from '@angular/core';
 import { HomeDirectives } from "../../directives/home-directives";
 import { CommentComponent } from '../../component/comment-component/comment-component';
+import { PosteComponent } from "../../component/poste-component/poste-component";
 
 @Component({
   selector: 'app-home',
-  imports: [HomeDirectives , CommentComponent],
+  imports: [HomeDirectives, CommentComponent, PosteComponent],
   templateUrl: './home.html',
   styleUrl: './home.css',
 })

@@ -1,6 +1,22 @@
-/* Optional: add hover effect for better UX */
-div.d-flex.mb-3:hover {
+.comment {
+  transition: all 0.2s ease-in-out;
+}
+
+.comment:hover {
   background-color: #f8f9fa;
-  border-radius: 8px;
-  padding: 4px;
+  border-radius: 10px;
+}
+
+.comment-content {
+  border-radius: 12px;
+  font-size: 0.9rem;
+}
+
+.hover-action {
+  cursor: pointer;
+}
+
+.hover-action:hover {
+  color: #0d6efd;
+  text-decoration: underline;
 }

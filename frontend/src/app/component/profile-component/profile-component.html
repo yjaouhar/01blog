@@ -1,0 +1,125 @@
+<!-- <div class=" post-card shadow-sm my-3">
+
+  <div class="profile-card p-4 rounded shadow-sm text-white" style="background: linear-gradient(135deg, #00c6ff, #0072ff);">
+    <div class="d-flex align-items-center gap-3">
+      <img [src]="profile().avatar" alt="Avatar" class="rounded-circle" width="80" height="80">
+      <div>
+        <h3 class="mb-1">{{ profile().name }}</h3>
+        <p class="mb-0">{{ profile().role }}</p>
+    </div>
+  </div>
+  
+  <div class="d-flex gap-4 mt-3">
+    <div class="text-center">
+      <h5>{{ profile().posts }}</h5>
+      <small>Posts</small>
+    </div>
+    <div class="text-center">
+      <h5>{{ profile().subscribers }}</h5>
+      <small>Subscribers</small>
+    </div>
+    <div class="text-center">
+      <h5>{{ profile().following }}</h5>
+      <small>Following</small>
+    </div>
+  </div>
+  
+  <div class="mt-3 bg-white text-dark p-3 rounded">
+    <p><strong>Age:</strong> {{ profile().age }}</p>
+    <p><strong>Gender:</strong> {{ profile().gender }}</p>
+    <p><strong>Email:</strong> {{ profile().email }}</p>
+  </div>
+</div>
+
+</div> -->
+<div class="post-card shadow-sm my-3">
+
+  <!-- Profile Card -->
+  <div class="profile-card p-4 rounded shadow-sm text-white"
+    style="background: linear-gradient(135deg, #00c6ff, #0072ff);">
+    <div class="d-flex align-items-center gap-3">
+      <img [src]="profile().avatar" alt="Avatar" class="rounded-circle"
+        width="80" height="80">
+      <div>
+        <h3 class="mb-1">{{ profile().name }}</h3>
+        <p class="mb-0">{{ profile().role }}</p>
+      </div>
+    </div>
+
+    <div class="d-flex gap-4 mt-3">
+      <div class="text-center">
+        <h5>{{ profile().posts }}</h5>
+        <small>Posts</small>
+      </div>
+      <div class="text-center">
+        <h5>{{ profile().subscribers }}</h5>
+        <small>Subscribers</small>
+      </div>
+      <div class="text-center">
+        <h5>{{ profile().following }}</h5>
+        <small>Following</small>
+      </div>
+    </div>
+
+    <div class="mt-3 bg-white text-dark p-3 rounded">
+      <p><strong>Age:</strong> {{ profile().age }}</p>
+      <p><strong>Gender:</strong> {{ profile().gender }}</p>
+      <p><strong>Email:</strong> {{ profile().email }}</p>
+    </div>
+  </div>
+
+  <!-- Tabs Content -->
+  <div class="d-flex justify-content-around mt-3 border-top pt-2">
+    <div class="text-center cursor-pointer" (click)="activeTab='posts'">
+      <i class="bi bi-file-text fs-4"
+        [class.text-primary]="activeTab==='posts'"></i>
+      <small class="d-block">Posts</small>
+    </div>
+    <div class="text-center cursor-pointer" (click)="activeTab='followers'">
+      <i class="bi bi-people fs-4"
+        [class.text-primary]="activeTab==='followers'"></i>
+      <small class="d-block">Followers</small>
+    </div>
+  </div>
+  <div class="mt-3">
+    <!-- Posts -->
+    <div *ngIf="activeTab === 'posts'">
+      <p *ngFor="let post of profile().postList">{{ post.title }}</p>
+    </div>
+
+    <!-- Followers -->
+    <div *ngIf="activeTab === 'followers'">
+      <div *ngFor="let user of profile().followers"
+        class="d-flex justify-content-between align-items-center mb-2 p-2 border rounded cursor-pointer"
+        (click)="openFollowModal(user)">
+        <div class="d-flex align-items-center gap-2">
+          <img src="/d.jpg" alt="Avatar" class="rounded-circle"
+            width="40" height="40">
+          <span>{{ user.name }}</span>
+        </div>
+        <span class="badge bg-secondary"> Following</span>
+      </div>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal fade" id="followModal" tabindex="-1"
+      aria-labelledby="followModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="followModalLabel">{{ selectedUser?.name
+              }}</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal"
+              aria-label="Close"></button>
+          </div>
+          <div class="modal-body d-flex justify-content-around">
+            <button class="btn btn-primary"
+              (click)="followUser(selectedUser)">Follow</button>
+            <button class="btn btn-danger"
+              (click)="unfollowUser(selectedUser)">Unfollow</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,24 @@
+.post-card {
+  border-radius: 15px;
+  overflow: hidden;
+      width: 50%;
+    margin: auto;
+}
+
+.post-img {
+  max-height: 450px;
+  object-fit: cover;
+}
+
+.card-header img {
+  border: 2px solid #eee;
+}
+
+.card-footer button {
+  border-radius: 10px;
+  font-weight: 500;
+}
+
+.card-footer button:hover {
+  background-color: #f2f2f2;
+}

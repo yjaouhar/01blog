@@ -8,7 +8,6 @@ export class NavSelecl {
   el = inject(ElementRef);
 
   styleEffect = effect(() => {
-    console.log(this.isActive());
     if (this.isActive()) {
       this.el.nativeElement.style.color = '#059669';  
     } else {
