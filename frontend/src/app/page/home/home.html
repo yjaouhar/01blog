@@ -1,2 +1,11 @@
+@for (post of postes(); track post.id) {
 
-<app-poste-component> </app-poste-component>
+<div class="card post-card shadow-sm my-3">
+    <app-poste-component [post]='post' [isCommentDisabled]='false'>
+    </app-poste-component>
+    <div class="modal fade" id="commentModal" tabindex="-1" aria-hidden="true">
+        <app-comment-component [post]="post"></app-comment-component>
+    </div>
+
+</div>
+}

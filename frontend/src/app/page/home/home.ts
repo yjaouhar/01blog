@@ -1,17 +1,20 @@
-import { Component } from '@angular/core';
-import { HomeDirectives } from "../../directives/home-directives";
-import { CommentComponent } from '../../component/comment-component/comment-component';
+import { Component, inject, signal } from '@angular/core';
 import { PosteComponent } from "../../component/poste-component/poste-component";
+import { PosteServices } from '../../services/poste.services';
+import { PostModel } from '../../model/poste-model';
+import { CommentComponent } from "../../component/comment-component/comment-component";
+import { HomeDirectives } from '../../directives/home-directives';
 
 @Component({
   selector: 'app-home',
-  imports: [HomeDirectives, CommentComponent, PosteComponent],
+  imports: [PosteComponent, CommentComponent ],
   templateUrl: './home.html',
   styleUrl: './home.css',
 })
 export class Home {
-  comments = [
-    { author: 'Yassine jaouhary', avatar: '/1762882197859_WhatsApp Image 2025-10-15 at 19.54.57.jpeg', text: 'Great post!', time: '5 min ago' },
-    { author: 'jaouhaer yassine', avatar: '/1762882197859_WhatsApp Image 2025-10-15 at 19.54.57.jpeg', text: 'Thanks for sharing', time: '10 min ago' }
-  ];
+
+  postServices = inject(PosteServices)
+  postes = signal<PostModel[]>(this.postServices.getPodteData());
+
+
 }

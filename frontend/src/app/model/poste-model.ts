@@ -1,6 +1,7 @@
 export interface PostModel {
     id: number;
     authore: string;
+    avatar: string;
     time: Date;
     title : string;
     descreption : string;
