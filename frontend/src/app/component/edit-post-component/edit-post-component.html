@@ -5,7 +5,7 @@
 
             <!-- Header -->
             <div class="modal-header border-0">
-                <h5 class="modal-title" id="editPostModalLabel">Edit Post</h5>
+                <h5 class="modal-title" id="editPostModalLabel">Edit Post </h5>
                 <button type="button" class="btn-close"
                     data-bs-dismiss="modal"></button>
             </div>
@@ -21,6 +21,7 @@
                         type="text"
                         class="form-control mb-4"
                         formControlName="userInput"
+                        (change)="onDescChange()" d
                         style="border-radius: 12px;" />
 
                     <!-- BUTTONS delete / upload -->
@@ -49,13 +50,12 @@
                         <div
                             class="border p-2"
                             style="border-radius: 18px; max-width: 320px;">
-                            {{currentMedia}}
-                            @if (isImage){
+                            @if (isImage || post.mediaType){
                             <img [src]="currentMedia"
                                 class="img-fluid rounded"
                                 style="max-height: 300px; object-fit: cover;"
                                 width="300" height="300" />
-                            }@else if (isVideo) {
+                            }@else if (isVideo || post.mediaType) {
                             <video [src]="currentMedia"
                                 controls
                                 class="img-fluid rounded"
@@ -72,7 +72,11 @@
                             Save
                         </button>
                     </div>
-
+                    @if (showError) {
+                    <div style="color: red;">
+                        {{ errorMsg }}
+                    </div>
+                    }
                 </form>
 
             </div>

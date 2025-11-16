@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, input, Input } from '@angular/core';
 
 @Component({
   selector: 'app-delet-post-component',
@@ -7,8 +7,10 @@ import { Component } from '@angular/core';
   styleUrl: './delet-post-component.css',
 })
 export class DeletPostComponent {
+  @Input() postId: number | null = null;
+
   confirmDelete() {
-    console.log("Post deleted.");
+    console.log("Post deleted.", this.postId);
     // hit service here
   }
 }

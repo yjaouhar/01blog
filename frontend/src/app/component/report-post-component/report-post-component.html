@@ -1,21 +1,19 @@
-<!-- REPORT MODAL -->
-<div
-    class="modal fade show"
-    style="display: block; background: rgba(0,0,0,0.5);" id="report">
+<div class="modal fade" id="report" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content p-3" style="border-radius: 20px;">
 
-            <!-- Header -->
-            <div class="modal-header border-0">
-                <h5 class="modal-title">Report</h5>
+            <div class="modal-header border-0 gap-3">
+                <h5 class="modal-title"
+                    id="reportPostModalLabel me-20">Report</h5>
+                <i class="bi bi-flag-fill text-warning"></i>
+                <button type="button" class="btn-close"
+                    data-bs-dismiss="modal"></button>
             </div>
 
-            <!-- Body -->
             <div class="modal-body">
 
                 <form [formGroup]="form" (ngSubmit)="onSubmit()">
 
-                    <!-- DESCRIPTION -->
                     <label class="form-label fw-bold">What is your
                         reason?</label>
 
@@ -24,9 +22,11 @@
                         class="form-control mb-4"
                         formControlName="userInput"
                         style="border-radius: 12px;" />
+                    <div
+                        class="text-center mt-4 d-flex justify-content-between">
+                        <button type="button" class="btn btn-outline-secondary"
+                            data-bs-dismiss="modal">cancel</button>
 
-                    <!-- SUBMIT -->
-                    <div class="text-center mt-4">
                         <button
                             type="submit"
                             class="btn btn-success px-5 py-2"
@@ -38,6 +38,7 @@
                 </form>
 
             </div>
+
         </div>
     </div>
 </div>

@@ -1,12 +1,11 @@
 import { Component, inject, signal } from '@angular/core';
-import { PosteComponent } from "../../component/poste-component/poste-component";
 import { PosteServices } from '../../services/poste.services';
 import { PostModel } from '../../model/poste-model';
-import { CommentComponent } from "../../component/comment-component/comment-component";
+import { PosteComponent } from "../../component/poste-component/poste-component";
 
 @Component({
   selector: 'app-home',
-  imports: [PosteComponent, CommentComponent],
+  imports: [PosteComponent],
   templateUrl: './home.html',
   styleUrl: './home.css',
 })

@@ -1,6 +1,8 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, SimpleChanges } from '@angular/core';
 import { ReactiveFormsModule, FormBuilder, FormGroup } from '@angular/forms';
 import { CommonModule } from '@angular/common';
+import { PosteComponent } from '../poste-component/poste-component';
+import { PostModel } from '../../model/poste-model';
 
 @Component({
   selector: 'app-edit-post',
@@ -10,23 +12,31 @@ import { CommonModule } from '@angular/common';
 })
 export class EditPostComponent {
 
-  @Input() desc: string='lll';
-  @Input() currentMedia!: string | null;
+  @Input() post!: PostModel;
+  currentMedia: string | null = null;
+  currentMediaFile: File | null = null;
+
   form: FormGroup;
   isImage = false;
   isVideo = false;
-
+  showError = false;
+  errorMsg = '';
+  changed = false
   constructor(private fb: FormBuilder) {
     this.form = this.fb.group({
-
-      userInput: [this.desc]
+      userInput: ['']
     });
   }
-
+  ngOnChanges(changes: SimpleChanges) {
+    if (changes['desc'] && this.post !== undefined) {
+      this.form.patchValue({ userInput: this.post.descreption });
+    }
+  }
   onFileSelected(event: any) {
     const file = event.target.files[0];
     if (!file) return;
-
+    this.showError = false;
+    this.currentMediaFile = file;
     const type = file.type;
 
     const reader = new FileReader();
@@ -40,12 +50,25 @@ export class EditPostComponent {
 
   deleteMedia() {
     this.currentMedia = null;
+    this.currentMediaFile = null;
     this.isImage = false;
     this.isVideo = false;
   }
-
+  onDescChange() {
+    this.showError = false;
+  }
   onSubmit() {
-    console.log("Description:", this.form.value.userInput);
-    console.log("Media:", this.currentMedia);
+    const newDesc: string = this.form.value.userInput;
+    if (!newDesc.trim() || this.post.descreption === newDesc || this.post.mediaUrl === this.currentMedia) {
+      this.errorMsg = 'You must select a file and change the description!';
+      this.showError = true;
+      return
+    }
+    console.log("--> post Id : ", this.post.id);
+
+    const formData = new FormData();
+    formData.append('description', newDesc)
+    formData.append('file', this.currentMediaFile!)
+
   }
 }
