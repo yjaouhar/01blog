@@ -6,10 +6,11 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from "@angular/forms";
 import { EditPostComponent } from "../edit-post-component/edit-post-component";
 import { DeletPostComponent } from "../delet-post-component/delet-post-component";
+import { ReportPostComponent } from "../report-post-component/report-post-component";
 
 @Component({
   selector: 'app-poste-component',
-  imports: [HomeDirectives, CommonModule, FormsModule, EditPostComponent, DeletPostComponent],
+  imports: [HomeDirectives, CommonModule, FormsModule, EditPostComponent, DeletPostComponent, ReportPostComponent],
   templateUrl: './poste-component.html',
   styleUrls: ['./poste-component.css'],
 })

@@ -20,9 +20,11 @@
                 </li>
                 <li><a class="dropdown-item text-danger"
                         data-bs-toggle="modal"
-                        data-bs-target="#deletPostModal">Delete</a></li>
-                <li><a class="dropdown-item" href="#">Report</a></li>
+                        data-bs-target="#deletePostModal">Delete</a></li>
+                <li><a class="dropdown-item" data-bs-toggle="modal"
+                        data-bs-target="#report">Report</a></li>
             </ul>
+            <app-report-post-component></app-report-post-component>
             <app-delet-post-component></app-delet-post-component>
             <app-edit-post
                 desc='post.descreption'
