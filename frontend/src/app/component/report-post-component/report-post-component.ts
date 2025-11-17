@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 
 @Component({
@@ -10,7 +10,7 @@ import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 })
 export class ReportPostComponent {
   form: FormGroup;
-
+  @Input() postId!: number;
   constructor(private fb: FormBuilder) {
     this.form = this.fb.group({
       userInput: ['']
@@ -18,6 +18,6 @@ export class ReportPostComponent {
   }
 
   onSubmit() {
-    console.log("Report reason:", this.form.value.userInput);
+    console.log("Report for post : " + this.postId + " reason: ", this.form.value.userInput);
   }
 }

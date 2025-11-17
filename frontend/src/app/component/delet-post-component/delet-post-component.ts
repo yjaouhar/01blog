@@ -11,6 +11,5 @@ export class DeletPostComponent {
 
   confirmDelete() {
     console.log("Post deleted.", this.postId);
-    // hit service here
   }
 }

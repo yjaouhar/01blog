@@ -21,7 +21,7 @@ export class EditPostComponent {
   isVideo = false;
   showError = false;
   errorMsg = '';
-  changed = false
+  changed = false;
   constructor(private fb: FormBuilder) {
     this.form = this.fb.group({
       userInput: ['']

@@ -26,7 +26,8 @@ public class AuthController {
     private AuthService authService;
 
     @PostMapping(value = "/register", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<GlobalResponse<?>> registerRequest(@RequestPart("data") @Valid RegisterRequest regesterRequest,
+    public ResponseEntity<GlobalResponse<?>> registerRequest(
+            @RequestPart("data") @Valid RegisterRequest regesterRequest,
             @RequestPart(value = "file", required = false) MultipartFile file) {
         authService.createUser(regesterRequest, file);
         return new ResponseEntity<>(new GlobalResponse<>("User registered successfully!"), HttpStatus.CREATED);

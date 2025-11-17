@@ -1,17 +1,27 @@
 
 
 <!-- Button to trigger modal -->
+@if (!poste || poste.length<1){
+<div class="d-flex justify-content-center align-items-center"
+    style="height: 200px; border: 1px dashed #ccc;">
+    <div class="text-center">
+        <div class="mb-2">
+            <i class="bi bi-camera fs-1 text-muted"></i>
+        </div>
+        <p class="text-muted mb-0">No Posts Yet</p>
+    </div>
+</div>
 
+}
 @for (post of poste; track post.id) {
-
-<div class="card post-card shadow-sm my-3">
-    <div>
+<div class="d-flex justify-content-center my-4">
+    <div class="card post-card shadow-sm" style="max-width: 6000px;">
+        <!-- Card Header -->
         <div
             class="card-header d-flex align-items-center justify-content-between bg-white border-0">
             <div class="d-flex align-items-center gap-2">
-                <img
-                    [src]='post.avatar'
-                    alt="Profile" class="rounded-circle" width="40" height="40">
+                <img [src]='post.avatar' alt="Profile" class="rounded-circle"
+                    width="40" height="40">
                 <div>
                     <h6 class="mb-0 fw-bold">{{post.authore}}</h6>
                     <small class="text-muted">{{post.time}}</small>
@@ -22,60 +32,50 @@
                     <i class="bi bi-three-dots-vertical"></i>
                 </button>
                 <ul class="dropdown-menu dropdown-menu-end">
-                    <li>
-                        <a class="dropdown-item" data-bs-toggle="modal"
-                            data-bs-target="#editPostModal"
-                            (click)="openEditModal(post)">Edit</a>
-                    </li>
+                    <li><a class="dropdown-item" data-bs-toggle="modal"
+                            data-bs-target="#editPostModal">Edit</a></li>
                     <li><a class="dropdown-item text-danger"
                             data-bs-toggle="modal"
-                            data-bs-target="#deletePostModal"
-                            (click)="openDeleteModal(selectedPost.id)">Delete</a></li>
+                            [attr.data-bs-target]="'#deletePostModal' + post.id">Delete</a></li>
                     <li><a class="dropdown-item" data-bs-toggle="modal"
-                            data-bs-target="#report">Report</a></li>
+                            [attr.data-bs-target]="'#report'+ post.id">Report</a></li>
                 </ul>
-                <app-edit-post
-                    [post]="selectedPost"></app-edit-post>
+                <app-edit-post [post]="post"></app-edit-post>
                 <app-delet-post-component
-                    [postId]="selectedPostId"></app-delet-post-component>
-                <app-report-post-component></app-report-post-component>
-
+                    [postId]="post.id"></app-delet-post-component>
+                <app-report-post-component
+                    [postId]="post.id"></app-report-post-component>
             </div>
         </div>
 
         <!-- Post Body -->
         <div class="card-body p-0">
             <p class="px-3 mb-2">{{post.descreption}}</p>
-            <img
-                [src]='post.mediaUrl'
-                alt="Post Image" class="w-100 img-fluid post-img">
+            <img [src]='post.mediaUrl' alt="Post Image"
+                class="img-fluid post-img">
         </div>
+
+        <!-- Card Footer -->
         <div class="card-footer bg-white border-top">
-            <div class="d-flex gap-1 ">
-                @if(isCommentDisabled){
-                <p>Comment :</p>
-                }@else {
+            <div class="d-flex gap-1">
                 <button class="btn btn-light d-flex align-items-center gap-1"
                     (click)="handelLike(post)">
                     <i appHomeDirectives [like]='post.liked'
                         class="bi bi-heart-fill"></i> {{post.totalLike}}
                 </button>
-
                 <button class="btn btn-light d-flex align-items-center gap-1"
-                    data-bs-toggle="modal" data-bs-target="#commentModal"
-                    [disabled]="isCommentDisabled">
+                    data-bs-toggle="modal" data-bs-target="#commentModal">
                     <i class="bi bi-chat"></i>{{post.totalComment}}
                 </button>
-                }
             </div>
         </div>
 
-        <!-- </div> -->
+        <!-- Comment Modal -->
+        <div class="modal fade" id="commentModal" tabindex="-1"
+            aria-hidden="true">
+            <!-- <app-comment-component></app-comment-component> -->
+        </div>
     </div>
-
-    <div class="modal fade" id="commentModal" tabindex="-1" aria-hidden="true">
-        <app-comment-component [post]='post'></app-comment-component>
-    </div>
-
 </div>
+
 }

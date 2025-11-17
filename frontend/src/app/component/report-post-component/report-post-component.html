@@ -1,4 +1,4 @@
-<div class="modal fade" id="report" tabindex="-1" aria-hidden="true">
+<div class="modal fade" [id]="'report'+postId" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content p-3" style="border-radius: 20px;">
 
@@ -16,7 +16,6 @@
 
                     <label class="form-label fw-bold">What is your
                         reason?</label>
-
                     <input
                         type="text"
                         class="form-control mb-4"
@@ -42,3 +41,6 @@
         </div>
     </div>
 </div>
+
+
+
