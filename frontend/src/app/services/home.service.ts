@@ -3,26 +3,8 @@ import { Injectable } from '@angular/core';
 @Injectable({
   providedIn: 'root',
 })
-export class PosteServices {
-
-  likePoste(postId: number): boolean {
-    console.log("----> like the post ", postId);
-    return true
-  }
-
-
-  commentPoste(commentDetails: object): boolean {
-    console.log("----> new comment for the post ", commentDetails);
-    return true
-  }
-
-
-  getComment(postId: number) {
-    return [
-      { author: 'Yassine', avatar: '/1762882197859_WhatsApp Image 2025-10-15 at 19.54.57.jpeg', text: 'Great post!', time: '5 min ago' },
-      { author: 'Sara', avatar: '/1762882197859_WhatsApp Image 2025-10-15 at 19.54.57.jpeg', text: 'Thanks for sharing', time: '10 min ago' }
-    ]
-  }
+export class HomeService {
+  
 
   getPodteData() {
     return [

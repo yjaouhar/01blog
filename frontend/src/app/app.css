@@ -1,0 +1,175 @@
+:root {
+    --main-color: #4c6ef5;
+    /* Blue modern */
+    --text-dark: #2d2d2d;
+    --bg-light: #ffffff;
+}
+
+/* BODY global */
+body {
+    background: #f5f7fb;
+    font-family: "Inter", sans-serif;
+}
+
+/* HEADER */
+header {
+    backdrop-filter: blur(10px);
+    background: rgba(255, 255, 255, 0.85) !important;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+/* Logo / Number badge */
+header .btn {
+    :root {
+        --main-color: #4c6ef5;
+        /* Blue modern */
+        --text-dark: #2d2d2d;
+        --bg-light: #ffffff;
+    }
+
+    /* BODY global */
+    body {
+        background: #f5f7fb;
+        font-family: "Inter", sans-serif;
+    }
+
+    /* HEADER */
+    header {
+        backdrop-filter: blur(10px);
+        background: rgba(255, 255, 255, 0.85) !important;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    }
+
+    /* Logo / Number badge */
+    header .btn {
+        padding: 4px 10px !important;
+        font-weight: bold;
+        border-radius: 15px;
+        box-shadow: 0 2px 6px rgba(76, 110, 245, 0.3);
+    }
+
+    /* ICON notification */
+    header .bi-bell {
+        transition: 0.2s;
+    }
+
+    header button:hover .bi-bell {
+        transform: rotate(15deg);
+    }
+
+    /* MAIN */
+    main {
+        background: #f6f8fc;
+        padding-bottom: 100px !important;
+    }
+
+    /* NAVBAR bottom */
+    nav {
+        backdrop-filter: blur(12px);
+        background: rgba(255, 255, 255, 0.9) !important;
+        border-top: 1px solid rgba(0, 0, 0, 0.08);
+    }
+
+    /* NAV items */
+    nav a {
+        color: var(--text-dark);
+        text-decoration: none;
+        font-size: 13px;
+        transition: 0.25s;
+
+    }
+
+    nav a.active,
+    nav a:hover {
+        color: var(--main-color);
+        transform: translateY(-3px);
+    }
+
+    /* Icons */
+    nav i {
+        font-size: 22px;
+        transition: 0.25s;
+
+    }
+
+    nav a:hover i,
+    nav a.active i {
+        color: var(--main-color);
+        transform: scale(1.15);
+    }
+
+    /* RESPONSIVE */
+    @media (min-width: 768px) {
+        header .fs-4 {
+            font-size: 28px !important;
+        }
+
+        nav i {
+            font-size: 24px;
+        }
+    }
+
+    padding: 4px 10px !important;
+    font-weight: bold;
+    border-radius: 15px;
+    box-shadow: 0 2px 6px rgba(76, 110, 245, 0.3);
+}
+
+/* ICON notification */
+header .bi-bell {
+    transition: 0.2s;
+}
+
+header button:hover .bi-bell {
+    transform: rotate(15deg);
+}
+
+/* MAIN */
+main {
+    background: #f6f8fc;
+    padding-bottom: 100px !important;
+}
+
+/* NAVBAR bottom */
+nav {
+    backdrop-filter: blur(12px);
+    background: rgba(255, 255, 255, 0.9) !important;
+    border-top: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+/* NAV items */
+nav a {
+    color: var(--text-dark);
+    text-decoration: none;
+    font-size: 13px;
+    transition: 0.25s;
+}
+
+nav a.active,
+nav a:hover {
+    color: var(--main-color);
+    transform: translateY(-3px);
+}
+
+/* Icons */
+nav i {
+    font-size: 22px;
+    transition: 0.25s;
+}
+
+nav a:hover i,
+nav a.active i {
+    color: var(--main-color);
+    transform: scale(1.15);
+}
+
+/* RESPONSIVE */
+@media (min-width: 768px) {
+    header .fs-4 {
+        font-size: 28px !important;
+    }
+
+    nav i {
+        font-size: 24px;
+    }
+}

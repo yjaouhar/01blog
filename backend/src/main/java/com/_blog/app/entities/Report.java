@@ -44,7 +44,7 @@ public class Report {
     @JoinColumn(name = "reported_post_id")
     private Postes reportedPost;
 
-    @Column(length = 500)
+    @Column(length = 255)
     private String reason;
 
     @Column(nullable = false)

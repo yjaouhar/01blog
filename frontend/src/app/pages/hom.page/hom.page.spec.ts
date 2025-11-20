@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { DeletPostComponent } from './delet-post-component';
+import { HomPage } from './hom.page';
 
-describe('DeletPostComponent', () => {
-  let component: DeletPostComponent;
-  let fixture: ComponentFixture<DeletPostComponent>;
+describe('HomPage', () => {
+  let component: HomPage;
+  let fixture: ComponentFixture<HomPage>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [DeletPostComponent]
+      imports: [HomPage]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(DeletPostComponent);
+    fixture = TestBed.createComponent(HomPage);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

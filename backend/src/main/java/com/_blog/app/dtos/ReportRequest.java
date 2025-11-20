@@ -9,6 +9,6 @@ public record ReportRequest(
 
                 UUID reportedUser,
                 UUID reportedPost,
-                @Size(min = 10, max = 500) @NotNull(message = "reasone is required") String reason) {
+                @Size(min = 10, max = 255) @NotNull(message = "reasone is required") String reason) {
 
 }

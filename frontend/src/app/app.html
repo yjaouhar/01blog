@@ -1,13 +1,13 @@
 <div class="d-flex flex-column vh-100">
 
   <!-- Header -->
-  <header class="w-100 position-fixed top-0 bg-light py-2 shadow"
+  <header class="w-100 position-fixed top-0 bg-light py-2 shadow "
     style="z-index: 10;">
     <div class="container">
       <div class="row align-items-center">
         <div
           class="col-2 d-flex align-items-center justify-content-center gap-2">
-          <div class="btn rounded-pill text-light p-1"
+          <div class="btn rounded-pill text-light bg-primary p-1"
             style="background-color: var(--main-color);">
             <span class="fw-bold fs-4">01</span>
           </div>
@@ -21,15 +21,14 @@
           </button>
         </div>
         <div class="col-2 text-center">
-          <button type="button" class="btn text-light fw-bold"
-            style="background-color: var(--main-color);">U</button>
+          <button type="button" class="btn text-light fw-bold">U</button>
         </div>
       </div>
     </div>
   </header>
 
   <!-- Scrollable main content -->
-  <main class="flex-grow-1"
+  <main class="flex-grow-1 mt-7"
     style="padding-top: 70px; padding-bottom: 70px; overflow-y: auto;">
     <router-outlet></router-outlet>
   </main>
@@ -39,24 +38,24 @@
     class="nav position-fixed bottom-0 d-flex justify-content-around w-100 bg-light py-2 border-top shadow-lg"
     style="z-index: 10;">
     <a routerLink="/" class="nav-link d-flex flex-column align-items-center"
-      appNavSelecl [isActive]="active()==='h'" (click)="changeIcone('h')">
+      (click)="changeIcone('h')">
       <i class="bi bi-house-door fs-4"></i>
       <span class="fw-medium fst-normal">Feed</span>
     </a>
     <a routerLink="/discover"
       class="nav-link d-flex flex-column align-items-center" appNavSelecl
-      [isActive]="active()==='d'" (click)="changeIcone('d')">
+      (click)="changeIcone('d')">
       <i class="bi bi-people fs-4"></i>
       <span class="fw-medium fst-normal">Discover</span>
     </a>
     <a routerLink="/profile"
       class="nav-link d-flex flex-column align-items-center" appNavSelecl
-      [isActive]="active()==='p'" (click)="changeIcone('p')">
+      (click)="changeIcone('p')">
       <i class="bi bi-person fs-4"></i>
       <span class="fw-medium fst-normal">Profile</span>
     </a>
     <a routerLink="#" class="nav-link d-flex flex-column align-items-center"
-      appNavSelecl [isActive]="active()==='a'" (click)="changeIcone('a')">
+      (click)="changeIcone('a')">
       <i class="bi bi-shield fs-4"></i>
       <span class="fw-medium fst-normal">Admin</span>
     </a>
