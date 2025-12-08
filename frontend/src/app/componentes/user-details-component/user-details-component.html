@@ -1,0 +1,130 @@
+<div class="container py-4">
+
+    <div class="bg-white rounded shadow-sm p-4 mb-4">
+        <div class="d-flex align-items-center gap-3">
+            <img [src]="profileDetails.avatar" class="profile-avatar">
+            <div>
+                <h3 class="fw-bold m-0">{{ profileDetails.username }}</h3>
+                <span class="text-secondary">{{profileDetails.name}}</span>
+            </div>
+            @if (false) {
+            <div class="ms-auto d-flex gap-3">
+                <button class="btn btn-outline-primary btn-sm"
+                    data-bs-toggle="modal"
+                    [attr.data-bs-target]="'#editProfileModal'+profileDetails.id">Edit
+                    Profile</button>
+            </div>
+            <div class="modal fade" [id]="'editProfileModal'+profileDetails.id"
+                tabindex="-1">
+                <app-edit-profile-modal
+                    [profile]="profileDetails"
+                    [id]="profileDetails.id"
+                    (onSave)="updateProfile($event)">
+                </app-edit-profile-modal>
+            </div>
+            }@else {
+            @if (true) {
+            <div class="ms-auto d-flex gap-3">
+                <button class="btn btn-primary btn-sm"
+                    (click)="followRequest(profileDetails.id)">Follow</button>
+            </div>
+            }@else {
+            <div class="ms-auto d-flex gap-3">
+                <button class="btn btn-outline-danger btn-sm"
+                    data-bs-toggle="modal"
+                    [attr.data-bs-target]="'#confermModalUnfollow'+profileDetails.id">Ufollow</button>
+            </div>
+            <div class="modal fade"
+                [id]="'confermModalUnfollow'+profileDetails.id"
+                tabindex="-1"
+                aria-modal="true" role="dialog">
+                <app-confirm-component [id]="'Unfollow'+profileDetails.id"
+                    (conferm)="unfollow($event , profileDetails.id)"
+                    message="do you want to unfollow"></app-confirm-component>
+            </div>
+            }
+            }
+        </div>
+    </div>
+
+    <div class="row">
+
+        <!-- LEFT SIDEBAR -->
+        <div class="col-md-3">
+            <div class="bg-white rounded shadow-sm p-3">
+
+                <h5 class="fw-bold mb-3">About</h5>
+
+                <p class="mb-1">
+                    <i class="bi bi-person-fill me-2"></i>
+                    {{profileDetails.gander}}
+                </p>
+                <p class="mb-1">
+                    <i class="bi bi-calendar-event-fill me-2"></i>
+                    {{profileDetails.age}}
+                </p>
+
+                <p class="mb-1">
+                    <i
+                        class="bi bi-envelope-fill me-2"></i>{{profileDetails.email}}
+                </p>
+
+            </div>
+        </div>
+
+        <!-- CENTER CONTENT -->
+        <div class="col-md-9">
+
+            <!-- Tabs -->
+            <div
+                class="d-flex justify-content-around bg-white rounded shadow-sm p-3 mb-3 tabs">
+
+                <span
+                    class="tab-item"
+                    [class.active]="showPostes"
+                    (click)="togglePosts()">
+                    Posts
+                </span>
+
+                <span
+                    class="tab-item"
+                    [class.active]="selectedFollowers"
+                    (click)="toggleFollowers()">
+                    Followers
+                </span>
+
+                <span
+                    class="tab-item"
+                    [class.active]="selectedFollowing"
+                    (click)="toggleFollowing()">
+                    Following
+                </span>
+            </div>
+
+            <!-- Posts -->
+            @if (showPostes) {
+            <div class="bg-white rounded shadow-sm ">
+                <app-poste-component [postes]="postes"></app-poste-component>
+            </div>
+            }
+
+            <!-- Followers / Following -->
+            @else {
+            <div class="bg-white rounded shadow-sm p-4 text-center">
+                @if (selectedFollowers) {
+                <app-list-users-component
+                    [users]="subscribed"></app-list-users-component>
+                }
+
+                @else if (selectedFollowing) {
+                <app-list-users-component
+                    [users]="subscriber"></app-list-users-component>
+                }
+            </div>
+            }
+
+        </div>
+
+    </div>
+
+</div>

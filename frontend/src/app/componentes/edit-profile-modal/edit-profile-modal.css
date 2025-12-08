@@ -1,0 +1,12 @@
+.modal-content {
+    border-radius: 14px;
+    padding: 5px;
+}
+
+.modal-title {
+    font-weight: bold;
+}
+
+.form-label {
+    font-weight: 600;
+}

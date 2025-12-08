@@ -1,0 +1,91 @@
+<div>
+    <div
+        class="card-header d-flex align-items-center justify-content-between bg-white border-0">
+        <div class="w-100 d-flex justify-content-between">
+            <div class="d-flex gap-3">
+                <img src='prof.png' alt="Profile" class="rounded-circle"
+                    width="40" height="40">
+                <div>
+                    <h6 class="mb-0 fw-bold">{{post.authore}}</h6>
+                    <small class="text-muted">{{post.time}}</small>
+                </div>
+            </div>
+
+            <div class="dropdown">
+                <button class="btn btn-light text-center"
+                    data-bs-toggle="dropdown">
+                    <i class="bi bi-three-dots-vertical"></i>
+                </button>
+                <ul class="dropdown-menu dropdown-menu-end">
+                    @if (true) {
+                    <li>
+                        <a class="dropdown-item" data-bs-toggle="modal"
+                            [attr.data-bs-target]="'#editPostModal' + post.id">
+                             <i class="bi bi-pencil-fill text-success p-2"></i>
+                        </a>
+                    </li>
+
+                    <li>
+                        <a class="dropdown-item text-danger"
+                            data-bs-toggle="modal"
+                            [attr.data-bs-target]="'#confermModal'+post.id">
+                             <i class="bi bi-trash-fill text-danger p-2"></i>
+                        </a>
+                    </li>
+                    }
+                    <li>
+                        <a class="dropdown-item" data-bs-toggle="modal"
+                            [attr.data-bs-target]="'#reportModel'+post.id">
+                            Report <i
+                                class="bi bi-flag-fill text-warning p-2"></i>
+                        </a>
+                    </li>
+
+                </ul>
+                @if (false) {
+
+                <div class="modal fade" [id]="'editPostModal' + post.id"
+                    data-bs-backdrop="static" data-bs-keyboard="false"
+                    tabindex="-1"
+                    aria-hidden="true">
+                    <app-edite-post-component
+                        [post]="post"></app-edite-post-component>
+                </div>
+                <div class="modal fade" [id]="'confermModal'+post.id"
+                    tabindex="-1"
+                    aria-modal="true" role="dialog">
+                    <app-confirm-component [id]="post.id"
+                        (conferm)="deletPost($event)"
+                        message="do you want"></app-confirm-component>
+                </div>
+                }
+                <div class="modal fade" [id]="'reportModel'+post.id"
+                    tabindex="-1"
+                    aria-hidden="true">
+                    <app-report-component [id]="post.id"
+                        (reason)="reportPost($event)"></app-report-component>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- Post Body -->
+    <div class=" card-body p-0 ">
+        <p class="px-3 mb-2">{{post.descreption}}</p>
+
+        @if (post.mediaType==="image" ){
+        <img [src]="post.mediaUrl" alt="Post Image"
+            class="img-fluid post-img">
+        }@else if (post.mediaType==="video") {
+        <video
+            [src]="post.mediaUrl"
+            controls
+            class="img-fluid rounded"
+            style="object-fit: cover;"></video>
+        }
+
+    </div>
+
+</div>

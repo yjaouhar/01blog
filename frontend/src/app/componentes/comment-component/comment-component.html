@@ -1,0 +1,54 @@
+
+<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+    <div class="modal-content">
+
+        <!-- Header -->
+        <div class="modal-header text-center">
+            <h5 class="modal-title">{{post.authore}} 's Postes</h5>
+            <button type="button" class="btn-close"
+                data-bs-dismiss="modal"
+                aria-label="Close"></button>
+        </div>
+
+        <!-- Body -->
+        <div class="modal-body">
+            <!-- <div> -->
+            <div class="d   -flex justify-content-center my-4 ">
+                <div
+                    class="card post-card shadow-sm p-2">
+                    <app-post-template-component
+                        [post]="post"></app-post-template-component>
+                </div>
+            </div>
+            <!-- </div> -->
+            @for (comment of comments; track $index) {
+            <div class="comment d-flex align-items-start gap-2 mb-3">
+                <img [src]="comment.avatar"
+                    alt="User"
+                    class="rounded-circle border"
+                    width="40" height="40">
+
+                <div
+                    class="comment-content bg-light p-2 px-3 rounded-3 flex-grow-1">
+                    <div
+                        class="d-flex justify-content-between align-items-center">
+                        <span class="fw-semibold">{{ comment.author }} </span>
+                        <small class="text-muted">{{ comment.time }}</small>
+                    </div>
+                    <p class="mb-1">{{ comment.text }}</p>
+
+                </div>
+            </div>
+            }
+        </div>
+
+        <!-- Footer -->
+        <div class="modal-footer d-flex">
+            <input type="text" class="form-control me-2"
+                placeholder="Write a comment..." [(ngModel)]="commentText">
+            <button class="btn btn-primary"
+                (click)="handelComment(post.id)">Send</button>
+        </div>
+
+    </div>
+</div>

@@ -1,0 +1,117 @@
+/* container */
+.container {
+    max-width: 800px;
+}
+
+/* كل user item */
+.user-item {
+    background-color: #fff;
+    border-radius: 8px;
+    margin-bottom: 10px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.user-item:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* user info */
+.user-info img.avatar {
+    border: 2px solid #ddd;
+}
+
+.user-info h6.name {
+    margin: 0;
+    font-size: 0.95rem;
+    font-weight: 600;
+}
+
+.user-info small.stats {
+    color: #666;
+    font-size: 0.8rem;
+}
+
+/* buttons */
+.user-item button {
+    min-width: 80px;
+}
+
+.user-item .btn-primary {
+    background-color: #0d6efd;
+    border-color: #0d6efd;
+}
+
+.user-item .btn-primary:hover {
+    background-color: #0b5ed7;
+}
+
+.user-item .btn-outline-danger {
+    border-color: #dc3545;
+    color: #dc3545;
+}
+
+.user-item .btn-outline-danger:hover {
+    background-color: #dc3545;
+    color: #fff;
+}
+
+/* modal */
+.modal .app-confirm-component {
+    padding: 20px;
+}
+
+.user-link {
+    color: inherit;
+    /* inherit color from parent */
+    display: flex;
+    align-items: center;
+    transition: background-color 0.2s, color 0.2s;
+    border-radius: 6px;
+    padding: 4px;
+}
+
+.user-link:hover {
+    background-color: rgba(0, 0, 0, 0.05);
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.user-link .name {
+    font-weight: 600;
+}
+
+.user-link .stats {
+    font-size: 0.8rem;
+    color: #666;
+}
+
+.user-list {
+    max-height: 500px;
+    overflow-y: auto;
+}
+
+.input-group-text {
+    cursor: pointer
+}
+
+.input-group-text:hover {
+    background-color: #d8d8d8;
+}
+
+/* responsive */
+@media (max-width: 576px) {
+    .user-info h6.name {
+        font-size: 0.85rem;
+    }
+
+    .user-info small.stats {
+        font-size: 0.75rem;
+    }
+
+    .user-item button {
+        font-size: 0.75rem;
+        padding: 0.25rem 0.5rem;
+    }
+}

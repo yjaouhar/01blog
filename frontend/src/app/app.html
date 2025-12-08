@@ -13,13 +13,22 @@
           </div>
           <div class="fs-4 fw-bold" style="color: var(--main-color);">Blog</div>
         </div>
-        <div class="col-8 text-end">
+        <!-- Notification -->
+        <div class="col-8 text-end dropdown">
           <button type="button" class="btn position-relative">
-            <i class="bi bi-bell fs-2"></i>
+            <i class="bi bi-bell fs-2" data-bs-toggle="dropdown"></i>
+            @if (false) {
             <span
               class="position-absolute top-0 start-100 translate-middle p-2 bg-danger rounded-circle"></span>
+            }
+            <ul class="dropdown-menu">
+              <li>Action</li>
+              <li>Another action</li>
+              <li>Something here</li>
+            </ul>
           </button>
         </div>
+        <!-- ------ -->
         <div class="col-2 text-center">
           <button type="button" class="btn text-light fw-bold">U</button>
         </div>
@@ -29,7 +38,7 @@
 
   <!-- Scrollable main content -->
   <main class="flex-grow-1 mt-7"
-    style="padding-top: 70px; padding-bottom: 70px; overflow-y: auto;">
+    style="padding-top: 70px; padding-bottom: 70px; overflow: hidden;">
     <router-outlet></router-outlet>
   </main>
 
@@ -38,24 +47,25 @@
     class="nav position-fixed bottom-0 d-flex justify-content-around w-100 bg-light py-2 border-top shadow-lg"
     style="z-index: 10;">
     <a routerLink="/" class="nav-link d-flex flex-column align-items-center"
-      (click)="changeIcone('h')">
+      routerLinkActive="active">
       <i class="bi bi-house-door fs-4"></i>
       <span class="fw-medium fst-normal">Feed</span>
     </a>
     <a routerLink="/discover"
-      class="nav-link d-flex flex-column align-items-center" appNavSelecl
-      (click)="changeIcone('d')">
+      class="nav-link d-flex flex-column align-items-center"
+      routerLinkActive="active">
       <i class="bi bi-people fs-4"></i>
       <span class="fw-medium fst-normal">Discover</span>
     </a>
     <a routerLink="/profile"
-      class="nav-link d-flex flex-column align-items-center" appNavSelecl
-      (click)="changeIcone('p')">
+      class="nav-link d-flex flex-column align-items-center"
+      routerLinkActive="active">
       <i class="bi bi-person fs-4"></i>
       <span class="fw-medium fst-normal">Profile</span>
     </a>
-    <a routerLink="#" class="nav-link d-flex flex-column align-items-center"
-      (click)="changeIcone('a')">
+    <a routerLink="/admin-panel"
+      class="nav-link d-flex flex-column align-items-center"
+      routerLinkActive="active">
       <i class="bi bi-shield fs-4"></i>
       <span class="fw-medium fst-normal">Admin</span>
     </a>

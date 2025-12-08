@@ -4,13 +4,13 @@ import { Injectable } from '@angular/core';
   providedIn: 'root',
 })
 export class HomeService {
-  
+
 
   getPodteData() {
     return [
       {
 
-        id: 1,
+        id: '1',
         authore: 'yassine jaouhary',
         avatar: '/d.jpg',
         time: new Date,
@@ -23,7 +23,7 @@ export class HomeService {
         liked: true
       },
       {
-        id: 2,
+        id: '2',
         authore: 'yassine jaouhary',
         avatar: '/d.jpg',
         time: new Date,
@@ -36,20 +36,20 @@ export class HomeService {
         liked: false
       },
       {
-        id: 3,
+        id: '3',
         authore: 'yassine jaouhary',
         avatar: '/d.jpg',
         time: new Date,
         title: 'Sahara Adventure',
         descreption: 'Exploring the endless dunes of Merzouga 🏜️.',
         mediaType: 'video',
-        mediaUrl: '/p.jpg',
+        mediaUrl: '/v.webm',
         totalLike: 200,
         totalComment: 25,
         liked: true
       },
       {
-        id: 4,
+        id: ' 4',
         authore: 'yassine jaouhary',
         avatar: 'd.jpg',
         time: new Date,
@@ -62,7 +62,7 @@ export class HomeService {
         liked: false
       },
       {
-        id: 5,
+        id: ' 5',
         authore: 'yassine jaouhary',
         avatar: '/d.jpg',
         time: new Date,
@@ -75,7 +75,7 @@ export class HomeService {
         liked: true
       },
       {
-        id: 6,
+        id: ' 6',
         authore: 'yassine jaouhary',
         avatar: '/d.jpg',
         time: new Date,
@@ -88,7 +88,7 @@ export class HomeService {
         liked: true
       },
       {
-        id: 7,
+        id: ' 7',
         authore: 'yassine jaouhary',
         avatar: '/d.jpg',
         time: new Date,
@@ -101,7 +101,7 @@ export class HomeService {
         liked: false
       },
       {
-        id: 8,
+        id: ' 8',
         authore: 'yassine jaouhary',
         avatar: '/d.jpg',
         time: new Date,
@@ -114,7 +114,7 @@ export class HomeService {
         liked: false
       },
       {
-        id: 9,
+        id: ' 9',
         authore: 'yassine jaouhary',
         avatar: '/d.jpg',
         time: new Date,
@@ -127,7 +127,7 @@ export class HomeService {
         liked: true
       },
       {
-        id: 10,
+        id: '10',
         authore: 'yassine jaouhary',
         avatar: '/d.jpg',
         time: new Date,

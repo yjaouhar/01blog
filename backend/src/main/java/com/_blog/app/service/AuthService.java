@@ -39,6 +39,7 @@ public class AuthService {
             throw CustomResponseException.CustomException(400, "Username already exists");
         }
         try {
+
             String hashedPassword = encoder.encode(registerRequest.password());
 
             UserAccount user = new UserAccount();
