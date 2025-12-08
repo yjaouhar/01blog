@@ -21,6 +21,7 @@ import com._blog.app.dtos.RegisterRequest;
 import com._blog.app.entities.UserAccount;
 import com._blog.app.repository.UserRepo;
 import com._blog.app.shared.CustomResponseException;
+import com._blog.app.utils.UserUtils;
 
 @Service
 public class AuthService {
@@ -29,26 +30,32 @@ public class AuthService {
     private UserRepo userRepo;
     @Autowired
     JwtHelper jwtHelper;
+    @Autowired
+    UserUtils utils;
     private final BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
 
     public void createUser(RegisterRequest registerRequest, MultipartFile file) {
         if (userRepo.existsByEmail(registerRequest.email())) {
             throw CustomResponseException.CustomException(400, "Email already exists");
         }
-        if (userRepo.existsByUsername(registerRequest.username())) {
+        if (!registerRequest.username().isBlank() && userRepo.existsByUsername(registerRequest.username())) {
             throw CustomResponseException.CustomException(400, "Username already exists");
         }
-        try {
 
+        try {
             String hashedPassword = encoder.encode(registerRequest.password());
 
             UserAccount user = new UserAccount();
-            user.setUsername(registerRequest.username());
+            if (registerRequest.username().isBlank()) {
+                utils.generatUsername(user);
+            } else {
+                user.setUsername(registerRequest.username());
+            }
+            user.setAge(registerRequest.age());
             user.setEmail(registerRequest.email());
             user.setPassword(hashedPassword);
             user.setFirstName(registerRequest.firstName());
             user.setLastName(registerRequest.lastName());
-            user.setAge(registerRequest.age());
             user.setGender(registerRequest.gender());
             user.setRole("USER");
             if (file != null && !file.isEmpty()) {

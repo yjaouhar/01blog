@@ -1,5 +1,6 @@
 <div class="d-flex flex-column vh-100">
 
+  @if (!isAutPage()) {
   <!-- Header -->
   <header class="w-100 position-fixed top-0 bg-light py-2 shadow "
     style="z-index: 10;">
@@ -35,7 +36,7 @@
       </div>
     </div>
   </header>
-
+  }
   <!-- Scrollable main content -->
   <main class="flex-grow-1 mt-7"
     style="padding-top: 70px; padding-bottom: 70px; overflow: hidden;">
@@ -43,6 +44,7 @@
   </main>
 
   <!-- Navbar -->
+  @if (!isAutPage()) {
   <nav
     class="nav position-fixed bottom-0 d-flex justify-content-around w-100 bg-light py-2 border-top shadow-lg"
     style="z-index: 10;">
@@ -70,5 +72,5 @@
       <span class="fw-medium fst-normal">Admin</span>
     </a>
   </nav>
-
+  }
 </div>

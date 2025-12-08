@@ -1,6 +1,5 @@
 import { Component, signal } from '@angular/core';
-import { RouterOutlet, RouterLink } from '@angular/router';
-import { NavBareDirective } from "./directive/nav-bare-directive";
+import { Router, RouterOutlet, RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-root',
@@ -9,10 +8,13 @@ import { NavBareDirective } from "./directive/nav-bare-directive";
   styleUrl: './app.css'
 })
 export class App {
-
+  constructor(public router: Router) { }
   active = signal('h')
   changeIcone(icon: string) {
     this.active.update(() => icon);
   }
 
+  isAutPage() {
+    return this.router.url === '/login' || this.router.url === '/register'
+  }
 }

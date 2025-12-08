@@ -120,7 +120,7 @@ public class ProfileService {
         if (editRequest.lastName() != null && !editRequest.lastName().isBlank()) {
             profileUser.setLastName(editRequest.lastName());
         }
-        if (editRequest.age() > 10) {
+        if (!editRequest.age().isBlank()) {
             profileUser.setAge(editRequest.age());
         }
         if (editRequest.gender() != null && !editRequest.gender().isBlank()) {

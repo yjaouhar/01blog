@@ -1,0 +1,38 @@
+<div class="container mt-5">
+    <div class="card shadow-sm p-4">
+        <h2 class="mb-4 text-center">Login</h2>
+        <form [formGroup]="loginForm" (ngSubmit)="submit()" class="form">
+            <!-- Email -->
+            <div class="mb-3">
+                <label>Email/Username</label>
+                <span class="ms-2 text-danger">*</span>
+                <input type="username" class="form-control"
+                    formControlName="username">
+                @if (loginForm.get('username')?.touched &&
+                loginForm.get('username')?.invalid) {
+                <div
+                    class="text-danger small">
+                    Enter a valid email/username.
+                </div>
+                }
+            </div>
+
+            <!-- Password -->
+            <div class="mb-3">
+                <label>Password</label>
+                <span class="ms-2 text-danger">*</span>
+                <input type="password" class="form-control"
+                    formControlName="password">
+                @if (loginForm.get('password')?.touched &&
+                loginForm.get('password')?.invalid) {
+                <div
+                    class="text-danger small">
+                    Password must be between 3 and 20 characters.
+                </div>
+                }
+            </div>
+
+            <button class="btn btn-primary w-100" type="submit">Login</button>
+        </form>
+    </div>
+</div>

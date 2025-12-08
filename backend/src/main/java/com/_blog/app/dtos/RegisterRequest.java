@@ -3,8 +3,6 @@ package com._blog.app.dtos;
 import org.hibernate.validator.constraints.Length;
 
 import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.Max;
-import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
@@ -13,18 +11,16 @@ public record RegisterRequest(
    
         @NotBlank(message = "First Name is required")
         @Pattern(regexp = "^[A-Za-z]+$", message = "First Name must contain only letters") 
-        @Size(min = 3, max = 20, message = "First Name must be between 3 and 20 characters")
+        @Size(min = 4, max = 20, message = "First Name must be between 4 and 20 characters")
         String firstName,
 
         @NotBlank(message = "Last Name is required")
         @Pattern(regexp = "^[A-Za-z]+$", message = "Last Name must contain only letters") 
-        @Size(min = 3, max = 20, message = "Last Name must be between 3 and 20 characters") 
+        @Size(min = 4, max = 20, message = "Last Name must be between 4 and 20 characters") 
         String lastName,
 
         @NotBlank(message = "Age is required") 
-        @Min(value = 10, message = "Age must be at least 10")
-        @Max(value = 300, message = "Age must be less than 300") 
-        Short age,
+        String age,
 
         @NotBlank(message = "Gender is required") 
         @Pattern(regexp = "male|female", message = "Gender must be 'male' or 'female'") 
@@ -32,9 +28,9 @@ public record RegisterRequest(
         @Length(max=100)
         String bio,
                 
-        @NotBlank(message = "Nickname is required") 
+      
         @Pattern(regexp = "^[A-Za-z][A-Za-z0-9_]*$", message = "Nickname must start with a letter and contain only letters, numbers or underscores") 
-        @Size(min = 3, max = 15, message = "Nickname must be between 3 and 15 characters") 
+        @Size(min = 4, max = 15, message = "Nickname must be between 4 and 15 characters") 
         String username,
                 
         @NotBlank(message = "Email is required") 

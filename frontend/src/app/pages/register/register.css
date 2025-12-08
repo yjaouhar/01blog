@@ -1,0 +1,35 @@
+.card {
+    max-width: 600px;
+    margin: auto;
+    overflow-y: auto;
+}
+
+label {
+    font-weight: 500;
+}
+
+.text-danger {
+    font-size: 0.85rem;
+}
+
+button {
+    margin-top: 10px;
+}
+
+.form {
+    max-height: 700px;
+}
+
+.avatar-preview img {
+    margin: auto;
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid #007bff;
+}
+.avatar-preview canvas {
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid #007bff;
+}

@@ -8,7 +8,7 @@ public record EditProfileRequest(
         @NotNull(message="profile id is required") UUID profileId,
         String firstName,//
         String lastName,//
-        short age,//
+        String age,//
         String gender,//
         String bio,//
         String username,

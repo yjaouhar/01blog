@@ -12,7 +12,7 @@ import lombok.Setter;
 public class ProfileDetailsResponse {
     private String firstName;
     private String lasteName;
-    private Short age;
+    private String age;
     private String gender;
     private String bio;
     private String userName;

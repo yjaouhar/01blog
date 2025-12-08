@@ -1,5 +1,6 @@
 package com._blog.app.utils;
 
+import java.util.Random;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,15 +21,26 @@ import lombok.Setter;
 @Component
 public class UserUtils {
     @Autowired
-    private   UserRepo userRepo;
+    private UserRepo userRepo;
 
-    public  UserAccount findUserByUsername(String username) {
+    public UserAccount findUserByUsername(String username) {
         return userRepo.findByUsername(username)
                 .orElseThrow(() -> CustomResponseException.CustomException(404, "user not found"));
     }
-    
-    public  UserAccount findUserById(UUID id) {
+
+    public UserAccount findUserById(UUID id) {
         return userRepo.findById(id)
                 .orElseThrow(() -> CustomResponseException.CustomException(404, "user not found"));
+    }
+
+    public String generatUsername(UserAccount user) {
+        String username = (user.getFirstName() + user.getLastName()).substring(0, 8);
+        if (userRepo.existsByUsername(username)) {
+            Random rand = new Random();
+            int uniq = rand.nextInt(100) + 1;
+            username = username + uniq;
+        }
+
+        return username;
     }
 }

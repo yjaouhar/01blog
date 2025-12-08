@@ -1,0 +1,132 @@
+<div class="container mt-5">
+  <div class="card shadow-sm p-4">
+    <h2 class="mb-4 text-center">Register</h2>
+    <form [formGroup]="registerForm" (ngSubmit)="submit()" class="form">
+
+      <div class="row">
+        <!-- First Name -->
+        <div class="col-md-6 mb-3">
+          <label>First Name</label>
+          <span class="ms-2 text-danger">*</span>
+          <input type="text" class="form-control" formControlName="firstName">
+          @if (registerForm.get('firstName')?.touched &&
+          registerForm.get('firstName')?.invalid ) {
+          <div class="text-danger small">
+            First Name must be between 2 and 20 characters
+          </div>
+          }
+        </div>
+
+        <!-- Last Name -->
+        <div class="col-md-6 mb-3">
+          <label>Last Name</label>
+          <span class="ms-2 text-danger">*</span>
+          <input type="text" class="form-control" formControlName="lastName">
+          @if (registerForm.get('lastName')?.touched &&
+          registerForm.get('lastName')?.invalid) {
+          <div
+            class="text-danger small">
+            Last Name must be between 2 and 20 characters
+          </div>
+          }
+        </div>
+      </div>
+
+      <!-- Gender -->
+      <div class="mb-3">
+        <label>Gender</label>
+        <span class="ms-2 text-danger">*</span>
+        <select class="form-select" formControlName="gender">
+          <option value>Choose...</option>
+          <option value="male">Male</option>
+          <option value="female">Female</option>
+        </select>
+        @if (registerForm.get('gender')?.touched &&
+        registerForm.get('gender')?.invalid) {
+        <div
+          class="text-danger small">
+          Gender must be 'male' or 'female'.
+        </div>
+        }
+      </div>
+
+      <!-- Age -->
+      <div class="mb-3">
+        <label>Birthday</label>
+        <span class="ms-2 text-danger">*</span>
+        <input type="date" class="form-control" formControlName="birthday">
+        @if (registerForm.get('age')?.touched &&
+        registerForm.get('age')?.invalid) {
+        <div
+          class="text-danger small">
+          Age must be between 1 and 120.
+        </div>
+        }
+      </div>
+
+      <!-- Bio -->
+      <div class="mb-3">
+        <label>Bio</label>
+        <textarea class="form-control" rows="3"
+          formControlName="bio"></textarea>
+        @if (registerForm.get('bio')?.touched &&
+        registerForm.get('bio')?.invalid) {
+        <div
+          class="text-danger small">
+          Max 100 characters.
+        </div>
+        }
+      </div>
+
+      <!-- Username -->
+      <div class="mb-3">
+        <label>Username</label>
+        <input type="text" class="form-control" formControlName="username">
+        @if (registerForm.get('username')?.touched &&
+        registerForm.get('username')?.invalid) {
+        <div
+          class="text-danger small">
+          Username must be between 4 and 15 characters.
+        </div>
+        }
+      </div>
+
+      <!-- Email -->
+      <div class="mb-3">
+        <label>Email</label>
+        <span class="ms-2 text-danger">*</span>
+        <input type="email" class="form-control" formControlName="email">
+        @if (registerForm.get('email')?.touched &&
+        registerForm.get('email')?.invalid) {
+        <div
+          class="text-danger small">
+          Enter a valid email.
+        </div>
+        }
+      </div>
+
+      <!-- Password -->
+      <div class="mb-3">
+        <label>Password</label>
+        <span class="ms-2 text-danger">*</span>
+        <input type="password" class="form-control" formControlName="password">
+        @if (registerForm.get('password')?.touched &&
+        registerForm.get('password')?.invalid) {
+        <div
+          class="text-danger small">
+          Password must be between 3 and 20 characters.
+        </div>
+        }
+      </div>
+
+      <!-- Avatar -->
+      <div class="mb-3">
+        <label>Avatar</label>
+        <input type="file" class="form-control" formControlName="avatar"
+          >
+      </div>
+
+      <button class="btn btn-primary w-100" type="submit">Register</button>
+    </form>
+  </div>
+</div>

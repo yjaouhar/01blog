@@ -1,0 +1,17 @@
+.card {
+    max-width: 600px;
+    margin: auto;
+    overflow-y: auto;
+}
+
+label {
+    font-weight: 500;
+}
+
+.text-danger {
+    font-size: 0.85rem;
+}
+
+button {
+    margin-top: 10px;
+}
