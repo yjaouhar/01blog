@@ -1,12 +1,15 @@
-import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { computed, inject, Injectable, signal } from '@angular/core';
 
 @Injectable({
   providedIn: 'root',
 })
 export class HomeService {
-
+  http = inject(HttpClient)
+  hhh = computed(signal('s'));
 
   getPodteData() {
+    const r = this.http.get('ddd')
     return [
       {
 

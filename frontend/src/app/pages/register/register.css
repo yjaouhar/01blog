@@ -20,16 +20,50 @@ button {
     max-height: 700px;
 }
 
-.avatar-preview img {
-    margin: auto;
-    width: 120px;
-    height: 120px;
-    border-radius: 50%;
-    object-fit: cover;
-    border: 2px solid #007bff;
+.crop-wrapper {
+    display: flex;
+    justify-content: center;
 }
-.avatar-preview canvas {
+
+.crop-viewport {
+    width: 320px;
+    /* visible crop UI size */
+    height: 320px;
+    position: relative;
+    overflow: hidden;
+    border: 1px solid #ddd;
+    background: #f6f6f6;
+    touch-action: none;
+    /* for touch drag */
+    border-radius: 8px;
+}
+
+.crop-img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    transform-origin: 0 0;
+    /* important */
+    user-select: none;
+    -webkit-user-drag: none;
+    will-change: transform;
+}
+
+/* optional: circle overlay to show circular avatar preview */
+.crop-overlay {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    pointer-events: none;
+    box-shadow: 0 0 0 9999px rgba(255, 255, 255, 0.4) inset;
     border-radius: 50%;
-    object-fit: cover;
-    border: 2px solid #007bff;
+    margin: auto;
+    width: 70%;
+    height: 70%;
+    top: 15%;
+    left: 15%;
+    mix-blend-mode: multiply;
+    border: 2px dashed rgba(255, 255, 255, 0.5);
 }
