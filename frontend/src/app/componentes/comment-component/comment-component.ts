@@ -1,6 +1,6 @@
 import { Component, inject, Input } from '@angular/core';
 import { PostService } from '../../services/post.service';
-import { PostModel } from '../../model/post.model';
+import { PostModel } from '../../model/post.type';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { PostTemplateComponent } from "../post-template-component/post-template-component";

@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { ProfileModel } from '../model/profileModel';
+import { ProfileModel } from '../model/profileInfo.type';
 
 type Result = {
   valid: boolean;

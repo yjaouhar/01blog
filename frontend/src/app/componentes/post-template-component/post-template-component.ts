@@ -1,5 +1,5 @@
 import { Component, Input } from '@angular/core';
-import { PostModel } from '../../model/post.model';
+import { PostModel } from '../../model/post.type';
 import { EditePostComponent } from "../edite-post-component/edite-post-component";
 import { ConfirmComponent } from "../confirm-component/confirm-component";
 import { ReportComponent } from "../report-component/report-component";

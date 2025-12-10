@@ -1,6 +1,6 @@
 import { Component, EventEmitter, inject, Input, Output, signal } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
-import { ProfileModel } from '../../model/profileModel';
+import { ProfileModel } from '../../model/profileInfo.type';
 import { single } from 'rxjs';
 import { UtilsService } from '../../services/utils.service';
 declare var bootstrap: any;

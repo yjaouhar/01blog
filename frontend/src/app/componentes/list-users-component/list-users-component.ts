@@ -1,5 +1,5 @@
 import { Component, Input } from '@angular/core';
-import { DiscoverModel } from '../../model/discover-model';
+import { DiscoverModel } from '../../model/discover.type';
 import { AppRoutes } from "../../app.routes";
 import { ConfirmComponent } from '../confirm-component/confirm-component';
 import { RouterLink } from '@angular/router';
@@ -39,8 +39,8 @@ export class ListUsersComponent {
 
   }
   searche(v: string) {
-    console.log("searche : " , v);
-    
+    console.log("searche : ", v);
+
   }
 
   goToProfile(user: DiscoverModel | null) {

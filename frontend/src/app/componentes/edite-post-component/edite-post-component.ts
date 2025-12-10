@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, Input, SimpleChanges } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
-import { PostModel } from '../../model/post.model';
+import { PostModel } from '../../model/post.type';
 declare var bootstrap: any;
 
 @Component({

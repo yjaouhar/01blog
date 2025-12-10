@@ -1,5 +1,5 @@
 import { Component, inject, signal } from '@angular/core';
-import { DiscoverModel } from '../../model/discover-model';
+import { DiscoverModel } from '../../model/discover.type';
 import { DiscoverService } from '../../services/discover.service';
 
 import { ListUsersComponent } from "../../componentes/list-users-component/list-users-component";

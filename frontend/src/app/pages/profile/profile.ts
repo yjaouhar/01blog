@@ -1,6 +1,6 @@
 import { Component, inject, signal } from '@angular/core';
 import { UserProfileService } from '../../services/user-profile.service';
-import { ProfileModel } from '../../model/profileModel';
+import { ProfileModel } from '../../model/profileInfo.type';
 import { UserDetailsComponent } from "../../componentes/user-details-component/user-details-component";
 import { ActivatedRoute } from '@angular/router';
 

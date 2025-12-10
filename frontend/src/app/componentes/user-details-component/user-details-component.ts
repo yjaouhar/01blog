@@ -5,7 +5,7 @@ import { PosteComponent } from "../poste.component/poste-component";
 import { UserProfileService } from '../../services/user-profile.service';
 import { DiscoverService } from '../../services/discover.service';
 import { ListUsersComponent } from "../list-users-component/list-users-component";
-import { ProfileModel } from '../../model/profileModel';
+import { ProfileModel } from '../../model/profileInfo.type';
 import { CommonModule } from '@angular/common';
 import { EditProfileModal } from "../edit-profile-modal/edit-profile-modal";
 import { ConfirmComponent } from "../confirm-component/confirm-component";

@@ -1,5 +1,7 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { BasicAuthType } from '../../model/basicAuth.type';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-login',
@@ -8,6 +10,7 @@ import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angula
   styleUrl: './login.css',
 })
 export class Login {
+  authService = inject(AuthService);
 
   loginForm = new FormGroup({
     username: new FormControl('', [Validators.required, Validators.minLength(4), Validators.maxLength(50)]),
@@ -15,11 +18,16 @@ export class Login {
   })
 
   submit() {
-    if (this.loginForm.invalid) {
+    const loginForm = this.loginForm;
+    if (loginForm.invalid) {
       this.loginForm.markAllAsTouched();
       return;
     }
-    console.log(this.loginForm.value);
+    const basicAuth: BasicAuthType = {
+      username: loginForm.value.username!,
+      password: loginForm.value.password!
+    }
+    this.authService.logine(basicAuth)
   }
 
 }

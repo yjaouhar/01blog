@@ -1,10 +1,10 @@
 import { Component, signal } from '@angular/core';
 import { AppRoutes } from "../../app.routes";
 import { RouterLink } from '@angular/router';
-import { ReportPosteModel } from '../../model/reportPost-model';
-import { ReportUserModel } from '../../model/reportUser-model';
+import { ReportPosteModel } from '../../model/reportPost.type';
+import { ReportUserModel } from '../../model/reportUser.type';
 import { PosteComponent } from "../../componentes/poste.component/poste-component";
-import { PostModel } from '../../model/post.model';
+import { PostModel } from '../../model/post.type';
 import { ConfirmComponent } from "../../componentes/confirm-component/confirm-component";
 import { CommentComponent } from "../../componentes/comment-component/comment-component";
 
