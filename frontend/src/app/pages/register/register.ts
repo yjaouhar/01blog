@@ -1,7 +1,9 @@
 import { Component, ElementRef, inject, signal, ViewChild } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { ResgisterType } from '../../model/register.type';
+
 import { AuthService } from '../../services/auth.service';
+import { Router } from '@angular/router';
+// import { Router } from 'express';
 declare var bootstrap: any;
 @Component({
   selector: 'app-register',
@@ -11,8 +13,13 @@ declare var bootstrap: any;
 })
 export class Register {
   avatarPreview: any = null;
+  constructor(
+    private router: Router
+  ) { }
   authService = inject(AuthService);
   birthdayError = signal(false);
+  hasError = signal(false);
+  messagError = signal('')
   registerForm = new FormGroup({
     firstName: new FormControl('', [Validators.required, Validators.minLength(2), Validators.maxLength(20)]),
     lastName: new FormControl('', [Validators.required, Validators.minLength(2), Validators.maxLength(20)]),
@@ -34,25 +41,35 @@ export class Register {
       return;
     }
     const formData = new FormData();
+    if (!registerData.value.username?.trim()) {
+      registerData.value.username = null;
+    }
     const data = {
       firstName: registerData.value.firstName,
       lastName: registerData.value.lastName,
-      age: registerData.value.birthday,
+      birthday: registerData.value.birthday,
       gender: registerData.value.gender,
       bio: registerData.value.bio,
       username: registerData.value.username,
       email: registerData.value.email,
       password: registerData.value.password,
     }
-    console.log("clikkk");
-
     formData.append("data", new Blob([JSON.stringify(data)], { type: 'application/json' }));
     if (registerData.value.avatar) {
       formData.append("file", registerData.value.avatar);
     }
 
-    this.authService.register(formData)
 
+    this.authService.register(formData).subscribe(res => {
+      if (res.success) {
+        this.router.navigate(['/login']);
+      } else {
+        this.hasError.set(true);
+        const message = res.message?.map(m => '*' + m.message).join('\n');
+        this.messagError.set(message!)
+      }
+
+    })
   }
   changeBirthaday(event: Event) {
     const birthday = event.target as HTMLInputElement

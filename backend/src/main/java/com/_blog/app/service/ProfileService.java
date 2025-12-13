@@ -95,7 +95,7 @@ public class ProfileService {
         profileDetails.setFollowing(subscriberRepo.countByUser(user));
         profileDetails.setFirstName(user.getFirstName());
         profileDetails.setLasteName(user.getLastName());
-        profileDetails.setAge(user.getAge());
+        profileDetails.setAge(user.getBirthday());
         profileDetails.setAvatar(user.getAvatar());
         profileDetails.setBio(user.getBio());
         profileDetails.setEmail(user.getEmail());
@@ -121,7 +121,7 @@ public class ProfileService {
             profileUser.setLastName(editRequest.lastName());
         }
         if (!editRequest.age().isBlank()) {
-            profileUser.setAge(editRequest.age());
+            profileUser.setBirthday(editRequest.age());
         }
         if (editRequest.gender() != null && !editRequest.gender().isBlank()) {
             profileUser.setGender(editRequest.gender());
@@ -202,7 +202,7 @@ public class ProfileService {
         return new GlobalDataResponse<>(followers, followersPage.getNumber(), followersPage.getTotalPages(),
                 followersPage.hasNext());
     }
-    
+
     public GlobalDataResponse<List<UserResponse>> following(UserAccount currentUser, int page, int size) {
 
         Page<Subscribers> followingPage = subscriberRepo.findByUser(currentUser, PageRequest.of(page, size));
@@ -210,7 +210,7 @@ public class ProfileService {
                 .map(follow -> {
                     UserAccount user = follow.getUser();
                     return new GlobalDataResponse.UserResponse(user.getAvatar(), user.getFirstName(),
-                            user.getLastName(), user.getUsername(),true);
+                            user.getLastName(), user.getUsername(), true);
                 }).toList();
         return new GlobalDataResponse<>(
                 following, followingPage.getNumber(), followingPage.getTotalPages(),

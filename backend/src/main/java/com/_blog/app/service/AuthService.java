@@ -38,7 +38,7 @@ public class AuthService {
         if (userRepo.existsByEmail(registerRequest.email())) {
             throw CustomResponseException.CustomException(400, "Email already exists");
         }
-        if (!registerRequest.username().isBlank() && userRepo.existsByUsername(registerRequest.username())) {
+        if (registerRequest.username() != null && userRepo.existsByUsername(registerRequest.username())) {
             throw CustomResponseException.CustomException(400, "Username already exists");
         }
 
@@ -46,18 +46,20 @@ public class AuthService {
             String hashedPassword = encoder.encode(registerRequest.password());
 
             UserAccount user = new UserAccount();
-            if (registerRequest.username().isBlank()) {
-                utils.generatUsername(user);
-            } else {
-                user.setUsername(registerRequest.username());
+            if (utils.validBirthday(registerRequest.birthday())) {
+                user.setBirthday(registerRequest.birthday());
             }
-            user.setAge(registerRequest.age());
             user.setEmail(registerRequest.email());
             user.setPassword(hashedPassword);
             user.setFirstName(registerRequest.firstName());
             user.setLastName(registerRequest.lastName());
             user.setGender(registerRequest.gender());
             user.setRole("USER");
+            if (registerRequest.username() == null) {
+                user.setUsername(utils.generatUsername(user));
+            } else {
+                user.setUsername(registerRequest.username());
+            }
             if (file != null && !file.isEmpty()) {
                 String uploadDir = "../uploads/avatar/";
                 File dir = new File(uploadDir);
