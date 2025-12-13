@@ -54,12 +54,13 @@
       <div class="mb-3">
         <label>Birthday</label>
         <span class="ms-2 text-danger">*</span>
-        <input type="date" class="form-control" formControlName="birthday">
-        @if (registerForm.get('age')?.touched &&
-        registerForm.get('age')?.invalid) {
+        <input type="date" class="form-control" formControlName="birthday"
+          (change)="changeBirthaday($event)">
+        @if ((registerForm.get('age')?.touched &&
+        registerForm.get('age')?.invalid) || birthdayError()) {
         <div
           class="text-danger small">
-          Age must be between 1 and 120.
+          must have 10 years old.
         </div>
         }
       </div>
@@ -73,7 +74,7 @@
         registerForm.get('bio')?.invalid) {
         <div
           class="text-danger small">
-          Max 100 characters.
+          Max 200 characters.
         </div>
         }
       </div>
@@ -114,7 +115,7 @@
         registerForm.get('password')?.invalid) {
         <div
           class="text-danger small">
-          Password must be between 3 and 20 characters.
+          Password should be at least 8 characters.
         </div>
         }
       </div>
@@ -155,9 +156,8 @@
           </div>
         </div>
       </div>
-      <!-- =============== -->
 
-      <button class="btn btn-primary w-100" type="submit">Register</button>
+      <button class="btn btn-primary w-100 mb-2" type="submit">Register</button>
     </form>
   </div>
 </div>

@@ -25,10 +25,10 @@ public record RegisterRequest(
         @NotBlank(message = "Gender is required") 
         @Pattern(regexp = "male|female", message = "Gender must be 'male' or 'female'") 
         String gender,
+
         @Length(max=100)
         String bio,
                 
-      
         @Pattern(regexp = "^[A-Za-z][A-Za-z0-9_]*$", message = "Nickname must start with a letter and contain only letters, numbers or underscores") 
         @Size(min = 4, max = 15, message = "Nickname must be between 4 and 15 characters") 
         String username,

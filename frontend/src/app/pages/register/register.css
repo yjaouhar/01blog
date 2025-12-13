@@ -11,13 +11,15 @@ label {
 .text-danger {
     font-size: 0.85rem;
 }
-
+.form-control{
+    resize: none;
+}
 button {
     margin-top: 10px;
 }
 
 .form {
-    max-height: 700px;
+    max-height: 600px;
 }
 
 .crop-wrapper {
