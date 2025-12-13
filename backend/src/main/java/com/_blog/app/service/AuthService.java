@@ -48,6 +48,8 @@ public class AuthService {
             UserAccount user = new UserAccount();
             if (utils.validBirthday(registerRequest.birthday())) {
                 user.setBirthday(registerRequest.birthday());
+            } else {
+                throw CustomResponseException.CustomException(400, "must have 10 years old.");
             }
             user.setEmail(registerRequest.email());
             user.setPassword(hashedPassword);
@@ -80,7 +82,6 @@ public class AuthService {
     public String login(LoginRequest request) {
 
         Optional<UserAccount> existUser;
-
         if (request.email().contains("@")) {
             existUser = userRepo.findByEmail(request.email());
         } else {

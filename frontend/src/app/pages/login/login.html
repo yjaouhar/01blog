@@ -31,7 +31,11 @@
                 </div>
                 }
             </div>
-
+            @if (hasError()) {
+            <div class="text-danger small text-center">
+                <pre style="white-space: pre-wrap;">{{messagError()}}</pre>
+            </div>
+            }
             <button class="btn btn-primary w-100" type="submit">Login</button>
         </form>
     </div>

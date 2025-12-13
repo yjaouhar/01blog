@@ -74,7 +74,6 @@ public class UserUtils {
         if (!hasHadBirthdayThisYear) {
             age--;
         }
-        System.out.println(":---------> " + age);
         return age >= 10;
     }
 }

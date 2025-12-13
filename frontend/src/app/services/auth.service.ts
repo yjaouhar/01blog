@@ -28,7 +28,16 @@ export class AuthService {
     )
 
   }
-  logine(basicAuth: BasicAuthType) {
-    console.log(basicAuth);
+  logine(basicAuth: BasicAuthType): Observable<Response> {
+    return this.http.post('http://localhost:8080/api/auth/login', basicAuth).pipe(
+      map((res) => {
+        console.log("jwt : ", res);
+        return { success: true, message: null }
+      }),
+      catchError((err) => {
+        console.log("------> error in catchError : ", err.error);
+        return of({ success: false, message: err.error.errors })
+      })
+    )
   }
 }

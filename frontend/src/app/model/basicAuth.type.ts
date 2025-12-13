@@ -1,4 +1,4 @@
 export interface BasicAuthType {
-    username: string,
+    email: string,
     password: string
 }
