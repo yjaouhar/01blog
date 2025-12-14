@@ -11,8 +11,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
-import com._blog.app.entities.UserAccount;
-
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
@@ -35,10 +33,11 @@ public class JwtHelper {
         boolean tokenExpired = tokenExpirationDate.before(new Date(System.currentTimeMillis()));
         return usernameMatch && !tokenExpired;
     }
-    public String generateToken(Map<String, Object> extraClaims, UserAccount userAccount) {
+
+    public String generateToken(Map<String, Object> extraClaims, String username) {
         return Jwts.builder()
                 .claims(extraClaims)
-                .subject(userAccount.getUsername())
+                .subject(username)
                 .issuedAt(new Date(System.currentTimeMillis()))
                 .expiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 24 * 14))
                 .signWith(getSignInkey())

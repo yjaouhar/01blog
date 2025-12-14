@@ -1,8 +1,10 @@
 package com._blog.app.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -16,6 +18,7 @@ import com._blog.app.dtos.RegisterRequest;
 import com._blog.app.service.AuthService;
 import com._blog.app.shared.GlobalResponse;
 
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 
 @RestController
@@ -34,9 +37,20 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<GlobalResponse<?>> loginRequest(@RequestBody @Valid LoginRequest loginDto) {
-        String token = authService.login(loginDto);
-        return new ResponseEntity<>(new GlobalResponse<>(token), HttpStatus.OK);
+    public ResponseEntity<GlobalResponse<?>> loginRequest(@RequestBody @Valid LoginRequest loginDto, HttpServletResponse response) {
+        ResponseCookie cookie = authService.login(loginDto);
+        response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
+        return new ResponseEntity<>(new GlobalResponse<>("login success"), HttpStatus.OK);
+    }
+
+    @PostMapping("/logout")
+    public ResponseEntity<GlobalResponse<?>> logoutRequest(HttpServletResponse response) {
+        ResponseCookie cookie = ResponseCookie.from("jwt", "")
+                .path("/")
+                .maxAge(0)
+                .build();
+        response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
+        return new ResponseEntity<>(new GlobalResponse<>("logout success"), HttpStatus.OK);
     }
 
 }

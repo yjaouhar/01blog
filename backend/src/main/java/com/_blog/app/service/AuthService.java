@@ -6,11 +6,13 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.time.Duration;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseCookie;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -79,7 +81,7 @@ public class AuthService {
         }
     }
 
-    public String login(LoginRequest request) {
+    public ResponseCookie login(LoginRequest request) {
 
         Optional<UserAccount> existUser;
         if (request.email().contains("@")) {
@@ -94,7 +96,15 @@ public class AuthService {
         Map<String, Object> customClaims = new HashMap<>();
         customClaims.put("userId", user.getId());
         customClaims.put("role", user.getRole());
-        return jwtHelper.generateToken(customClaims, user);
+        String token = jwtHelper.generateToken(customClaims, user.getUsername());
+        return ResponseCookie.from("jwt", token).
+                httpOnly(true).
+                secure(false).
+                path("/").
+                sameSite("Lax").
+                maxAge(Duration.ofHours(24)).
+                build();
+
     }
 
 }
