@@ -6,23 +6,16 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
-import java.time.Duration;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseCookie;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import com._blog.app.config.JwtHelper;
 import com._blog.app.dtos.LoginRequest;
 import com._blog.app.dtos.RegisterRequest;
-import com._blog.app.entities.RefreshToken;
 import com._blog.app.entities.UserAccount;
-import com._blog.app.repository.RefreshTokenRepo;
 import com._blog.app.repository.UserRepo;
 import com._blog.app.shared.CustomResponseException;
 import com._blog.app.utils.UserUtils;
@@ -33,11 +26,8 @@ public class AuthService {
     @Autowired
     private UserRepo userRepo;
     @Autowired
-    JwtHelper jwtHelper;
-    @Autowired
     UserUtils utils;
-    @Autowired
-    RefreshTokenRepo refreshTokenRepo;
+
     private final BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
 
     public void createUser(RegisterRequest registerRequest, MultipartFile file) {
@@ -80,12 +70,14 @@ public class AuthService {
                 user.setAvatar("../" + uploadDir + fileName);
             }
             userRepo.save(user);
+            System.out.println("--------> register : " + user);
         } catch (IOException e) {
+            System.out.println("--------> catch error register : " + e.getMessage());
             throw CustomResponseException.CustomException(500, e.getMessage());
         }
     }
 
-    public ResponseCookie login(LoginRequest request) {
+    public UserAccount login(LoginRequest request) {
 
         Optional<UserAccount> existUser;
         if (request.email().contains("@")) {
@@ -97,23 +89,7 @@ public class AuthService {
         if (!encoder.matches(request.password(), user.getPassword())) {
             throw new CustomResponseException(401, "Invalid Credentials");
         }
-        Map<String, Object> customClaims = new HashMap<>();
-        customClaims.put("userId", user.getId());
-        customClaims.put("role", user.getRole());
-        RefreshToken refreshToken = new RefreshToken();
-        String accessToken = jwtHelper.generateAccessToken(customClaims, user.getUsername());
-        String refToken = jwtHelper.generateRefreshToken();
-        refreshToken.setToken(refToken);
-        refreshToken.setUser(user);
-        
-        refreshTokenRepo.save(refreshToken);
-        return ResponseCookie.from("refreshToken", refToken).
-                httpOnly(true).
-                secure(false).
-                path("/api/auth/refresh").
-                maxAge(Duration.ofDays(7)).
-                build();
-
+        return user;
     }
 
 }

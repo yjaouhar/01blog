@@ -1,19 +1,20 @@
 package com._blog.app.config;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-import com._blog.app.service.UserDetailService;
+import com._blog.app.entities.RefreshToken;
+import com._blog.app.repository.RefreshTokenRepo;
 
+import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
@@ -24,33 +25,56 @@ public class JwtAuthFilter extends OncePerRequestFilter {
     private JwtHelper jwtHelper;
 
     @Autowired
-    private UserDetailService userDetailService;
+    private RefreshTokenRepo refreshTokenRepo;
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
+    protected void doFilterInternal(HttpServletRequest request,
+            HttpServletResponse response,
+            FilterChain filterChain)
             throws ServletException, IOException {
-        String token = null;
-        String authHeader = request.getHeader("Authorization");
-        if (authHeader != null && authHeader.startsWith("Bearer")) {
-            token = authHeader.substring(7);
+
+        String header = request.getHeader("Authorization");
+        String accessToken = null;
+
+        if (header != null && header.startsWith("Bearer ")) {
+            accessToken = header.substring(7);
         }
-        if (token == null) {
-            filterChain.doFilter(request, response);
-            return;
-        }
-        String username = jwtHelper.extractUsername(token);
-        if (username != null) {
-            UserDetails userDetails = userDetailService.loadUserByUsername(username);
-            Boolean isTokenValid = jwtHelper.isTokenValid(token, userDetails);
-            if (isTokenValid) {
-                UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
-                        userDetails, null , userDetails.getAuthorities());
-                authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-                SecurityContextHolder.getContext().setAuthentication(authenticationToken);
+
+        if (accessToken != null) {
+            try {
+                // jwtHelper.isTokenValid(accessToken);
+                // Token صالح → forward
+                filterChain.doFilter(request, response);
+                return;
+            } catch (ExpiredJwtException e) {
+                // Access token سالا → حاول refresh
+                Cookie[] cookies = request.getCookies();
+                if (cookies != null) {
+                    for (Cookie c : cookies) {
+                        if (c.getName().equals("refreshToken")) {
+                            RefreshToken rt = refreshTokenRepo.findByToken(c.getValue())
+                                    .orElse(null);
+                            if (rt != null && rt.getExpiryDate().isAfter(LocalDateTime.now())) {
+                                String newAccess = jwtHelper.generateAccessToken(
+                                        Map.of("userId", rt.getUser().getId(), "role", rt.getUser().getRole()),
+                                        rt.getUser().getUsername()
+                                );
+                                response.setHeader("New-Access-Token", newAccess);
+                                filterChain.doFilter(request, response);
+                                return;
+                            }
+                        }
+                    }
+                }
+                response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Token expired");
+                return;
+            } catch (Exception e) {
+                response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Invalid token");
+                return;
             }
         }
 
+        // ما كاينش access token → forward إذا route مسموح أو reject
         filterChain.doFilter(request, response);
     }
-
 }

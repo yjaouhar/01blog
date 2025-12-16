@@ -66,4 +66,6 @@ public class UserAccount {
     private List<Subscribers> folloerUser = new ArrayList<>();
     @OneToMany(mappedBy = "reportedUser", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Report> report = new ArrayList<>();
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<RefreshToken> refreshtokens = new ArrayList<>();
 }

@@ -154,8 +154,6 @@ public class PostesService {
     }
 
     public String likePost(UUID postId, UserAccount currentUser) {
-        System.out.println("------------_> creat : " +
-                currentUser.getEmail() + currentUser.getId());
         Postes post = posteUtils.findPostById(postId);
         if (likeRepo.existsByUserIdAndPostId(currentUser.getId(), post.getId())) {
             likeRepo.deleteByUserIdAndPostId(currentUser.getId(), post.getId());

@@ -48,6 +48,13 @@ public class GlobalDataResponse<T> {
         private boolean folloewd;
 
     }
+    @Getter
+    @Setter
+    @AllArgsConstructor
+    public static class LoginResponse {
+        private boolean success;
+        private String token;
+    }
 
     @Getter
     @Setter
