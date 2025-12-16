@@ -3,6 +3,7 @@ package com._blog.app.config;
 import java.util.Date;
 import java.util.Map;
 import java.util.Objects;
+import java.util.UUID;
 import java.util.function.Function;
 
 import javax.crypto.SecretKey;
@@ -42,6 +43,20 @@ public class JwtHelper {
                 .expiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 24 * 14))
                 .signWith(getSignInkey())
                 .compact();
+    }
+
+    public String generateAccessToken(Map<String, Object> extraClaims, String username) {
+        return Jwts.builder()
+                .claims(extraClaims)
+                .subject(username)
+                .issuedAt(new Date(System.currentTimeMillis()))
+                .expiration(new Date(System.currentTimeMillis() + 1000 * 60 * 15))
+                .signWith(getSignInkey())
+                .compact();
+    }
+
+    public String generateRefreshToken() {
+        return UUID.randomUUID().toString();
     }
 
     public <T> T extraClaims(String token, Function<Claims, T> claimsResolve) {

@@ -20,7 +20,9 @@ import org.springframework.web.multipart.MultipartFile;
 import com._blog.app.config.JwtHelper;
 import com._blog.app.dtos.LoginRequest;
 import com._blog.app.dtos.RegisterRequest;
+import com._blog.app.entities.RefreshToken;
 import com._blog.app.entities.UserAccount;
+import com._blog.app.repository.RefreshTokenRepo;
 import com._blog.app.repository.UserRepo;
 import com._blog.app.shared.CustomResponseException;
 import com._blog.app.utils.UserUtils;
@@ -34,6 +36,8 @@ public class AuthService {
     JwtHelper jwtHelper;
     @Autowired
     UserUtils utils;
+    @Autowired
+    RefreshTokenRepo refreshTokenRepo;
     private final BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
 
     public void createUser(RegisterRequest registerRequest, MultipartFile file) {
@@ -96,13 +100,18 @@ public class AuthService {
         Map<String, Object> customClaims = new HashMap<>();
         customClaims.put("userId", user.getId());
         customClaims.put("role", user.getRole());
-        String token = jwtHelper.generateToken(customClaims, user.getUsername());
-        return ResponseCookie.from("jwt", token).
+        RefreshToken refreshToken = new RefreshToken();
+        String accessToken = jwtHelper.generateAccessToken(customClaims, user.getUsername());
+        String refToken = jwtHelper.generateRefreshToken();
+        refreshToken.setToken(refToken);
+        refreshToken.setUser(user);
+        
+        refreshTokenRepo.save(refreshToken);
+        return ResponseCookie.from("refreshToken", refToken).
                 httpOnly(true).
                 secure(false).
-                path("/").
-                sameSite("Lax").
-                maxAge(Duration.ofHours(24)).
+                path("/api/auth/refresh").
+                maxAge(Duration.ofDays(7)).
                 build();
 
     }
