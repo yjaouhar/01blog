@@ -3,14 +3,13 @@ package com._blog.app.config;
 import java.util.Date;
 import java.util.Map;
 import java.util.UUID;
-import java.util.function.Function;
 
 import javax.crypto.SecretKey;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import com._blog.app.model.ClaimsJwtType;
+import com._blog.app.model.JwtUserPrincipal;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
@@ -23,15 +22,14 @@ public class JwtHelper {
     @Value("${jwt.secret}")
     private String JWT_SECRET;
 
-    public String extractUsername(String token) {
-        return extraClaims(token, Claims::getSubject);
-    }
-
-    public Claims isTokenValid(String token) {
+    // public String extractUsername(String token) {
+    //     return extraClaims(token, Claims::getSubject);
+    // }
+    public JwtUserPrincipal isTokenValid(String token) {
         Claims claims = extractAllClaims(token);
-        ClaimsJwtType userClaims = ClaimsJwtType.builder().
-                username(extraClaims(token, Claims::getSubject)).build();
-        return extractAllClaims(token);
+        JwtUserPrincipal userClaims = new JwtUserPrincipal(claims.getSubject(), claims.get("role", String.class), UUID.fromString(claims.getId()));
+        System.out.println("------> Claims jwt : " + userClaims.toString());
+        return userClaims;
     }
 
     public String generateAccessToken(Map<String, Object> extraClaims, String username) {
@@ -48,11 +46,10 @@ public class JwtHelper {
         return UUID.randomUUID().toString();
     }
 
-    public <T> T extraClaims(String token, Function<Claims, T> claimsResolve) {
-        final Claims claims = extractAllClaims(token);
-        return claimsResolve.apply(claims);
-    }
-
+    // public <T> T extraClaims(String token, Function<Claims, T> claimsResolve) {
+    //     final Claims claims = extractAllClaims(token);
+    //     return claimsResolve.apply(claims);
+    // }
     private Claims extractAllClaims(String token) {
 
         return Jwts
