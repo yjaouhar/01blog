@@ -9,8 +9,10 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import com._blog.app.entities.RefreshToken;
+import com._blog.app.entities.UserAccount;
 import com._blog.app.repository.RefreshTokenRepo;
 
+import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -42,12 +44,11 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
         if (accessToken != null) {
             try {
-                // jwtHelper.isTokenValid(accessToken);
-                // Token صالح → forward
+                Claims claims = jwtHelper.isTokenValid(accessToken);
+        
                 filterChain.doFilter(request, response);
                 return;
             } catch (ExpiredJwtException e) {
-                // Access token سالا → حاول refresh
                 Cookie[] cookies = request.getCookies();
                 if (cookies != null) {
                     for (Cookie c : cookies) {
@@ -55,9 +56,10 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                             RefreshToken rt = refreshTokenRepo.findByToken(c.getValue())
                                     .orElse(null);
                             if (rt != null && rt.getExpiryDate().isAfter(LocalDateTime.now())) {
+                                UserAccount user = rt.getUser();
                                 String newAccess = jwtHelper.generateAccessToken(
-                                        Map.of("userId", rt.getUser().getId(), "role", rt.getUser().getRole()),
-                                        rt.getUser().getUsername()
+                                        Map.of("userId",user.getId(), "role", user.getRole()),
+                                        user.getUsername()
                                 );
                                 response.setHeader("New-Access-Token", newAccess);
                                 filterChain.doFilter(request, response);
@@ -73,8 +75,6 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                 return;
             }
         }
-
-        // ما كاينش access token → forward إذا route مسموح أو reject
         filterChain.doFilter(request, response);
     }
 }
