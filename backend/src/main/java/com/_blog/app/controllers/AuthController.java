@@ -48,6 +48,7 @@ public class AuthController {
     public ResponseEntity<GlobalResponse<?>> registerRequest(
             @RequestPart("data") @Valid RegisterRequest regesterRequest,
             @RequestPart(value = "file", required = false) MultipartFile file) {
+        System.out.println("-----> fiel: " + file.getName());
         authService.createUser(regesterRequest, file);
         return new ResponseEntity<>(new GlobalResponse<>("User registered successfully!"), HttpStatus.CREATED);
     }
@@ -74,9 +75,9 @@ public class AuthController {
         ResponseCookie cookie = ResponseCookie.from("refreshToken", refToken).
                 httpOnly(true).
                 secure(false).
-                path("/api/auth/refresh").
+                path("/").
                 maxAge(Duration.ofDays(7))
-                .sameSite("Strict")
+                .sameSite("Lax")
                 .build();
 
         response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
@@ -85,7 +86,8 @@ public class AuthController {
     }
 
     @PostMapping("/refresh")
-    public ResponseEntity<GlobalResponse<?>> refresh(@CookieValue(value="refreshToken",required=false ) String token, HttpServletResponse response) {
+    @Transactional
+    public ResponseEntity<GlobalResponse<?>> refresh(@CookieValue(value = "refreshToken", required = false) String token, HttpServletResponse response) {
         if (token == null) {
             return new ResponseEntity<>(new GlobalResponse<>("Missing refresh token"), HttpStatus.UNAUTHORIZED);
         }
@@ -105,9 +107,9 @@ public class AuthController {
         ResponseCookie cookie = ResponseCookie.from("refreshToken", newRefToken).
                 httpOnly(true).
                 secure(false).
-                path("/api/auth").
+                path("/").
                 maxAge(Duration.ofDays(7))
-                .sameSite("Strict")
+                .sameSite("Lax")
                 .build();
         response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
 
@@ -119,14 +121,17 @@ public class AuthController {
     }
 
     @PostMapping("/logout")
+    @Transactional
     public ResponseEntity<GlobalResponse<?>> logoutRequest(
             @CookieValue(value = "refreshToken", required = false) String token, HttpServletResponse response) {
+        System.out.println("---------> logout request " + token);
         if (token != null) {
-            refreshTokenRepo.deleteByToken(token);
+            RefreshToken r = refreshTokenRepo.deleteByToken(token);
+            System.out.println("---------> refresh removed " + r.getUser().getUsername());
         }
-        
+
         ResponseCookie cookie = ResponseCookie.from("refreshToken", "")
-                .path("/api/auth")
+                .path("/")
                 .maxAge(0)
                 .build();
         response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());

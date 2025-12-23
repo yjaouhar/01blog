@@ -55,5 +55,22 @@ export class UtilsService {
 
     return { valid: true };
   }
+  validBirthday(input: string): boolean {
+    const birthDate = new Date(input);
+    const currentDate = new Date()
+    let age = currentDate.getFullYear() - birthDate.getFullYear();
+    const hasHadBirthdayThisYear =
+      currentDate.getMonth() > birthDate.getMonth() ||
+      (currentDate.getMonth() === birthDate.getMonth() &&
+        currentDate.getDate() >= birthDate.getDate());
 
+    if (!hasHadBirthdayThisYear) {
+      age--;
+    }
+    return age >= 10;
+  }
+
+  accessToken(): string | null {
+    return localStorage.getItem('token');
+  }
 }

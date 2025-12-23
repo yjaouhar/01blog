@@ -3,6 +3,7 @@ import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angula
 
 import { AuthService } from '../../services/auth.service';
 import { Router } from '@angular/router';
+import { UtilsService } from '../../services/utils.service';
 // import { Router } from 'express';
 declare var bootstrap: any;
 @Component({
@@ -12,11 +13,12 @@ declare var bootstrap: any;
   styleUrl: './register.css',
 })
 export class Register {
-  avatarPreview: any = null;
   constructor(
     private router: Router
   ) { }
   authService = inject(AuthService);
+  utils = inject(UtilsService);
+  avatar = signal<File | null>(null);
   birthdayError = signal(false);
   hasError = signal(false);
   messagError = signal('')
@@ -29,7 +31,6 @@ export class Register {
     username: new FormControl('', [Validators.minLength(4), Validators.maxLength(15)]),
     email: new FormControl('', [Validators.required, Validators.email]),
     password: new FormControl('', [Validators.required, Validators.minLength(3), Validators.maxLength(50)]),
-    avatar: new FormControl<File | null>(null)
 
   })
 
@@ -55,8 +56,9 @@ export class Register {
       password: registerData.value.password,
     }
     formData.append("data", new Blob([JSON.stringify(data)], { type: 'application/json' }));
-    if (registerData.value.avatar) {
-      formData.append("file", registerData.value.avatar);
+
+    if (this.avatar()) {
+      formData.append("file", this.avatar()!);
     }
 
 
@@ -73,29 +75,17 @@ export class Register {
   }
   changeBirthaday(event: Event) {
     const birthday = event.target as HTMLInputElement
-    if (!this.validBirthday(birthday.value)) {
+    UtilsService
+    if (!this.utils.validBirthday(birthday.value)) {
       this.birthdayError.update(() => true);
     } else {
       this.birthdayError.update(() => false);
     }
   }
-  validBirthday(input: string): boolean {
-    const birthDate = new Date(input);
-    const currentDate = new Date()
-    let age = currentDate.getFullYear() - birthDate.getFullYear();
-    const hasHadBirthdayThisYear =
-      currentDate.getMonth() > birthDate.getMonth() ||
-      (currentDate.getMonth() === birthDate.getMonth() &&
-        currentDate.getDate() >= birthDate.getDate());
 
-    if (!hasHadBirthdayThisYear) {
-      age--;
-    }
-
-    return age >= 10;
-  }
   @ViewChild('cropImage') cropImage!: ElementRef<HTMLImageElement>;
   @ViewChild('viewport') viewport!: ElementRef<HTMLDivElement>;
+  @ViewChild('avatarInput') avatarInput!: ElementRef<HTMLInputElement>;
   scale = 1;
   imgNaturalWidth = 0;
   imgNaturalHeight = 0;
@@ -113,9 +103,20 @@ export class Register {
   modalInstance: any = null;
 
   onFileSelect(event: any) {
+   
     const file = event.target.files?.[0];
     if (!file) return;
-
+    if (!file.type?.startsWith("image/")) {
+      this.hasError.set(true);
+      this.messagError.set("Avatar must be an image!")
+      return
+    }
+    if (file.size > 2 * 1024 * 1024) {
+      this.hasError.set(true);
+      this.messagError.set("Avatar too big!")
+      return
+    }
+    this.hasError.set(false);
     const reader = new FileReader();
     reader.onload = (e: any) => {
       const url = e.target.result;
@@ -255,11 +256,15 @@ export class Register {
 
   closeModal() {
     this.modalInstance?.hide();
+    this.avatar.set(null);
+    this.avatarInput.nativeElement.value = '';
   }
 
   confirmAvatar() {
+
     const vp = this.viewport.nativeElement;
     const vpSize = vp.clientWidth; // same height
+
 
     let sx = (-this.posX) / this.scale;
     let sy = (-this.posY) / this.scale;
@@ -275,6 +280,7 @@ export class Register {
     // draw to canvas 128x128
     const target = 128;
     const canvas = document.createElement('canvas');
+
     canvas.width = target;
     canvas.height = target;
     const ctx = canvas.getContext('2d')!;
@@ -292,16 +298,10 @@ export class Register {
     canvas.toBlob((blob) => {
       if (!blob) return;
       const file = new File([blob], 'avatar.jpg', { type: 'image/jpeg' });
-      // patch form control
-      this.registerForm.patchValue({ avatar: file });
-      console.log('Resized & cropped avatar:', file);
+      this.avatar.set(file);
 
-      // optionally create preview url
       const url = URL.createObjectURL(blob);
-      this.closeModal();
-
-      // you can store or show avatarPreview
-      // this.avatarPreview = url;
+      this.modalInstance?.hide();
     }, 'image/jpeg', 0.9);
   }
 

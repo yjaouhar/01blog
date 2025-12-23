@@ -37,16 +37,15 @@ public class AuthService {
         if (registerRequest.username() != null && userRepo.existsByUsername(registerRequest.username())) {
             throw CustomResponseException.CustomException(400, "Username already exists");
         }
+        if (!utils.validBirthday(registerRequest.birthday())) {
+            throw CustomResponseException.CustomException(400, "must have 10 years old.");
+        }
 
         try {
             String hashedPassword = encoder.encode(registerRequest.password());
 
             UserAccount user = new UserAccount();
-            if (utils.validBirthday(registerRequest.birthday())) {
-                user.setBirthday(registerRequest.birthday());
-            } else {
-                throw CustomResponseException.CustomException(400, "must have 10 years old.");
-            }
+            user.setBirthday(registerRequest.birthday());
             user.setEmail(registerRequest.email());
             user.setPassword(hashedPassword);
             user.setFirstName(registerRequest.firstName());
@@ -59,6 +58,13 @@ public class AuthService {
                 user.setUsername(registerRequest.username());
             }
             if (file != null && !file.isEmpty()) {
+                if (file.getSize() > 2 * (1024 * 1024)) {
+                    throw CustomResponseException.CustomException(400, "Avatar too large");
+                }
+                String contentType = file.getContentType();
+                if (contentType != null && !contentType.startsWith("image/")) {
+                    throw CustomResponseException.CustomException(400, "Invalid avatar file type");
+                }
                 String uploadDir = "../uploads/avatar/";
                 File dir = new File(uploadDir);
                 if (!dir.exists()) {

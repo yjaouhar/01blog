@@ -1,5 +1,6 @@
 package com._blog.app.repository;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -10,15 +11,15 @@ import com._blog.app.entities.UserAccount;
 
 public interface RefreshTokenRepo extends JpaRepository<RefreshToken, UUID> {
 
-    // @Modifying(clearAutomatically = true, flushAutomatically = true)
-    // @Query("DELETE FROM refreshToken r WHERE r.user = :user")
     void deleteByUser(UserAccount user);
+
+    void  deleteAllByExpiryDateBefore(LocalDateTime date);
 
     RefreshToken findByUser(UserAccount user);
 
     Optional<RefreshToken> findByToken(String token);
 
-    void deleteByToken(String token);
+    RefreshToken deleteByToken(String token);
 
     boolean existsByUser(UserAccount user);
 }

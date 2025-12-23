@@ -2,6 +2,7 @@ import { inject, Injectable } from '@angular/core';
 import { BasicAuthType } from '../model/basicAuth.type';
 import { HttpClient } from '@angular/common/http';
 import { catchError, map, Observable, of, throwError } from 'rxjs';
+import { Router } from '@angular/router';
 type Response = {
   success: boolean,
   message: message[] | null;
@@ -14,6 +15,9 @@ type message = {
 })
 export class AuthService {
 
+  constructor(
+    private router: Router
+  ) { }
   http = inject(HttpClient)
   register(formData: FormData): Observable<Response> {
 
@@ -22,22 +26,37 @@ export class AuthService {
         return { success: true, message: null }
       }),
       catchError((err) => {
-        console.log("------> error in catchError : ", err.error);
+        console.log("------> error in catchError for register : ", err.error);
         return of({ success: false, message: err.error.errors })
       })
     )
 
   }
   logine(basicAuth: BasicAuthType): Observable<Response> {
-    return this.http.post('http://localhost:8080/api/auth/login', basicAuth).pipe(
+    return this.http.post<{ data: message[] }>('http://localhost:8080/api/auth/login', basicAuth, { withCredentials: true }).pipe(
       map((res) => {
-        console.log("jwt : ", res);
-        return { success: true, message: null }
+        // console.log("jwt : ", res);
+        const data = res.data;
+        return { success: true, message: data }
       }),
       catchError((err) => {
-        console.log("------> error in catchError : ", err.error);
+        console.log("------> error in catchError for login : ", err.error);
         return of({ success: false, message: err.error.errors })
       })
     )
+  }
+  logout(): void {
+    this.http.post('http://localhost:8080/api/auth/logout', {}, { withCredentials: true }).subscribe({
+      next: () => {
+        console.log("logout success");
+
+        localStorage.removeItem('token');
+        this.router.navigate(['/login']);
+      },
+      error: (err) => {
+        console.log("Logout error: ", err);
+      }
+    });
+
   }
 }

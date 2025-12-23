@@ -34,6 +34,9 @@ export class Login {
     }
     this.authService.logine(basicAuth).subscribe(res => {
       if (res.success) {
+        if (res.message) {
+          localStorage.setItem('token', res.message.toString());
+        }
         this.router.navigate(['/'])
       } else {
         this.hasError.set(true)

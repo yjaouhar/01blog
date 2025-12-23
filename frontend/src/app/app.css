@@ -1,3 +1,182 @@
+:root {
+    --main-color: #6366f1;
+    --danger-color: #ef4444;
+    --light-bg: #ffffff;
+    --shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    --transition: all 0.3s ease;
+}
+
+.header-custom {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    background: var(--light-bg);
+    padding: 0.75rem 0;
+    box-shadow: var(--shadow);
+    z-index: 1000;
+    /* backdrop-filter: blur(10px); */
+}
+
+/* Logo Badge */
+.badge-number {
+
+    padding: 0.5rem 0.75rem;
+    border-radius: 50px;
+    font-weight: bold;
+    font-size: 1.25rem;
+    /* box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3); */
+    /* transition: var(--transition); */
+}
+
+/* .badge-number:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(99, 102, 241, 0.4);
+} */
+
+.badge-text {
+    display: inline-block;
+}
+
+.brand-name {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--main-color);
+    letter-spacing: -0.5px;
+}
+
+/* Notification Button */
+.btn-notification {
+    position: relative;
+    background: transparent;
+    border: none;
+    color: #6b7280;
+    font-size: 1.75rem;
+    /* padding: 0.5rem; */
+    /* border-radius: 50%; */
+    transition: var(--transition);
+    cursor: pointer;
+}
+
+.btn-notification:hover {
+    /* color: rgba(99, 102, 241, 0.1); */
+    color: var(--main-color);
+    transform: scale(1.1);
+}
+
+.notification-badge {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    width: 10px;
+    height: 10px;
+    background: var(--danger-color);
+    border-radius: 50%;
+    border: 2px solid var(--light-bg);
+    display: none;
+    /* Show by adding 'd-block' class when needed */
+}
+
+.notification-badge.active {
+    display: block;
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+
+    0%,
+    100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+
+    50% {
+        opacity: 0.7;
+        transform: scale(1.2);
+    }
+}
+
+/* Notification Dropdown */
+.notification-dropdown {
+    min-width: 300px;
+    border: none;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+    border-radius: 12px;
+    padding: 0.5rem 0;
+    margin-top: 0.5rem;
+}
+
+.notification-dropdown .dropdown-item {
+    padding: 0.75rem 1.25rem;
+    transition: var(--transition);
+    font-size: 0.9rem;
+}
+
+.notification-dropdown .dropdown-item:hover {
+    background: rgba(99, 102, 241, 0.1);
+    color: var(--main-color);
+}
+
+/* User Button */
+.btn-user {
+    background: linear-gradient(135deg, var(--main-color), #4100da);
+    color: #0b6efd;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    border: #a0a0a0 2px solid;
+    font-weight: bold;
+    font-size: 1.6rem;
+    margin-right: 0.5rem;
+    transition: var(--transition);
+    cursor: pointer;
+    /* box-shadow: 0 4px 12px rgba(152, 153, 255, 0.3); */
+}
+
+.btn-user:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(215, 216, 255, 0.4);
+}
+
+/* Logout Button */
+.btn-logout {
+    color: white;
+    border: none;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    font-size: 1.1rem;
+
+    cursor: pointer;
+
+}
+
+.btn-logout:hover {
+    background: #ffffff;
+    color: red;
+    transform: translateY(-2px) rotate(-10deg);
+    /* box-shadow: 0 6px 16px rgba(239, 68, 68, 0.4); */
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .brand-name {
+        font-size: 1.25rem;
+    }
+
+    .badge-number {
+        padding: 0.4rem 0.6rem;
+        font-size: 1rem;
+    }
+
+    .btn-notification {
+        font-size: 1.5rem;
+    }
+
+    .notification-dropdown {
+        min-width: 250px;
+    }
+}
+
 a {
     color: rgb(114, 114, 114);
     cursor: pointer;

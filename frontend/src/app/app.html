@@ -2,36 +2,48 @@
 
   @if (!isAutPage()) {
   <!-- Header -->
-  <header class="w-100 position-fixed top-0 bg-light py-2 shadow "
-    style="z-index: 10;">
-    <div class="container">
+  <header class="header-custom">
+    <div class="container-fluid px-3">
       <div class="row align-items-center">
+        <!-- Logo Section -->
         <div
-          class="col-2 d-flex align-items-center justify-content-center gap-2">
-          <div class="btn rounded-pill text-light bg-primary p-1"
-            style="background-color: var(--main-color);">
-            <span class="fw-bold fs-4">01</span>
+          class="col-3 d-flex align-items-center justify-content-start gap-2">
+          <div class="badge-number">
+            <span class="badge-text text-primary">01</span>
           </div>
-          <div class="fs-4 fw-bold" style="color: var(--main-color);">Blog</div>
+          <div class="brand-name">Blog</div>
         </div>
-        <!-- Notification -->
-        <div class="col-8 text-end dropdown">
-          <button type="button" class="btn position-relative">
-            <i class="bi bi-bell fs-2" data-bs-toggle="dropdown"></i>
-            @if (false) {
-            <span
-              class="position-absolute top-0 start-100 translate-middle p-2 bg-danger rounded-circle"></span>
-            }
-            <ul class="dropdown-menu">
-              <li>Action</li>
-              <li>Another action</li>
-              <li>Something here</li>
+
+        <!-- Notification Section -->
+        <div class="col-7 text-end">
+          <div class="dropdown d-inline-block">
+            <button type="button" class="btn-notification"
+              data-bs-toggle="dropdown" aria-expanded="false">
+              <i class="bi bi-bell"></i>
+              <!-- Notification Badge (Show when there are notifications) -->
+              <span class="notification-badge"></span>
+            </button>
+            <ul class="dropdown-menu dropdown-menu-end notification-dropdown">
+              <li><a class="dropdown-item" href="#">New message
+                  received</a></li>
+              <li><a class="dropdown-item" href="#">Your post was liked</a></li>
+              <li><a class="dropdown-item" href="#">New follower</a></li>
             </ul>
-          </button>
+          </div>
         </div>
-        <!-- ------ -->
-        <div class="col-2 text-center">
-          <button type="button" class="btn text-light fw-bold">U</button>
+
+        <!-- User Actions Section -->
+        <div class="col-2 d-flex justify-content-around">
+          @if (false) {
+          <img src="/d.jpg" alt="User Avatar"
+            class="btn-user" width="50" height="50">
+          }@else {
+          <button type="button" class="btn-user">U</button>
+          }
+          <button type="button" class="btn btn-danger btn-logout"
+            (click)="logout()">
+            <i class="bi bi-box-arrow-left"></i>
+          </button>
         </div>
       </div>
     </div>
