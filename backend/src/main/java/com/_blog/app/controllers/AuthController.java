@@ -85,25 +85,48 @@ public class AuthController {
     }
 
     @PostMapping("/refresh")
-    public ResponseEntity<GlobalResponse<?>> refresh(@CookieValue("refreshToken") String token) {
-        RefreshToken rt = refreshTokenRepo.findByToken(token)
-                .orElseThrow(() -> CustomResponseException.CustomException(401, "Invalid refresh token"));
-        if (rt.getExpiryDate().isBefore(LocalDateTime.now())) {
-            refreshTokenRepo.delete(rt);
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+    public ResponseEntity<GlobalResponse<?>> refresh(@CookieValue(value="refreshToken",required=false ) String token, HttpServletResponse response) {
+        if (token == null) {
+            return new ResponseEntity<>(new GlobalResponse<>("Missing refresh token"), HttpStatus.UNAUTHORIZED);
         }
+        RefreshToken oldToken = refreshTokenRepo.findByToken(token)
+                .orElseThrow(() -> CustomResponseException.CustomException(403, "Invalid refresh token"));
+
+        if (oldToken.getExpiryDate().isBefore(LocalDateTime.now())) {
+            refreshTokenRepo.delete(oldToken);
+            return new ResponseEntity<>(new GlobalResponse<>("Refresh token expired"), HttpStatus.FORBIDDEN);
+        }
+        refreshTokenRepo.delete(oldToken);
+        UserAccount user = oldToken.getUser();
+        String newRefToken = jwtHelper.generateRefreshToken();
+        RefreshToken refreshToken = new RefreshToken(newRefToken, user, LocalDateTime.now().plusDays(7));
+        refreshTokenRepo.save(refreshToken);
+
+        ResponseCookie cookie = ResponseCookie.from("refreshToken", newRefToken).
+                httpOnly(true).
+                secure(false).
+                path("/api/auth").
+                maxAge(Duration.ofDays(7))
+                .sameSite("Strict")
+                .build();
+        response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
+
         String newAccess = jwtHelper.generateAccessToken(
-                Map.of("userId", rt.getUser().getId(), "role", rt.getUser().getRole()),
-                rt.getUser().getUsername()
+                Map.of("userId", oldToken.getUser().getId(), "role", user.getRole()),
+                user.getUsername()
         );
         return new ResponseEntity<>(new GlobalResponse<>(newAccess), HttpStatus.OK);
     }
 
     @PostMapping("/logout")
-    public ResponseEntity<GlobalResponse<?>> logoutRequest(@CookieValue("refreshToken") String token, HttpServletResponse response) {
-        refreshTokenRepo.deleteByToken(token);
+    public ResponseEntity<GlobalResponse<?>> logoutRequest(
+            @CookieValue(value = "refreshToken", required = false) String token, HttpServletResponse response) {
+        if (token != null) {
+            refreshTokenRepo.deleteByToken(token);
+        }
+        
         ResponseCookie cookie = ResponseCookie.from("refreshToken", "")
-                .path("/api/auth/refresh")
+                .path("/api/auth")
                 .maxAge(0)
                 .build();
         response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
