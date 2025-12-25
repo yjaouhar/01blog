@@ -59,4 +59,21 @@ export class AuthService {
     });
 
   }
+  getMe(): Observable<any> {
+    return this.http.post('http://localhost:8080/api/auth/me', {}, { withCredentials: true });
+
+  }
+  refreshToken() {
+    return this.http.post<{ accessToken: string }>(
+      'http://localhost:8080/api/auth/refresh',
+      {},
+      { withCredentials: true }
+    );
+  }
+  accessToken(): string | null {
+    return localStorage.getItem('access_token');
+  }
+  setAccessToken(token: string) {
+    localStorage.setItem('access_token', token);
+  }
 }

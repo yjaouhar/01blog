@@ -70,7 +70,5 @@ export class UtilsService {
     return age >= 10;
   }
 
-  accessToken(): string | null {
-    return localStorage.getItem('token');
-  }
+
 }
