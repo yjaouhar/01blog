@@ -25,7 +25,9 @@ export const authInterceptor: HttpInterceptorFn = (
     const token = authService.accessToken();
     let authReq = req;
 
+    console.log("add token : ", token);
     if (token) {
+
         authReq = addToken(req, token);
     }
 

@@ -73,7 +73,12 @@ export class AuthService {
   }
   accessToken(): string | null {
     if (typeof window !== 'undefined' && window.localStorage) {
+      console.log("-------- : ");
+
       return localStorage.getItem('access_token');
+    } else {
+      console.log("+++++++++ : ");
+
     }
     return null;
   }

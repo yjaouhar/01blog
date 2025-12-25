@@ -48,15 +48,14 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
         String header = request.getHeader("Authorization");
         String accessToken = (header != null && header.startsWith("Bearer ")) ? header.substring(7) : null;
-        // System.out.println("accessToken in filter : " + accessToken);
         if (accessToken == null) {
             CustomResponseException.returnError(response, "Missing access token", HttpServletResponse.SC_UNAUTHORIZED);
             return;
         }
 
         try {
-            System.out.println("token :" + accessToken);
             JwtUserPrincipal principal = jwtHelper.isTokenValid(accessToken);
+            System.out.println("********* token :" + principal);
             UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(
                     principal,
                     null,

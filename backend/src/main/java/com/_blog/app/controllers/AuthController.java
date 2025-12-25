@@ -141,14 +141,7 @@ public class AuthController {
 
     @PostMapping("/me")
     public ResponseEntity<GlobalResponse<?>> testEndpoint() {
-        Object principalObj = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-
-        if (principalObj instanceof JwtUserPrincipal principal) {
-            System.out.println("-----> principal: " + principal);
-        } else if (principalObj instanceof String username) {
-            System.out.println("-----> username: " + username);
-            // ممكن تجيب JwtUserPrincipal من DB إذا بغيت
-        }
-        return new ResponseEntity<>(new GlobalResponse<>("valid"), HttpStatus.OK);
+        JwtUserPrincipal principal = (JwtUserPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        return new ResponseEntity<>(new GlobalResponse<>(principal.getRole()), HttpStatus.OK);
     }
 }
