@@ -51,7 +51,6 @@ public class JwtHelper {
     //     return claimsResolve.apply(claims);
     // }
     private Claims extractAllClaims(String token) {
-
         return Jwts
                 .parser()
                 .verifyWith(getSignInkey())

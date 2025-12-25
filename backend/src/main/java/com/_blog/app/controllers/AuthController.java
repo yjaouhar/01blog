@@ -3,6 +3,7 @@ package com._blog.app.controllers;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -24,6 +26,7 @@ import com._blog.app.dtos.LoginRequest;
 import com._blog.app.dtos.RegisterRequest;
 import com._blog.app.entities.RefreshToken;
 import com._blog.app.entities.UserAccount;
+import com._blog.app.model.JwtUserPrincipal;
 import com._blog.app.repository.RefreshTokenRepo;
 import com._blog.app.service.AuthService;
 import com._blog.app.shared.CustomResponseException;
@@ -88,15 +91,16 @@ public class AuthController {
     @PostMapping("/refresh")
     @Transactional
     public ResponseEntity<GlobalResponse<?>> refresh(@CookieValue(value = "refreshToken", required = false) String token, HttpServletResponse response) {
+        System.out.println("-----> refresh token : " + token);
         if (token == null) {
-            return new ResponseEntity<>(new GlobalResponse<>("Missing refresh token"), HttpStatus.UNAUTHORIZED);
+            return new ResponseEntity<>(new GlobalResponse<>(List.of(new GlobalResponse.ErrorItem("Missing refresh token"))), HttpStatus.UNAUTHORIZED);
         }
         RefreshToken oldToken = refreshTokenRepo.findByToken(token)
                 .orElseThrow(() -> CustomResponseException.CustomException(403, "Invalid refresh token"));
 
         if (oldToken.getExpiryDate().isBefore(LocalDateTime.now())) {
             refreshTokenRepo.delete(oldToken);
-            return new ResponseEntity<>(new GlobalResponse<>("Refresh token expired"), HttpStatus.FORBIDDEN);
+            return new ResponseEntity<>(new GlobalResponse<>(List.of(new GlobalResponse.ErrorItem("Refresh token expired"))), HttpStatus.FORBIDDEN);
         }
         refreshTokenRepo.delete(oldToken);
         UserAccount user = oldToken.getUser();
@@ -124,12 +128,9 @@ public class AuthController {
     @Transactional
     public ResponseEntity<GlobalResponse<?>> logoutRequest(
             @CookieValue(value = "refreshToken", required = false) String token, HttpServletResponse response) {
-        System.out.println("---------> logout request " + token);
         if (token != null) {
-            RefreshToken r = refreshTokenRepo.deleteByToken(token);
-            System.out.println("---------> refresh removed " + r.getUser().getUsername());
+            refreshTokenRepo.deleteByToken(token);
         }
-
         ResponseCookie cookie = ResponseCookie.from("refreshToken", "")
                 .path("/")
                 .maxAge(0)
@@ -138,4 +139,16 @@ public class AuthController {
         return new ResponseEntity<>(new GlobalResponse<>("logout success"), HttpStatus.OK);
     }
 
+    @PostMapping("/me")
+    public ResponseEntity<GlobalResponse<?>> testEndpoint() {
+        Object principalObj = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        if (principalObj instanceof JwtUserPrincipal principal) {
+            System.out.println("-----> principal: " + principal);
+        } else if (principalObj instanceof String username) {
+            System.out.println("-----> username: " + username);
+            // ممكن تجيب JwtUserPrincipal من DB إذا بغيت
+        }
+        return new ResponseEntity<>(new GlobalResponse<>("valid"), HttpStatus.OK);
+    }
 }

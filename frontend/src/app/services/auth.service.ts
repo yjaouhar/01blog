@@ -49,8 +49,9 @@ export class AuthService {
     this.http.post('http://localhost:8080/api/auth/logout', {}, { withCredentials: true }).subscribe({
       next: () => {
         console.log("logout success");
-
-        localStorage.removeItem('token');
+        if (typeof window !== 'undefined' && window.localStorage) {
+          localStorage.removeItem('token');
+        }
         this.router.navigate(['/login']);
       },
       error: (err) => {
@@ -71,9 +72,14 @@ export class AuthService {
     );
   }
   accessToken(): string | null {
-    return localStorage.getItem('access_token');
+    if (typeof window !== 'undefined' && window.localStorage) {
+      return localStorage.getItem('access_token');
+    }
+    return null;
   }
   setAccessToken(token: string) {
-    localStorage.setItem('access_token', token);
+    if (typeof window !== 'undefined' && window.localStorage) {
+      localStorage.setItem('access_token', token);
+    }
   }
 }

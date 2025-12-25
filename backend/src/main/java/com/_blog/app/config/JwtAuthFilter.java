@@ -11,6 +11,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import com._blog.app.model.JwtUserPrincipal;
+import com._blog.app.shared.CustomResponseException;
 
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.JwtException;
@@ -47,16 +48,15 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
         String header = request.getHeader("Authorization");
         String accessToken = (header != null && header.startsWith("Bearer ")) ? header.substring(7) : null;
-
+        // System.out.println("accessToken in filter : " + accessToken);
         if (accessToken == null) {
-            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Missing access token");
+            CustomResponseException.returnError(response, "Missing access token", HttpServletResponse.SC_UNAUTHORIZED);
             return;
         }
 
         try {
-
+            System.out.println("token :" + accessToken);
             JwtUserPrincipal principal = jwtHelper.isTokenValid(accessToken);
-
             UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(
                     principal,
                     null,
@@ -66,9 +66,11 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             filterChain.doFilter(request, response);
 
         } catch (ExpiredJwtException e) {
-            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Token expired");
+            // response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Token expired");
+            CustomResponseException.returnError(response, "Token expired", HttpServletResponse.SC_UNAUTHORIZED);
         } catch (JwtException e) {
-            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Invalid token");
+            // response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Invalid token");
+            CustomResponseException.returnError(response, "Invalid token", HttpServletResponse.SC_FORBIDDEN);
         } finally {
             SecurityContextHolder.clearContext();
         }
