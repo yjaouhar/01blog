@@ -1,10 +1,12 @@
 package com._blog.app.utils;
 
+import java.time.Duration;
 import java.time.LocalDate;
 import java.util.Random;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseCookie;
 import org.springframework.stereotype.Component;
 
 import com._blog.app.entities.UserAccount;
@@ -45,17 +47,6 @@ public class UserUtils {
         return username;
     }
 
-    // const birthDate  = new Date(input);
-    // const currentDate  = new Date()
-    // let age = currentDate.getFullYear() - birthDate.getFullYear();
-    // const hasHadBirthdayThisYear 
-    //         = currentDate.getMonth() > birthDate.getMonth()
-    //         || (currentDate.getMonth() == = birthDate.getMonth()
-    //         && currentDate.getDate() >= birthDate.getDate());
-    // if (!hasHadBirthdayThisYear) {
-    //   age--;
-    // }
-    // return age >= 10;
     public boolean validBirthday(String birthday) {
         LocalDate birthDate = LocalDate.parse(birthday);
         LocalDate currentDate = LocalDate.now();
@@ -75,5 +66,23 @@ public class UserUtils {
             age--;
         }
         return age >= 10;
+    }
+
+    public static  String generatCookie(String key, String value, Duration duration) {
+        return ResponseCookie.from(key, value).
+                httpOnly(true).
+                secure(false).
+                path("/").
+                maxAge(duration).
+                sameSite("Lax")
+                .build().toString();
+
+    }
+    public static String removeCookies(String key) {
+        return ResponseCookie.from(key, "").
+                path("/").
+                maxAge(0)
+                .build().toString();
+
     }
 }

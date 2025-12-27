@@ -17,6 +17,7 @@ import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.JwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
@@ -45,9 +46,18 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             filterChain.doFilter(request, response);
             return;
         }
+        Cookie[] cookies = request.getCookies();
+        String accessToken = null;
 
-        String header = request.getHeader("Authorization");
-        String accessToken = (header != null && header.startsWith("Bearer ")) ? header.substring(7) : null;
+        if (cookies != null) {
+            for (Cookie cookie : cookies) {
+                if ("access_token".equals(cookie.getName())) {
+                    accessToken = cookie.getValue();
+                    break;
+                }
+            }
+        }
+
         if (accessToken == null) {
             CustomResponseException.returnError(response, "Missing access token", HttpServletResponse.SC_UNAUTHORIZED);
             return;
@@ -55,7 +65,6 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
         try {
             JwtUserPrincipal principal = jwtHelper.isTokenValid(accessToken);
-            System.out.println("********* token :" + principal);
             UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(
                     principal,
                     null,

@@ -10,10 +10,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.CookieValue;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -31,7 +31,9 @@ import com._blog.app.repository.RefreshTokenRepo;
 import com._blog.app.service.AuthService;
 import com._blog.app.shared.CustomResponseException;
 import com._blog.app.shared.GlobalResponse;
+import com._blog.app.utils.UserUtils;
 
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
@@ -58,7 +60,7 @@ public class AuthController {
 
     @PostMapping("/login")
     @Transactional
-    public ResponseEntity<GlobalResponse<?>> loginRequest(@RequestBody @Valid LoginRequest loginDto, HttpServletResponse response) {
+    public ResponseEntity<GlobalResponse<?>> loginRequest(@RequestBody @Valid LoginRequest loginDto, HttpServletResponse response, HttpServletRequest request) {
         UserAccount user = authService.login(loginDto);
 
         Map<String, Object> customClaims = new HashMap<>();
@@ -74,16 +76,8 @@ public class AuthController {
 
         RefreshToken refreshToken = new RefreshToken(refToken, user, LocalDateTime.now().plusDays(7));
         refreshTokenRepo.save(refreshToken);
-
-        ResponseCookie cookie = ResponseCookie.from("refreshToken", refToken).
-                httpOnly(true).
-                secure(false).
-                path("/").
-                maxAge(Duration.ofDays(7))
-                .sameSite("Lax")
-                .build();
-
-        response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
+        response.addHeader(HttpHeaders.SET_COOKIE, UserUtils.generatCookie("refreshToken", refToken, Duration.ofDays(7)));
+        response.addHeader(HttpHeaders.SET_COOKIE, UserUtils.generatCookie("access_token", accessToken, Duration.ofMinutes(15)));
 
         return new ResponseEntity<>(new GlobalResponse<>(accessToken), HttpStatus.OK);
     }
@@ -91,7 +85,6 @@ public class AuthController {
     @PostMapping("/refresh")
     @Transactional
     public ResponseEntity<GlobalResponse<?>> refresh(@CookieValue(value = "refreshToken", required = false) String token, HttpServletResponse response) {
-        System.out.println("-----> refresh token : " + token);
         if (token == null) {
             return new ResponseEntity<>(new GlobalResponse<>(List.of(new GlobalResponse.ErrorItem("Missing refresh token"))), HttpStatus.UNAUTHORIZED);
         }
@@ -107,21 +100,13 @@ public class AuthController {
         String newRefToken = jwtHelper.generateRefreshToken();
         RefreshToken refreshToken = new RefreshToken(newRefToken, user, LocalDateTime.now().plusDays(7));
         refreshTokenRepo.save(refreshToken);
-
-        ResponseCookie cookie = ResponseCookie.from("refreshToken", newRefToken).
-                httpOnly(true).
-                secure(false).
-                path("/").
-                maxAge(Duration.ofDays(7))
-                .sameSite("Lax")
-                .build();
-        response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
-
         String newAccess = jwtHelper.generateAccessToken(
                 Map.of("userId", oldToken.getUser().getId(), "role", user.getRole()),
                 user.getUsername()
         );
-        return new ResponseEntity<>(new GlobalResponse<>(newAccess), HttpStatus.OK);
+        response.addHeader(HttpHeaders.SET_COOKIE, UserUtils.generatCookie("refreshToken", newRefToken, Duration.ofDays(7)));
+        response.addHeader(HttpHeaders.SET_COOKIE, UserUtils.generatCookie("access_token", newAccess, Duration.ofMinutes(15)));
+        return new ResponseEntity<>(new GlobalResponse<>("refresh success"), HttpStatus.OK);
     }
 
     @PostMapping("/logout")
@@ -131,15 +116,12 @@ public class AuthController {
         if (token != null) {
             refreshTokenRepo.deleteByToken(token);
         }
-        ResponseCookie cookie = ResponseCookie.from("refreshToken", "")
-                .path("/")
-                .maxAge(0)
-                .build();
-        response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
+        response.addHeader(HttpHeaders.SET_COOKIE, UserUtils.removeCookies("access_token"));
+        response.addHeader(HttpHeaders.SET_COOKIE, UserUtils.removeCookies("refreshToken"));
         return new ResponseEntity<>(new GlobalResponse<>("logout success"), HttpStatus.OK);
     }
 
-    @PostMapping("/me")
+    @GetMapping("/me")
     public ResponseEntity<GlobalResponse<?>> testEndpoint() {
         JwtUserPrincipal principal = (JwtUserPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         return new ResponseEntity<>(new GlobalResponse<>(principal.getRole()), HttpStatus.OK);

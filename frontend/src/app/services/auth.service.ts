@@ -1,8 +1,9 @@
-import { inject, Injectable } from '@angular/core';
+import { Inject, inject, Injectable, PLATFORM_ID } from '@angular/core';
 import { BasicAuthType } from '../model/basicAuth.type';
 import { HttpClient } from '@angular/common/http';
-import { catchError, map, Observable, of, throwError } from 'rxjs';
+import { catchError, map, Observable, of } from 'rxjs';
 import { Router } from '@angular/router';
+import { isPlatformBrowser } from '@angular/common';
 type Response = {
   success: boolean,
   message: message[] | null;
@@ -15,9 +16,9 @@ type message = {
 })
 export class AuthService {
 
-  constructor(
-    private router: Router
-  ) { }
+
+  constructor(@Inject(PLATFORM_ID) private platformId: Object) { }
+  router: Router = inject(Router);
   http = inject(HttpClient)
   register(formData: FormData): Observable<Response> {
 
@@ -35,8 +36,8 @@ export class AuthService {
   logine(basicAuth: BasicAuthType): Observable<Response> {
     return this.http.post<{ data: message[] }>('http://localhost:8080/api/auth/login', basicAuth, { withCredentials: true }).pipe(
       map((res) => {
-        // console.log("jwt : ", res);
         const data = res.data;
+        console.log("------> login response data : ", data);
         return { success: true, message: data }
       }),
       catchError((err) => {
@@ -46,12 +47,9 @@ export class AuthService {
     )
   }
   logout(): void {
-    this.http.post('http://localhost:8080/api/auth/logout', {}, { withCredentials: true }).subscribe({
+    this.http.post('http://localhost:8080/api/auth/logout', {}).subscribe({
       next: () => {
         console.log("logout success");
-        if (typeof window !== 'undefined' && window.localStorage) {
-          localStorage.removeItem('token');
-        }
         this.router.navigate(['/login']);
       },
       error: (err) => {
@@ -61,30 +59,25 @@ export class AuthService {
 
   }
   getMe(): Observable<any> {
-    return this.http.post('http://localhost:8080/api/auth/me', {}, { withCredentials: true });
+    // return this.http.get('http://localhost:8080/api/auth/me', { withCredentials: true });
+    if (isPlatformBrowser(this.platformId)) {
+      console.log("in browser getMe()");
+
+      return this.http.get('http://localhost:8080/api/auth/me', { withCredentials: true });
+    } else {
+      // فال SSR، ممكن ترجّع null أو fallback data
+      console.log("in ser getMe()");
+      return of(null);
+    }
 
   }
+
   refreshToken() {
-    return this.http.post<{ accessToken: string }>(
+    return this.http.post<{ data: string }>(
       'http://localhost:8080/api/auth/refresh',
-      {},
-      { withCredentials: true }
+      {}, { withCredentials: true }
     );
   }
-  accessToken(): string | null {
-    if (typeof window !== 'undefined' && window.localStorage) {
-      console.log("-------- : ");
 
-      return localStorage.getItem('access_token');
-    } else {
-      console.log("+++++++++ : ");
 
-    }
-    return null;
-  }
-  setAccessToken(token: string) {
-    if (typeof window !== 'undefined' && window.localStorage) {
-      localStorage.setItem('access_token', token);
-    }
-  }
 }

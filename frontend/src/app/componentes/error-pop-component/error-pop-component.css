@@ -1,0 +1,91 @@
+
+         .error-popup {
+             position: fixed;
+             top: -100px;
+             left: 50%;
+             transform: translateX(-50%);
+             z-index: 9999;
+             min-width: 320px;
+             max-width: 500px;
+             transition: top 0.5s ease-out;
+             animation: slideDown 0.5s ease-out forwards;
+         }
+
+         @keyframes slideDown {
+             to {
+                 top: 20px;
+             }
+         }
+
+         .error-popup.hide {
+             animation: slideUp 0.5s ease-in forwards;
+         }
+
+         @keyframes slideUp {
+             to {
+                 top: -100px;
+             }
+         }
+
+         .popup-content {
+             background: white;
+             border-radius: 12px;
+             box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+             border-left: 5px solid #dc3545;
+             padding: 16px 20px;
+             display: flex;
+             align-items: center;
+             gap: 15px;
+         }
+
+         .popup-icon {
+             width: 40px;
+             height: 40px;
+             background: #dc3545;
+             border-radius: 50%;
+             display: flex;
+             align-items: center;
+             justify-content: center;
+             flex-shrink: 0;
+         }
+
+         .popup-icon svg {
+             width: 24px;
+             height: 24px;
+             color: white;
+         }
+
+         .popup-text {
+             flex: 1;
+         }
+
+         .popup-title {
+             font-weight: 600;
+             color: #dc3545;
+             margin: 0 0 4px 0;
+             font-size: 16px;
+         }
+
+         .popup-message {
+             color: #6c757d;
+             margin: 0;
+             font-size: 14px;
+         }
+
+         .popup-close {
+             background: none;
+             border: none;
+             color: #6c757d;
+             cursor: pointer;
+             padding: 0;
+             width: 24px;
+             height: 24px;
+             display: flex;
+             align-items: center;
+             justify-content: center;
+             transition: color 0.2s;
+         }
+
+         .popup-close:hover {
+             color: #dc3545;
+         }
