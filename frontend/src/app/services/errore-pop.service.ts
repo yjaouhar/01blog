@@ -10,15 +10,13 @@ export class ErrorePopService {
   error$ = this.errorSubject.asObservable();
 
   showError(message: string) {
-    console.log('SHOW INSTANCE', this);
     this.errorSubject.next(message);
 
-    setTimeout(() => {
-      this.hideError();
-    }, 4000);
+    // setTimeout(() => {
+    //   this.hideError();
+    // }, 4000);
   }
   hideError() {
-    console.log('+/+/+/+/');
     this.errorSubject.next(null);
   }
 }

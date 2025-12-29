@@ -78,7 +78,6 @@ public class AuthService {
             userRepo.save(user);
             System.out.println("--------> register : " + user);
         } catch (IOException e) {
-            System.out.println("--------> catch error register : " + e.getMessage());
             throw CustomResponseException.CustomException(500, e.getMessage());
         }
     }

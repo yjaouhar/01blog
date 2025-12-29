@@ -10,10 +10,7 @@ import { Subscription } from 'rxjs';
   styleUrl: './error-pop-component.css',
 })
 export class ErrorPopComponent {
-  private cdr = inject(ChangeDetectorRef);
   errorPopService = inject(ErrorePopService);
-
-
   closeErrorPopup() {
     this.errorPopService.hideError();
   }
