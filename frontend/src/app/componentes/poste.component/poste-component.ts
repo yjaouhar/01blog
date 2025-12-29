@@ -5,10 +5,11 @@ import { PostTemplateComponent } from "../post-template-component/post-template-
 import { CommonModule } from '@angular/common';
 import { LikeDirective } from "../../directive/like-directive";
 import { PostService } from '../../services/post.service';
+import { RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-poste-component',
-  imports: [CommentComponent, PostTemplateComponent, CommonModule, LikeDirective],
+  imports: [CommentComponent, PostTemplateComponent, CommonModule, LikeDirective, RouterLink],
   standalone: true,
   templateUrl: './poste-component.html',
   styleUrl: './poste-component.css',

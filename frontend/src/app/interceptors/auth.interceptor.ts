@@ -21,23 +21,25 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
             if (error?.error?.errors?.length > 0) {
                 message = error?.error?.errors[0]?.message
             }
+            // if (error.status === 401 && !req.url.includes('/auth/refresh') && message !== "Invalid token") {
 
-            if (error.status === 401 && !req.url.includes('/auth/refresh') && message !== "Invalid token") {
-           
+            //     return authService.refreshToken().pipe(
+            //         switchMap(() => {
+            //             const retryReq = req.clone({ withCredentials: true });
+            //             return next(retryReq);
+            //         }),
+            //         catchError(err => {
+            //             // if (err?.status === 401 || err?.status === 403 || err?.status === 400) {
+            //             //     console.log("lllll ==> ", err.error);
 
-                return authService.refreshToken().pipe(
-                    switchMap(() => {
-                        const retryReq = req.clone({ withCredentials: true });
-                        return next(retryReq);
-                    }),
-                    catchError(err => {
-                        if (err?.status === 401 || err?.status === 403 || err?.status === 400) {
-                            router.navigate(['/login']);
-                        }
-                        return throwError(() => err); error?.error?.errors
-                    })
-                );
-            } 
+            //             //     router.navigate(['/login']);
+            //             //     // return throwError(() => err);
+            //             // }
+            //             return throwError(() => err);
+            //         })
+            //     );
+            // }
+            // console.log(">>>> ==> ", error);
             return throwError(() => error);
         })
     );

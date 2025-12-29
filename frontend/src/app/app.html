@@ -1,5 +1,12 @@
 <div class="d-flex flex-column vh-100">
-  @if (!isAutPage()) {
+  <!-- @if (!isAutPage()  &&!authReady) {
+  <div class="text-center">
+    <div class="spinner-border" role="status">
+      <span class="visually-hidden">Loading...</span>
+    </div>
+  </div>
+  } -->
+  @if (!isAutPage() ) {
   <!-- Header -->
   <header class="header-custom">
     <div class="container-fluid px-3">
@@ -51,13 +58,13 @@
   <!-- Scrollable main content -->
   <main class="flex-grow-1 mt-7"
     style="padding-top: 70px; padding-bottom: 70px; overflow: hidden;">
-      <app-error-pop-component></app-error-pop-component>
+    <app-error-pop-component></app-error-pop-component>
 
     <router-outlet></router-outlet>
   </main>
 
   <!-- Navbar -->
-  @if (!isAutPage()) {
+  @if (!isAutPage() ) {
   <nav
     class="nav position-fixed bottom-0 d-flex justify-content-around w-100 bg-light py-2 border-top shadow-lg"
     style="z-index: 10;">

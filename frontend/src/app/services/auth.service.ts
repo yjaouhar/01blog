@@ -1,7 +1,7 @@
 import { inject, Injectable } from '@angular/core';
 import { BasicAuthType } from '../model/basicAuth.type';
 import { HttpClient } from '@angular/common/http';
-import { catchError, map, Observable, of, throwError } from 'rxjs';
+import { BehaviorSubject, catchError, map, Observable, of, throwError } from 'rxjs';
 import { Router } from '@angular/router';
 type Response = {
   success: boolean,
@@ -14,7 +14,9 @@ type message = {
   providedIn: 'root',
 })
 export class AuthService {
-
+  private authReadySubject = new BehaviorSubject(false);
+  authReady$ = this.authReadySubject.asObservable();
+  currentUser: any = null;
   router: Router = inject(Router);
   http = inject(HttpClient)
   register(formData: FormData): Observable<Response> {
@@ -59,9 +61,11 @@ export class AuthService {
 
   }
   getMe(): Observable<any> {
-    return this.http.get('http://localhost:8080/api/auth/me', { withCredentials: true });
+    return this.http.get('http://localhost:8080/api/auth/me', { withCredentials: true })
   }
-
+  isLoggedIn() {
+    return !!this.currentUser;
+  }
   refreshToken() {
     return this.http.post<{ data: string }>(
       'http://localhost:8080/api/auth/refresh',
