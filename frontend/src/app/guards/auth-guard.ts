@@ -1,7 +1,7 @@
 import { inject, PLATFORM_ID } from '@angular/core';
 import { CanActivateFn, Router } from '@angular/router';
 import { AuthService } from '../services/auth.service';
-import { catchError, map, of } from 'rxjs';
+import { catchError, map, of, throwError } from 'rxjs';
 import { isPlatformBrowser } from '@angular/common';
 
 export const authGuard: CanActivateFn = (route, state) => {
@@ -23,8 +23,9 @@ export const authGuard: CanActivateFn = (route, state) => {
     }),
     catchError(err => {
       console.log("==> * error in catch Guard : ", err.error);
-      router.navigate(['/login']);
-      return of(false);
+      // router.navigate(['/login']);
+
+      return throwError(() => err);
     })
   );
 };

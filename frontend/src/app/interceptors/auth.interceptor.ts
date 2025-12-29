@@ -20,12 +20,13 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
             const message = error?.error?.errors[0]?.message;
             if (error.status === 401 && !req.url.includes('/auth/refresh') && message !== 'Invalid token') {
                 return authService.refreshToken().pipe(
-                    switchMap((s) => {
+                    switchMap(() => {
                         const retryReq = req.clone({ withCredentials: true });
                         return next(retryReq);
                     }),
                     catchError(err => {
-                        router.navigate(['/login']);
+                        console.log("==> * error in refresh token Interceptor : ", err.error);
+                        // router.navigate(['/login']);
                         return throwError(() => err);
                     })
                 );

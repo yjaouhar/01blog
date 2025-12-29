@@ -1,19 +1,21 @@
-import { Component, EventEmitter, input, Output } from '@angular/core';
+import { ChangeDetectorRef, Component, EventEmitter, inject, input, Output } from '@angular/core';
+import { ErrorePopService } from '../../services/errore-pop.service';
+import { CommonModule } from '@angular/common';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-error-pop-component',
-  imports: [],
+  imports: [CommonModule],
   templateUrl: './error-pop-component.html',
   styleUrl: './error-pop-component.css',
 })
 export class ErrorPopComponent {
-
-  @Output() conf = new EventEmitter<boolean>();
-  message = input<string>('');
+  private cdr = inject(ChangeDetectorRef);
+  errorPopService = inject(ErrorePopService);
 
 
   closeErrorPopup() {
-    this.conf.emit(true);
+    this.errorPopService.hideError();
   }
 
 }

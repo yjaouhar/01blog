@@ -1,5 +1,4 @@
 <div class="d-flex flex-column vh-100">
-
   @if (!isAutPage()) {
   <!-- Header -->
   <header class="header-custom">
@@ -52,6 +51,8 @@
   <!-- Scrollable main content -->
   <main class="flex-grow-1 mt-7"
     style="padding-top: 70px; padding-bottom: 70px; overflow: hidden;">
+      <app-error-pop-component></app-error-pop-component>
+
     <router-outlet></router-outlet>
   </main>
 

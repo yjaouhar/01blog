@@ -1,10 +1,11 @@
 import { Component, inject, signal } from '@angular/core';
 import { Router, RouterOutlet, RouterLink } from '@angular/router';
 import { AuthService } from './services/auth.service';
+import { ErrorPopComponent } from "./componentes/error-pop-component/error-pop-component";
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, RouterLink],
+  imports: [RouterOutlet, RouterLink, ErrorPopComponent],
   templateUrl: './app.html',
   styleUrl: './app.css'
 })

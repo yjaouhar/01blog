@@ -1,15 +1,14 @@
-import { Component, inject, input, Input } from '@angular/core';
+import { Component, inject, Input } from '@angular/core';
 import { PostModel } from '../../model/post.type';
 import { CommentComponent } from "../comment-component/comment-component";
 import { PostTemplateComponent } from "../post-template-component/post-template-component";
 import { CommonModule } from '@angular/common';
 import { LikeDirective } from "../../directive/like-directive";
 import { PostService } from '../../services/post.service';
-import { ErrorPopComponent } from "../error-pop-component/error-pop-component";
 
 @Component({
   selector: 'app-poste-component',
-  imports: [CommentComponent, PostTemplateComponent, CommonModule, LikeDirective, ErrorPopComponent],
+  imports: [CommentComponent, PostTemplateComponent, CommonModule, LikeDirective],
   standalone: true,
   templateUrl: './poste-component.html',
   styleUrl: './poste-component.css',
