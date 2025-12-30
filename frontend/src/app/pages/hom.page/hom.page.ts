@@ -7,12 +7,14 @@ import { PosteComponent } from '../../componentes/poste.component/poste-componen
   templateUrl: './hom.page.html',
   styleUrl: './hom.page.css',
 })
-export class HomPage implements OnInit {
+export class HomPage   {
   loding = signal(true);
-  ngOnInit(): void {
-    console.log("dd #########");
-    // this.loding.set(false);
-  }
+  // ngOnInit(): void {
+  //   debugger;
+  //   return
+  //   console.log("dd #########");
+  //   // this.loding.set(false);
+  // }
   homeService = inject(HomeService)
   postes = signal(this.homeService.getPodteData())
 
