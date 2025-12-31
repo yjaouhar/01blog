@@ -47,8 +47,7 @@ public class PosteController {
     public ResponseEntity<GlobalResponse<?>> allPost(@RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
         JwtUserPrincipal principal = (JwtUserPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        System.out.println("000000000> " + principal.getId());
-        UserAccount currentUser = userUtils.findUserByUsername(principal.getUsername());
+        UserAccount currentUser = userUtils.findUserById(principal.getId());
         return new ResponseEntity<>(new GlobalResponse<>(postesService.homePostes(currentUser, page, size)),
                 HttpStatus.CREATED);
     }

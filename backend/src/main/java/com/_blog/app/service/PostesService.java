@@ -55,15 +55,19 @@ public class PostesService {
     private static final Logger logger = LoggerFactory.getLogger(PostesService.class);
 
     public GlobalDataResponse<List<GlobalDataResponse.PostResponse>> homePostes(UserAccount user, int page, int size) {
+        System.out.println("bghina njibo lpostes");
         List<Subscribers> following = subscriberRepo.findByUser(user);
         List<UserAccount> followedUser = new ArrayList<>(following.stream().map(Subscribers::getTarget).toList());
         followedUser.add(user);
+        System.out.println("jaw l users");
         Page<Postes> postPage = posteRepo.findByUserIn(followedUser, PageRequest.of(page, size,
                 Sort.by(Sort.Direction.DESC, "create_at")));
+        System.out.println("jaw postat mn db ");
+
         List<GlobalDataResponse.PostResponse> posts = postPage.getContent().stream().map(post -> {
             boolean liked = likeRepo.existsByUserIdAndPostId(user.getId(), post.getId());
             long totaLike = likeRepo.countByPostId(post.getId());
-          
+
             long totalComment = commentRepo.countByPostId(post.getId());
             GlobalDataResponse.PostResponse respo = new GlobalDataResponse.PostResponse();
             respo.setId(post.getId());
@@ -77,6 +81,7 @@ public class PostesService {
             respo.setLiked(liked);
             return respo;
         }).toList();
+        System.out.println("post jaw ---> " + posts.size());
         return new GlobalDataResponse<>(posts, postPage.getNumber(),
                 postPage.getTotalPages(), postPage.hasNext());
 
@@ -96,9 +101,9 @@ public class PostesService {
         post.setUser(currentUser);
         subscriberRepo.findByTarget(currentUser)
                 .ifPresent(followers -> followers.forEach(follower -> {
-                    String content = currentUser.getUsername() + " shared a new post";
-                    notificationService.insertNotification(follower.getUser(), content);
-                }));
+            String content = currentUser.getUsername() + " shared a new post";
+            notificationService.insertNotification(follower.getUser(), content);
+        }));
         posteRepo.save(post);
 
     }

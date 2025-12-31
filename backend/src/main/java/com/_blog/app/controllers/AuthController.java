@@ -53,7 +53,7 @@ public class AuthController {
     public ResponseEntity<GlobalResponse<?>> registerRequest(
             @RequestPart("data") @Valid RegisterRequest regesterRequest,
             @RequestPart(value = "file", required = false) MultipartFile file) {
-        System.out.println("-----> fiel: " + file.getName());
+        // System.out.println("-----> fiel: " + file.getName());
         authService.createUser(regesterRequest, file);
         return new ResponseEntity<>(new GlobalResponse<>("User registered successfully!"), HttpStatus.CREATED);
     }

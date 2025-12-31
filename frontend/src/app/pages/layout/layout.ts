@@ -21,7 +21,7 @@ export class Layout implements OnInit {
   // loding = signal(true);
   router = inject(Router)
   homeService = inject(HomeService)
-  postes = signal<PostModel[] | null>(null)
+  postes = signal<PostModel[] | null>([])
   loadingService = inject(LoadingService)
 
   ngOnInit(): void {

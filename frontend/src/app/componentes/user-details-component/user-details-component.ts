@@ -23,7 +23,7 @@ export class UserDetailsComponent {
   showPostes = true;
   posteServic = inject(HomeService)
   discoverService = inject(DiscoverService)
-  postes = this.posteServic.getPodteData();
+  postes = [];
   subscribed = this.discoverService.getUsers().filter(u => u.subscribed)
   subscriber = this.discoverService.getUsers().filter(u => !u.subscribed)
   togglePosts() {

@@ -57,7 +57,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                 }
             }
         }
-System.out.println("Access Token in Filter: " + accessToken);
+// System.out.println("Access Token in Filter: " + accessToken);
         if (accessToken == null) {
             CustomResponseException.returnError(response, "Missing access token", HttpServletResponse.SC_UNAUTHORIZED);
             return;

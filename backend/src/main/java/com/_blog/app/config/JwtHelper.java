@@ -27,7 +27,7 @@ public class JwtHelper {
     // }
     public JwtUserPrincipal isTokenValid(String token) {
         Claims claims = extractAllClaims(token);
-        System.out.println("------> Claims jwt : " + claims);
+        // System.out.println("------> Claims jwt : " + claims);
         JwtUserPrincipal userClaims = new JwtUserPrincipal(claims.getSubject(), claims.get("role", String.class), UUID.fromString(claims.get("userId", String.class)));
         return userClaims;
     }
