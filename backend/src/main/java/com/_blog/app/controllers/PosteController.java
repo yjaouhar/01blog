@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -24,6 +25,7 @@ import com._blog.app.dtos.CommentPosteRequest;
 import com._blog.app.dtos.PosteCreationRequest;
 import com._blog.app.dtos.PosteUpdateRequest;
 import com._blog.app.entities.UserAccount;
+import com._blog.app.model.JwtUserPrincipal;
 import com._blog.app.service.PostesService;
 import com._blog.app.shared.GlobalResponse;
 import com._blog.app.utils.UserUtils;
@@ -41,12 +43,12 @@ public class PosteController {
     @Autowired
     private UserUtils userUtils;
 
-
-
     @GetMapping
     public ResponseEntity<GlobalResponse<?>> allPost(@RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size, Principal principal) {
-        UserAccount currentUser = userUtils.findUserByUsername(principal.getName());
+            @RequestParam(defaultValue = "10") int size) {
+        JwtUserPrincipal principal = (JwtUserPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        System.out.println("000000000> " + principal.getId());
+        UserAccount currentUser = userUtils.findUserByUsername(principal.getUsername());
         return new ResponseEntity<>(new GlobalResponse<>(postesService.homePostes(currentUser, page, size)),
                 HttpStatus.CREATED);
     }
@@ -55,7 +57,7 @@ public class PosteController {
     public ResponseEntity<GlobalResponse<?>> creatPoste(@RequestPart("data") @Valid PosteCreationRequest posteRequest,
             @RequestPart(value = "file", required = false) MultipartFile file, Principal principal) {
         UserAccount currentUser = userUtils.findUserByUsername(principal.getName());
-      
+
         postesService.creatPoste(posteRequest, currentUser, file);
         return new ResponseEntity<>(new GlobalResponse<>("created !"), HttpStatus.CREATED);
     }

@@ -1,0 +1,47 @@
+ <header class="header-custom">
+    <div class="container-fluid px-3">
+        <div class="d-flex justify-content-between align-items-center">
+            <!-- Logo Section -->
+            <div class="d-flex align-items-center gap-1">
+                <div class="badge-number">
+                    <span class="badge-text text-primary">01</span>
+                </div>
+                <div class="brand-name">Blog</div>
+            </div>
+
+            <!-- Notification Section -->
+
+            <!-- User Actions Section -->
+            <div class="d-flex align-items-center gap-5">
+                <div class="dropdown d-inline-block">
+                    <button type="button" class="btn-notification"
+                        data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="bi bi-bell"></i>
+                        <!-- Notification Badge (Show when there are notifications) -->
+                        <span class="notification-badge"></span>
+                    </button>
+                    <ul
+                        class="dropdown-menu dropdown-menu-end notification-dropdown">
+                        <li><a class="dropdown-item" href="#">New message
+                                received</a></li>
+                        <li><a class="dropdown-item" href="#">Your post was
+                                liked</a></li>
+                        <li><a class="dropdown-item" href="#">New
+                                follower</a></li>
+                    </ul>
+                </div>
+
+                @if (false) {
+                <img src="/d.jpg" alt="User Avatar"
+                    class="btn-user" width="50" height="50">
+                }@else {
+                <button type="button" class="btn  btn-user">U</button>
+                }
+                <button type="button" class="btn btn-danger btn-logout"
+                    (click)="logout()">
+                    <i class="bi bi-box-arrow-left"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+</header>

@@ -78,7 +78,7 @@ System.out.println("Access Token in Filter: " + accessToken);
             CustomResponseException.returnError(response, "Token expired", HttpServletResponse.SC_UNAUTHORIZED);
         } catch (JwtException e) {
             // response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Invalid token");
-            CustomResponseException.returnError(response, "Invalid token", HttpServletResponse.SC_FORBIDDEN);
+            CustomResponseException.returnError(response, "Invalid token", HttpServletResponse.SC_UNAUTHORIZED);
         } finally {
             SecurityContextHolder.clearContext();
         }

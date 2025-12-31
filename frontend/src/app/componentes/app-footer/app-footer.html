@@ -1,0 +1,27 @@
+ <nav
+    class="nav position-fixed bottom-0 d-flex justify-content-around w-100 bg-light py-2 border-top shadow-lg"
+    style="z-index: 10;">
+    <a routerLink="/" class="nav-link d-flex flex-column align-items-center"
+        routerLinkActive="active"  [routerLinkActiveOptions]="{ exact: true }">
+        <i class="bi bi-house-door fs-4"></i>
+        <span class="fw-medium fst-normal">Feed</span>
+    </a>
+    <a routerLink="/discover"
+        class="nav-link d-flex flex-column align-items-center"
+        routerLinkActive="active">
+        <i class="bi bi-people fs-4"></i>
+        <span class="fw-medium fst-normal">Discover</span>
+    </a>
+    <a routerLink="/profile"
+        class="nav-link d-flex flex-column align-items-center"
+        routerLinkActive="active">
+        <i class="bi bi-person fs-4"></i>
+        <span class="fw-medium fst-normal">Profile</span>
+    </a>
+    <a routerLink="/admin-panel"
+        class="nav-link d-flex flex-column align-items-center"
+        routerLinkActive="active">
+        <i class="bi bi-shield fs-4"></i>
+        <span class="fw-medium fst-normal">Admin</span>
+    </a>
+</nav>

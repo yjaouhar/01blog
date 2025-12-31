@@ -37,7 +37,7 @@ export class Login {
         this.router.navigate(['/'])
       } else {
         this.hasError.set(true)
-        const message = res.message?.map(m => '*' + m.message).join('\n');
+        const message = res.message?.map(m => '*' + m).join('\n');
         this.messagError.set(message!)
       }
     })

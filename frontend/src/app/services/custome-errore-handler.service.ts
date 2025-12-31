@@ -9,7 +9,7 @@ export class CustomeErroreHandlerService implements ErrorHandler {
   errorPoopService = inject(ErrorePopService);
 
   handleError(error: any): void {
-    // console.log('==> Custom Error Handler:', error);
+    console.log('==> Custom Error Handler:', error);
     let userMessage = 'Something went wrong, please try again.'; 
 
     if (error?.status === 400) {

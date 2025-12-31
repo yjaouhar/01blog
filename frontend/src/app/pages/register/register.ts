@@ -67,7 +67,7 @@ export class Register {
         this.router.navigate(['/login']);
       } else {
         this.hasError.set(true);
-        const message = res.message?.map(m => '*' + m.message).join('\n');
+        const message = res.message?.map(m => '*' + m).join('\n');
         this.messagError.set(message!)
       }
 
@@ -103,7 +103,7 @@ export class Register {
   modalInstance: any = null;
 
   onFileSelect(event: any) {
-   
+
     const file = event.target.files?.[0];
     if (!file) return;
     if (!file.type?.startsWith("image/")) {

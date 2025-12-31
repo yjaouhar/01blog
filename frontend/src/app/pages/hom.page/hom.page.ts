@@ -9,12 +9,7 @@ import { PosteComponent } from '../../componentes/poste.component/poste-componen
 })
 export class HomPage   {
   loding = signal(true);
-  // ngOnInit(): void {
-  //   debugger;
-  //   return
-  //   console.log("dd #########");
-  //   // this.loding.set(false);
-  // }
+
   homeService = inject(HomeService)
   postes = signal(this.homeService.getPodteData())
 

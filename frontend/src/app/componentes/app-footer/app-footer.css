@@ -1,0 +1,53 @@
+/* Footer container */
+nav.nav {
+    background-color: #fff;
+    /* White background */
+    border-top: 1px solid #dee2e6;
+    /* subtle border */
+    box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+    /* shadow on top */
+    z-index: 1000;
+}
+
+/* Nav links styling */
+nav.nav .nav-link {
+    color: #6c757d;
+    text-decoration: none;
+    transition: color 0.3s, transform 0.2s;
+    cursor: pointer;
+}
+
+nav.nav .nav-link.active,
+nav.nav .nav-link:hover {
+    color: #007bff;
+    /* primary color */
+    transform: scale(1.1);
+}
+
+/* Icons */
+nav.nav .nav-link i {
+    display: block;
+}
+
+/* Labels */
+nav.nav .nav-link span {
+    font-size: 0.8rem;
+    margin-top: 2px;
+}
+
+/* Make sure the footer stays above content */
+body {
+    padding-bottom: 70px;
+    /* equal or more than footer height */
+}
+
+/* Responsive tweaks */
+@media (max-width: 576px) {
+    nav.nav .nav-link span {
+        font-size: 0.7rem;
+    }
+
+    nav.nav .nav-link i {
+        font-size: 1.2rem;
+    }
+}
