@@ -13,10 +13,10 @@ import lombok.Setter;
 // @AllArgsConstructor
 public class GlobalDataResponse<T> {
 
-    private  T data;
-    private  int currentPage;
-    private  int totalPages;
-    private  boolean hasNext;
+    private T data;
+    private int currentPage;
+    private int totalPages;
+    private boolean hasNext;
 
     public GlobalDataResponse(T data, int currentPage, int totalPage, boolean hasNext) {
         this.data = data;
@@ -25,22 +25,23 @@ public class GlobalDataResponse<T> {
         this.hasNext = hasNext;
     }
 
-
     @Getter
     @Setter
     @AllArgsConstructor
     public static class SubscribersResponse {
+
         private String avatar;
         private String lastName;
         private String firstName;
         private String userName;
         private boolean folloewd;
     }
-    
+
     @Getter
     @Setter
     @AllArgsConstructor
     public static class UserResponse {
+
         private String avatar;
         private String lastName;
         private String firstName;
@@ -48,11 +49,13 @@ public class GlobalDataResponse<T> {
         private boolean folloewd;
 
     }
+
     @Getter
     @Setter
     @AllArgsConstructor
     public static class LoginResponse {
-        private boolean success;
+
+        private String username;
         private String token;
     }
 
@@ -60,18 +63,20 @@ public class GlobalDataResponse<T> {
     @Setter
     @AllArgsConstructor
     public static class NotificationResponse {
+
         // private String sender;
         private String content;
         private boolean read;
         private LocalDateTime creatAt;
 
     }
-        @Setter
+
+    @Setter
     @Getter
     @NoArgsConstructor
     // @AllArgsConstructor
     public static class PostResponse {
-     
+
         private UUID id;
         private String title;
         private String descreption;
@@ -81,4 +86,5 @@ public class GlobalDataResponse<T> {
         private long totalComment;
         private boolean liked;
     }
+
 }

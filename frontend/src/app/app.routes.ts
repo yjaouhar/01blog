@@ -6,7 +6,6 @@ import { Profile } from './pages/profile/profile';
 import { AdminPanel } from './pages/admin-panel/admin-panel';
 import { Register } from './pages/register/register';
 import { Login } from './pages/login/login';
-import { authResolver } from './resolver/auth.resolver-resolver';
 import { authGuard } from './guards/auth-guard';
 import { Placeholder } from './componentes/placeholder/placeholder';
 

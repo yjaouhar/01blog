@@ -34,7 +34,6 @@ export class Login {
     }
     this.authService.logine(basicAuth).subscribe(res => {
       if (res.success) {
-
         this.router.navigate(['/'])
       } else {
         this.hasError.set(true)

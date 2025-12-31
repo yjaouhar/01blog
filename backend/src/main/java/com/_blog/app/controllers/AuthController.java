@@ -30,6 +30,7 @@ import com._blog.app.model.JwtUserPrincipal;
 import com._blog.app.repository.RefreshTokenRepo;
 import com._blog.app.service.AuthService;
 import com._blog.app.shared.CustomResponseException;
+import com._blog.app.shared.GlobalDataResponse;
 import com._blog.app.shared.GlobalResponse;
 import com._blog.app.utils.UserUtils;
 
@@ -79,7 +80,7 @@ public class AuthController {
         response.addHeader(HttpHeaders.SET_COOKIE, UserUtils.generatCookie("refreshToken", refToken, Duration.ofDays(7)));
         response.addHeader(HttpHeaders.SET_COOKIE, UserUtils.generatCookie("access_token", accessToken, Duration.ofMinutes(15)));
 
-        return new ResponseEntity<>(new GlobalResponse<>(accessToken), HttpStatus.OK);
+        return new ResponseEntity<>(new GlobalResponse<>(new GlobalDataResponse.LoginResponse(user.getUsername(), accessToken)), HttpStatus.OK);
     }
 
     @PostMapping("/refresh")

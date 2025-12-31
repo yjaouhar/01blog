@@ -9,12 +9,12 @@ export const authGuard: CanActivateFn = (route, state) => {
 
   const router = inject(Router);
   const platformId = inject(PLATFORM_ID);
+  const auth = inject(AuthService);
+  console.log("======= 1 ", platformId, " <==> ", auth.getUser());
   if (isPlatformServer(platformId)) {
-    console.log("======= 1 ", router.url);
 
     return true;
   }
-  const auth = inject(AuthService);
   const allowedRoles = route?.data?.['roles'];
   console.log("======= 2");
   return auth.getMe().pipe(

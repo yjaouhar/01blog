@@ -17,7 +17,8 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
     }
     console.log('🍪 Request in interceptor:', req.headers.keys());
 
-    // if (isPlatformBrowser(platformId)) {
+    // if (isPlatformBrowser(platformId)) {h
+    
     // }
     req.headers.set('Cookies', 'myCookie1=value1; myCookie2=value2');
     const authReq = req.clone({ withCredentials: true });
