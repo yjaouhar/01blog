@@ -8,9 +8,19 @@
                 </div>
                 <div class="brand-name">Blog</div>
             </div>
-
+            <!-- <app-post-create-component></app-post-create-component> -->
             <!-- Notification Section -->
-
+            <div>
+                <button type="button" class="btn btn-primary position-relative"
+                    title="creat post" (click)="toggelShowCreatPostPop(true)">
+                    <i class="bi bi-plus-circle"></i>
+                </button>
+            </div>
+            <!-- Scrollable modal -->
+            @if(showCreatPostPop()){
+            <app-post-create-component
+                (hide)="toggelShowCreatPostPop(!$event)"></app-post-create-component>
+            }
             <!-- User Actions Section -->
             <div class="d-flex align-items-center gap-5">
                 <div class="dropdown d-inline-block">

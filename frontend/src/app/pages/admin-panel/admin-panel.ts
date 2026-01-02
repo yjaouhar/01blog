@@ -33,35 +33,7 @@ export class AdminPanel {
     { id: '2', username: 'tarik_dev', email: 'tarik@gmail.com', avatar: 'https://i.pravatar.cc/40?u=2' },
   ];
 
-  posts: PostModel[] = [
-    {
-
-      id: '1',
-      authore: 'yassine jaouhary',
-      avatar: '/d.jpg',
-      time: new Date,
-      title: 'Sunset in Marrakech',
-      descreption: 'The colors of the sky tonight were magical 🌅.',
-      mediaType: 'image',
-      mediaUrl: '/p.jpg',
-      totalLike: 120,
-      totalComment: 14,
-      liked: true
-    },
-    {
-      id: '2',
-      authore: 'yassine jaouhary',
-      avatar: '/d.jpg',
-      time: new Date,
-      title: 'Coding Night',
-      descreption: 'Late night debugging session with coffee ☕ and lo-fi beats.',
-      mediaType: 'image',
-      mediaUrl: '/p.jpg',
-      totalLike: 85,
-      totalComment: 9,
-      liked: false
-    },
-  ];
+  // posts: PostModel;
 
   reports = [
     { id: 1, reason: 'Inappropriate post', reportedBy: 'user123', time: '2h ago', type: 'post', target: { id: 88 }, targetUser: 'badUser97' },

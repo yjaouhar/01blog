@@ -1,9 +1,12 @@
 package com._blog.app.shared;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 
+import jakarta.persistence.Embeddable;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -73,18 +76,36 @@ public class GlobalDataResponse<T> {
 
     @Setter
     @Getter
-    @NoArgsConstructor
     // @AllArgsConstructor
+    @Builder
     public static class PostResponse {
 
         private UUID id;
-        private String title;
+        private String authore;
+        private String avatar;
+        private LocalDateTime createTime;
+        private LocalDateTime updateTime;
         private String descreption;
-        private String mediaType;
-        private String mediaUrl;
+        private List<Media> media;
         private long totalLike;
         private long totalComment;
         private boolean liked;
+    }
+
+    // @Builder
+    @Embeddable
+    @NoArgsConstructor
+    @Getter
+    @Setter
+    public static class Media {
+
+        private String mediaType;
+        private String mediaUrl;
+
+        public Media(String mediaType, String mediaUrl) {
+            this.mediaType = mediaType;
+            this.mediaUrl = mediaUrl;
+        }
     }
 
 }

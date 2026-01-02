@@ -73,7 +73,7 @@ public class AuthService {
                 String fileName = System.currentTimeMillis() + "_" + file.getOriginalFilename();
                 Path filePath = Paths.get(uploadDir + fileName);
                 Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
-                user.setAvatar("../" + uploadDir + fileName);
+                user.setAvatar("/uploads/avatar/" + fileName);
             }
             userRepo.save(user);
             System.out.println("--------> register : " + user);

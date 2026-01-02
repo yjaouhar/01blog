@@ -1,6 +1,7 @@
 package com._blog.app.controllers;
 
 import java.security.Principal;
+import java.util.List;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,9 +11,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -52,30 +53,30 @@ public class PosteController {
                 HttpStatus.CREATED);
     }
 
-    @PostMapping(value = "/create", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<GlobalResponse<?>> creatPoste(@RequestPart("data") @Valid PosteCreationRequest posteRequest,
-            @RequestPart(value = "file", required = false) MultipartFile file, Principal principal) {
-        UserAccount currentUser = userUtils.findUserByUsername(principal.getName());
-
+            @RequestPart(value = "file", required = false) List<MultipartFile> file) {
+        JwtUserPrincipal principal = (JwtUserPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        UserAccount currentUser = userUtils.findUserById(principal.getId());
         postesService.creatPoste(posteRequest, currentUser, file);
         return new ResponseEntity<>(new GlobalResponse<>("created !"), HttpStatus.CREATED);
     }
 
-    @DeleteMapping("/delete/{postId}")
-    public ResponseEntity<GlobalResponse<?>> deletPost(@PathVariable UUID postId,
-            Principal principal) {
-        UserAccount currentUser = userUtils.findUserByUsername(principal.getName());
+    @DeleteMapping("/{postId}")
+    public ResponseEntity<GlobalResponse<?>> deletPost(@PathVariable UUID postId ) {
+        JwtUserPrincipal principal = UserUtils.getPrincipal();
+        UserAccount currentUser = userUtils.findUserById(principal.getId());
         postesService.deletPost(postId, currentUser);
         return new ResponseEntity<>(new GlobalResponse<>("Deleted !"), HttpStatus.OK);
     }
 
-    @PutMapping(value = "/update", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PatchMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<GlobalResponse<?>> updatePost(
             @RequestPart("data") @Valid PosteUpdateRequest posteUpdateRequest,
-            @RequestPart(value = "file", required = false) MultipartFile file, Principal principal) {
-        UserAccount currentUser = userUtils.findUserByUsername(principal.getName());
-        postesService.updatePost(posteUpdateRequest, file, currentUser);
-        return new ResponseEntity<>(new GlobalResponse<>("update success !"), HttpStatus.OK);
+            @RequestPart(value = "file", required = false) List<MultipartFile> file) {
+        JwtUserPrincipal principal = UserUtils.getPrincipal();
+        UserAccount currentUser = userUtils.findUserById(principal.getId());
+        return new ResponseEntity<>(new GlobalResponse<>(postesService.updatePost(posteUpdateRequest, file, currentUser)), HttpStatus.OK);
     }
 
     @PostMapping("/like/{postId}")

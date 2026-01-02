@@ -9,6 +9,7 @@ import { PosteComponent } from "../../componentes/poste.component/poste-componen
 import { PostModel } from '../../model/post.type';
 import { LoadingService } from '../../services/loading.service';
 import { Loading } from "../../componentes/loading/loading";
+import { PostCreateComponent } from "../../componentes/post-create-component/post-create-component";
 
 @Component({
   selector: 'app-layout',
@@ -21,7 +22,7 @@ export class Layout implements OnInit {
   // loding = signal(true);
   router = inject(Router)
   homeService = inject(HomeService)
-  postes = signal<PostModel[] | null>([])
+  postes = signal<PostModel | null>(null)
   loadingService = inject(LoadingService)
 
   ngOnInit(): void {
@@ -33,8 +34,11 @@ export class Layout implements OnInit {
     });
     this.homeService.getPodteData().subscribe({
       next: res => {
+        console.log("++++++", res.data);
+        this.postes.set(res.data)
+      },
+      complete: () => {
         this.loadingService.hide()
-        console.log("-----> postes : ", res);
       }
     });
   }

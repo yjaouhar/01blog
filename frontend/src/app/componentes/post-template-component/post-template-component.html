@@ -1,14 +1,19 @@
+@if (post) {
+
 <div>
     <div
         class="card-header d-flex align-items-center justify-content-between bg-white border-0">
         <div class="w-100 d-flex justify-content-between">
             <div class="d-flex gap-3">
-                <img src='prof.png' alt="Profile" class="rounded-circle"
+                <img [src]="url+post.avatar" alt="Profile"
+                    class="rounded-circle"
                     width="40" height="40">
                 <div>
                     <h6 class="mb-0 fw-bold">{{post.authore}}</h6>
-                    <small class="text-muted">{{post.time}}</small>
+                    <small
+                        class="text-muted">{{utils.timeAgo(post.createTime)}}</small>
                 </div>
+
             </div>
 
             <div class="dropdown">
@@ -21,7 +26,7 @@
                     <li>
                         <a class="dropdown-item" data-bs-toggle="modal"
                             [attr.data-bs-target]="'#editPostModal' + post.id">
-                             <i class="bi bi-pencil-fill text-success p-2"></i>
+                            <i class="bi bi-pencil-fill text-success p-2"></i>
                         </a>
                     </li>
 
@@ -29,7 +34,7 @@
                         <a class="dropdown-item text-danger"
                             data-bs-toggle="modal"
                             [attr.data-bs-target]="'#confermModal'+post.id">
-                             <i class="bi bi-trash-fill text-danger p-2"></i>
+                            <i class="bi bi-trash-fill text-danger p-2"></i>
                         </a>
                     </li>
                     }
@@ -42,7 +47,7 @@
                     </li>
 
                 </ul>
-                @if (false) {
+                @if (true) {
 
                 <div class="modal fade" [id]="'editPostModal' + post.id"
                     data-bs-backdrop="static" data-bs-keyboard="false"
@@ -55,7 +60,7 @@
                     tabindex="-1"
                     aria-modal="true" role="dialog">
                     <app-confirm-component [id]="post.id"
-                        (conferm)="deletPost($event)"
+                        (conferm)="deletPost()"
                         message="do you want"></app-confirm-component>
                 </div>
                 }
@@ -72,20 +77,66 @@
     </div>
 
     <!-- Post Body -->
-    <div class=" card-body p-0 ">
+    <div class="card-body p-0">
         <p class="px-3 mb-2">{{post.descreption}}</p>
 
-        @if (post.mediaType==="image" ){
-        <img [src]="post.mediaUrl" alt="Post Image"
-            class="img-fluid post-img">
-        }@else if (post.mediaType==="video") {
-        <video
-            [src]="post.mediaUrl"
-            controls
-            class="img-fluid rounded"
-            style="object-fit: cover;"></video>
-        }
+        @if (post.media.length === 1) {
+        <div class="px-3">
+            @if (post.media[0].mediaType === 'image') {
+            <img [src]="url + post.media[0].mediaUrl"
+                alt="Post Image"
+                class="rounded border w-100"
+                style="object-fit:cover; max-height:500px;">
+            } @else if (post.media[0].mediaType === 'video') {
+            <video [src]="url + post.media[0].mediaUrl"
+                controls
+                class="rounded border w-100"
+                style="object-fit:cover; max-height:500px;">
+            </video>
+            }
+        </div>
+        } @else if (post.media.length > 1) {
+        <!-- Carousel for multiple media -->
+        <div id="carousel-{{post.id}}" class="carousel slide px-3"
+            data-bs-ride="carousel">
+            <div class="carousel-inner rounded">
+                @for (media of post.media; track $index) {
+                <div [class]="'carousel-item '+active($index)">
+                    @if (media.mediaType === 'image') {
+                    <img [src]="url + media.mediaUrl"
+                        class="d-block w-100"
+                        style="object-fit:cover; max-height:500px;"
+                        alt="Post Image">
+                    } @else if (media.mediaType === 'video') {
+                    <video [src]="url + media.mediaUrl"
+                        controls
+                        class="d-block w-100"
+                        style="object-fit:cover; max-height:500px;">
+                    </video>
+                    }
+                </div>
+                }
+            </div>
 
+            <!-- Controls -->
+            <button class="carousel-control-prev" type="button"
+                [attr.data-bs-target]="'#carousel-'+post.id"
+                data-bs-slide="prev"
+                style="max-height: 50px; align-self: center;">
+                <span class="carousel-control-prev-icon"></span>
+                <span class="visually-hidden">Previous</span>
+            </button>
+            <button class="carousel-control-next" type="button"
+                [attr.data-bs-target]="'#carousel-'+post.id"
+                data-bs-slide="next"
+                style="max-height: 50px; align-self: center;">
+                <span class="carousel-control-next-icon"></span>
+                <span class="visually-hidden">Next</span>
+            </button>
+        </div>
+        }
     </div>
 
 </div>
+
+}

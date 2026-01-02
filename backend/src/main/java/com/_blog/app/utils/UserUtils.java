@@ -7,9 +7,11 @@ import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseCookie;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
 import com._blog.app.entities.UserAccount;
+import com._blog.app.model.JwtUserPrincipal;
 import com._blog.app.repository.UserRepo;
 import com._blog.app.shared.CustomResponseException;
 
@@ -47,6 +49,10 @@ public class UserUtils {
         return username;
     }
 
+    public static JwtUserPrincipal getPrincipal() {
+        return (JwtUserPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+    }
+
     public boolean validBirthday(String birthday) {
         LocalDate birthDate = LocalDate.parse(birthday);
         LocalDate currentDate = LocalDate.now();
@@ -68,7 +74,7 @@ public class UserUtils {
         return age >= 10;
     }
 
-    public static  String generatCookie(String key, String value, Duration duration) {
+    public static String generatCookie(String key, String value, Duration duration) {
         return ResponseCookie.from(key, value).
                 httpOnly(true).
                 secure(false).
@@ -78,6 +84,7 @@ public class UserUtils {
                 .build().toString();
 
     }
+
     public static String removeCookies(String key) {
         return ResponseCookie.from(key, "").
                 path("/").

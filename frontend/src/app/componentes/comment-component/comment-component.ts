@@ -1,6 +1,6 @@
 import { Component, inject, Input } from '@angular/core';
 import { PostService } from '../../services/post.service';
-import { PostModel } from '../../model/post.type';
+import { Post, PostModel } from '../../model/post.type';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { PostTemplateComponent } from "../post-template-component/post-template-component";
@@ -15,7 +15,7 @@ import { PostTemplateComponent } from "../post-template-component/post-template-
 export class CommentComponent {
   postServices = inject(PostService)
   commentText = '';
-  @Input() post!: PostModel;
+  @Input() post!: Post;
   comments = this.postServices.getComment(1);
   ngAfterViewInit() {
     const modalEl = document.getElementById('commentModal' + this.post.id);

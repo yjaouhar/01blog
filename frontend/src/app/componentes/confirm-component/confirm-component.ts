@@ -13,8 +13,6 @@ export class ConfirmComponent {
   @Output() conferm = new EventEmitter<boolean>()
 
   ngAfterViewInit() {
-    console.log("{{{{{{{{{{{{{}}}}}}}}}}}}} ", this.id);
-
     const modalEl = document.getElementById('confermModal' + this.id);
     if (!modalEl) return;
 

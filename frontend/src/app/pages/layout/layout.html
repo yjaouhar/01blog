@@ -1,9 +1,11 @@
  <app-app-header></app-app-header>
+<!-- <app-post-create-component></app-post-create-component> -->
+ 
 <main class="flex-grow-1 mt-7"
     style="padding-top: 70px; padding-bottom: 70px; overflow: hidden;">
     <app-loading></app-loading>
     @if(isHomePage()){
-    <app-poste-component [postes]="postes()!"
+    <app-poste-component [postesData]="postes()!"
         [showReaction]="true"></app-poste-component>
     }@else {
     <router-outlet></router-outlet>

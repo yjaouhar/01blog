@@ -38,7 +38,7 @@ public class AdminServise {
             if (report.getReportedPost() != null) {
                 if (reportsActionRequest.remove()) {
                     posteRepo.delete(report.getReportedPost());
-                    String content = "Your post titled '" + report.getReportedPost().getTitle() + "' was removed by admin due to reports.";
+                    String content = "Your post titled '" + report.getReportedPost().getDescription() + "' was removed by admin due to reports.";
                     notificationService.insertNotification(report.getReportedPost().getUser(), content);
                 } else {
                     report.getReportedPost().setHide(true);

@@ -1,7 +1,9 @@
 import { CommonModule } from '@angular/common';
-import { Component, Input, SimpleChanges } from '@angular/core';
+import { Component, inject, Input, signal, SimpleChanges } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
-import { PostModel } from '../../model/post.type';
+import { Media, Post, PostModel } from '../../model/post.type';
+import { environment } from '../../../environments/enveronment';
+import { PostService } from '../../services/post.service';
 declare var bootstrap: any;
 
 @Component({
@@ -12,16 +14,17 @@ declare var bootstrap: any;
 })
 export class EditePostComponent {
 
-  @Input() post!: PostModel;
-  currentMedia: string | null = null;
-  currentMediaFile: File | null = null;
-
+  @Input() post!: Post;
+  currentMediaFile = signal<File[]>([]);
+  existingMedia = signal<Media[]>([]);
+  removedMediaIds = signal<string[]>([]);
+  url = environment.apiUrl;
   form: FormGroup;
-  isImage = false;
-  isVideo = false;
+
   hasChange = false;
-  showError = false;
-  errorMsg = '';
+  hasError = signal(false);
+  messagError = signal('');
+  posteService = inject(PostService)
   constructor(private fb: FormBuilder) {
     this.form = this.fb.group({
       userInput: ['']
@@ -38,50 +41,93 @@ export class EditePostComponent {
   ngOnChanges(changes: SimpleChanges) {
     if (changes['post'] && this.post !== undefined) {
       this.form.patchValue({ userInput: this.post.descreption });
-      this.currentMedia = this.post.mediaUrl
-      this.isImage = this.post.mediaType === 'image';
-      this.isVideo = this.post.mediaType === 'video'
+      this.existingMedia.set(this.post.media)
     }
   }
-  onFileSelected(event: any) {
-    const file = event.target.files[0];
-    if (!file) return;
-    this.showError = false;
-    this.currentMediaFile = file;
-    const type = file.type;
-    const reader = new FileReader();
-    this.hasChange = true;
-    reader.onload = () => {
+  async addMedia(event: Event) {
+    this.hasError.set(false)
+    const input = event.target as HTMLInputElement;
+    if (!input.files?.length) return;
 
-      this.currentMedia = reader.result as string;
-      this.isImage = type.startsWith("image");
-      this.isVideo = type.startsWith("video");
-    };
-    reader.readAsDataURL(file);
+    const file = input.files[0];
+    const type = file.type.startsWith('image') ? 'image' : 'video';
+    if (type !== "image" && type !== "video") {
+      this.hasError.set(true)
+      this.messagError.set(`Only image/video allowed`)
+      return
+    }
+    // max size in bytes(5MB for image, 20MB for video)
+    const maxSize = type == "image" ? 8 * 1024 * 1024 : 20 * 1024 * 1024;
+    if (file.size > maxSize) {
+      this.hasError.set(true);
+      this.messagError.set(`File too large. Max allowed: ${maxSize / (1024 * 1024)} MB`)
+      return
+    }
+    let url = '';
+    if (type === 'image') {
+      const croppedBlob = await this.posteService.cropImageToSquare(file, 150);
+      url = URL.createObjectURL(croppedBlob);
+    } else {
+      url = URL.createObjectURL(file);
+    }
+
+    this.existingMedia.update(arr => [...arr, { mediaUrl: url, mediaType: type }]);
+    this.currentMediaFile.update(arr => [...arr, file])
+    this.hasChange = true;
+    input.value = '';
   }
 
-  deleteMedia() {
-    this.currentMedia = null;
-    this.currentMediaFile = null;
-    this.isImage = false;
-    this.isVideo = false;
+
+  deleteMedia(url: string) {
+    this.existingMedia.update(p => p.filter(m => m.mediaUrl != url))
+    this.removedMediaIds.update(arr => [...arr, url])
+    this.hasChange = true
+
+  }
+  close() {
+    this.currentMediaFile.set([]);
+    this.removedMediaIds.set([]);
+    this.existingMedia.set(this.post.media)
+    this.form.patchValue({ userInput: this.post.descreption });
   }
   onDescChange() {
-    this.showError = false;
+    this.hasError.set(false);
+  }
+  difindUrl(mediaUrl: string) {
+    if (!mediaUrl.startsWith("blob")) {
+      return this.url;
+    }
+    return ""
   }
   onSubmit() {
     const newDesc: string = this.form.value.userInput;
     if (!newDesc.trim() || (this.post.descreption === newDesc && !this.hasChange)) {
-      this.errorMsg = 'You must select a file and change the description!';
-      this.showError = true;
+      this.messagError.set('You must select a file and change the description!');
+      this.hasError.set(true);
       return
     }
 
-    console.log("edited");
-
     const formData = new FormData();
-    formData.append('description', newDesc)
-    formData.append('file', this.currentMediaFile!)
+    const data = {
+      description: newDesc,
+      postId: this.post.id,
+      removedMediaIds: this.removedMediaIds()
+    }
+    formData.append('data', new Blob([JSON.stringify(data)], { type: "application/json" }))
+    this.currentMediaFile().forEach(f => {
+      formData.append('file', f)
+    })
+
+
+    this.posteService.editePost(formData).subscribe({
+      next: res => {
+        console.log("post edited : ", res);
+        this.post.media = res.data as any;
+        if (this.post.descreption !== newDesc) {
+          this.post.descreption = newDesc
+        }
+      }
+    });
     const modalEl = document.getElementById('editPostModal' + this.post.id);
     const modal = bootstrap.Modal.getInstance(modalEl);
     modal.hide();

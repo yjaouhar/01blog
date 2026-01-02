@@ -1,17 +1,13 @@
 package com._blog.app.service;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.io.File;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.UUID;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -36,6 +32,8 @@ import com._blog.app.shared.CustomResponseException;
 import com._blog.app.shared.GlobalDataResponse;
 import com._blog.app.utils.PosteUtils;
 
+import jakarta.transaction.Transactional;
+
 @Service
 public class PostesService {
 
@@ -52,62 +50,74 @@ public class PostesService {
     @Autowired
     private NotificationService notificationService;
 
-    private static final Logger logger = LoggerFactory.getLogger(PostesService.class);
-
+    // private static final Logger logger = LoggerFactory.getLogger(PostesService.class);
     public GlobalDataResponse<List<GlobalDataResponse.PostResponse>> homePostes(UserAccount user, int page, int size) {
-        System.out.println("bghina njibo lpostes");
-        List<Subscribers> following = subscriberRepo.findByUser(user);
-        List<UserAccount> followedUser = new ArrayList<>(following.stream().map(Subscribers::getTarget).toList());
-        followedUser.add(user);
-        System.out.println("jaw l users");
-        Page<Postes> postPage = posteRepo.findByUserIn(followedUser, PageRequest.of(page, size,
-                Sort.by(Sort.Direction.DESC, "create_at")));
-        System.out.println("jaw postat mn db ");
+        List<GlobalDataResponse.PostResponse> posts = new ArrayList<>();
+        Page<Postes> postsPage = Page.empty();
+        try {
+            // all user following from me
+            List<Subscribers> followinTarget = subscriberRepo.findByUser(user);
+            // njib target mn row li ana dyr lihom follow 
+            // useres li ghnjib lihomm postat
+            List<UserAccount> postUserTarget = new ArrayList<>(followinTarget.stream().map(Subscribers::getTarget).toList());
+            // kanzid rasi bax njib postat dyali
+            postUserTarget.add(user);
+            postsPage = posteRepo.findByUserIn(postUserTarget, PageRequest.of(page, size,
+                    Sort.by(Sort.Direction.DESC, "createdAt")));
 
-        List<GlobalDataResponse.PostResponse> posts = postPage.getContent().stream().map(post -> {
-            boolean liked = likeRepo.existsByUserIdAndPostId(user.getId(), post.getId());
-            long totaLike = likeRepo.countByPostId(post.getId());
+            System.out.println("jaw postat mn db ");
 
-            long totalComment = commentRepo.countByPostId(post.getId());
-            GlobalDataResponse.PostResponse respo = new GlobalDataResponse.PostResponse();
-            respo.setId(post.getId());
-            respo.setTitle(post.getTitle());
-            respo.setDescreption(post.getDescription());
-            respo.setMediaType(post.getMedia_type());
-            respo.setMediaUrl(post.getMedia_url());
-            respo.setTotalComment(totalComment);
-            respo.setTotalLike(totaLike);
+            posts = postsPage.getContent().stream().map(post -> {
+                boolean liked = likeRepo.existsByUserIdAndPostId(user.getId(), post.getId());
+                long totaLike = likeRepo.countByPostId(post.getId());
+                long totalComment = commentRepo.countByPostId(post.getId());
+                return GlobalDataResponse.PostResponse.builder().
+                        id(post.getId()).
+                        authore(post.getUser().getUsername()).
+                        avatar(post.getUser().getAvatar()).
+                        createTime(post.getCreatedAt()).
+                        updateTime(post.getUpdateAt()).
+                        descreption(post.getDescription()).
+                        media(post.getMedia()).
+                        totalComment(totalComment).
+                        totalLike(totaLike).
+                        liked(liked)
+                        .build();
+            }).toList();
+            System.out.println("post jaw ---> " + posts.size());
+        } catch (Exception e) {
+            System.out.println("post error ---> " + e.getMessage());
+            throw e;
+        }
 
-            respo.setLiked(liked);
-            return respo;
-        }).toList();
-        System.out.println("post jaw ---> " + posts.size());
-        return new GlobalDataResponse<>(posts, postPage.getNumber(),
-                postPage.getTotalPages(), postPage.hasNext());
-
+        return new GlobalDataResponse<>(posts, postsPage.getNumber(),
+                postsPage.getTotalPages(), postsPage.hasNext());
     }
 
-    public void creatPoste(PosteCreationRequest postRequest, UserAccount currentUser, MultipartFile file) {
-        Postes post = new Postes();
+    public void creatPoste(PosteCreationRequest postRequest, UserAccount currentUser, List<MultipartFile> file) {
 
-        post.setTitle(postRequest.title());
-        post.setDescription(postRequest.description());
-        post.setMedia_type("text");
+        List<GlobalDataResponse.Media> media = new ArrayList<>();
         if (file != null && !file.isEmpty()) {
-            PosteUtils.MediaData mediaData = posteUtils.saveMedia(file);
-            post.setMedia_url(mediaData.getFilePath());
-            post.setMedia_type(mediaData.getType());
+            List<PosteUtils.MediaData> mediaData = posteUtils.saveMedia(file);
+            mediaData.stream().forEach(m -> {
+                media.add(new GlobalDataResponse.Media(m.getType(), m.getFilePath()));
+            });
+
         }
-        post.setUser(currentUser);
+        Postes post = new Postes(postRequest.description(), media, currentUser);
+
         subscriberRepo.findByTarget(currentUser)
                 .ifPresent(followers -> followers.forEach(follower -> {
             String content = currentUser.getUsername() + " shared a new post";
             notificationService.insertNotification(follower.getUser(), content);
         }));
+        post.setCreatedAt(LocalDateTime.now());
+        post.setUpdateAt(LocalDateTime.now());
         posteRepo.save(post);
 
     }
 
+    @Transactional
     public void deletPost(UUID postId, UserAccount currentUser) {
         Postes post = posteUtils.findPostById(postId);
 
@@ -115,47 +125,51 @@ public class PostesService {
             throw CustomResponseException.CustomException(403,
                     "can't have access for delete post");
         }
+        List<GlobalDataResponse.Media> mediaPostes = post.getMedia();
         posteRepo.deleteById(post.getId());
+        if (mediaPostes != null && !mediaPostes.isEmpty()) {
+            for (GlobalDataResponse.Media media : mediaPostes) {
+                File f = new File(".." + media.getMediaUrl()); // kayna t9dr tzid path root
+                if (f.exists()) {
+                    f.delete(); // delete file
+                }
+            }
+        }
 
     }
 
-    public void updatePost(PosteUpdateRequest updateRequest, MultipartFile file, UserAccount currentUser) {
+    public List<GlobalDataResponse.Media> updatePost(PosteUpdateRequest updateRequest, List<MultipartFile> file, UserAccount currentUser) {
         Postes post = posteUtils.findPostById(updateRequest.postId());
 
         if (!posteUtils.haveAccess(post, currentUser)) {
             throw CustomResponseException.CustomException(403, "You can't update this post");
         }
-        boolean isUpdate = false;
-        if (updateRequest.title() != null && !updateRequest.title().isBlank()) {
-            post.setTitle(updateRequest.title());
-            isUpdate = true;
-        }
 
         if (updateRequest.description() != null && !updateRequest.description().isBlank()) {
             post.setDescription(updateRequest.description());
-            isUpdate = true;
         }
-
-        if (file != null && !file.isEmpty()) {
-
-            if (post.getMedia_url() != null) {
-                Path oldFilePath = Paths.get(post.getMedia_url().substring(1));
-                try {
-                    Files.deleteIfExists(oldFilePath);
-                } catch (IOException e) {
-                    logger.warn("Failed to delete old media file: {}", oldFilePath, e);
+        if (updateRequest.removedMediaIds() != null && !updateRequest.removedMediaIds().isEmpty()) {
+            Iterator<GlobalDataResponse.Media> iterator = post.getMedia().iterator();
+            while (iterator.hasNext()) {
+                GlobalDataResponse.Media media = iterator.next();
+                if (updateRequest.removedMediaIds().contains(media.getMediaUrl())) {
+                    File f = new File(".." + media.getMediaUrl());
+                    if (f.exists()) {
+                        f.delete();
+                    }
+                    iterator.remove();
                 }
             }
-            PosteUtils.MediaData mediaData = posteUtils.saveMedia(file);
-            post.setMedia_url(mediaData.getFilePath());
-            post.setMedia_type(mediaData.getType());
-            isUpdate = true;
 
         }
-        if (isUpdate) {
-            post.setUpdate_at(LocalDateTime.now());
+        if (file != null && !file.isEmpty()) {
+            List<PosteUtils.MediaData> mediaData = posteUtils.saveMedia(file);
+            mediaData.forEach(m -> {
+                post.getMedia().add(new GlobalDataResponse.Media(m.getType(), m.getFilePath()));
+            });
         }
         posteRepo.save(post);
+        return post.getMedia();
     }
 
     public String likePost(UUID postId, UserAccount currentUser) {
@@ -168,7 +182,7 @@ public class PostesService {
             like.setUser(currentUser);
             like.setPost(post);
             likeRepo.save(like);
-            String content = currentUser.getUsername() + " Liked your post titled '" + "'" + post.getTitle();
+            String content = currentUser.getUsername() + " Liked your post titled '" + "'" + post.getDescription();
             notificationService.insertNotification(post.getUser(), content);
         }
         return "Like added!";
@@ -181,7 +195,7 @@ public class PostesService {
         comment.setPost(post);
         comment.setUser(currentUser);
         commentRepo.save(comment);
-        String content = currentUser.getUsername() + " comment your post titled '" + "'" + post.getTitle();
+        String content = currentUser.getUsername() + " comment your post titled '" + "'" + post.getDescription();
         notificationService.insertNotification(post.getUser(), content);
     }
 

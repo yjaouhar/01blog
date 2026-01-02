@@ -10,8 +10,10 @@ export class CustomeErroreHandlerService implements ErrorHandler {
 
   handleError(error: any): void {
     console.log('==> Custom Error Handler:', error);
-    let userMessage = 'Something went wrong, please try again.'; 
-
+    let userMessage = 'Something went wrong, please try again.';
+    if (error?.error) {
+      userMessage = error?.error
+    }
     if (error?.status === 400) {
       userMessage = 'Bad request, please check your input.';
     } else if (error?.status === 401) {

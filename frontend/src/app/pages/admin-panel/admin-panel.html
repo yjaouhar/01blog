@@ -153,7 +153,7 @@
                 </thead>
 
                 <tbody>
-                    @for (p of posts; track p.id) {
+                    <!-- @for (p  of []; track p.id) {
                     <tr>
                         <td>{{ p.id }}</td>
                         <td>{{ p.authore }}</td>
@@ -182,7 +182,7 @@
 
                         </td>
                     </tr>
-                    }
+                    } -->
                 </tbody>
             </table>
             <div class="modal fade"
@@ -204,8 +204,8 @@
             <div class="modal fade" [id]="'postModal'+selectPostId()"
                 tabindex="-1"
                 aria-hidden="true">
-                <app-comment-component
-                    [post]="selectPost"></app-comment-component>
+                <!-- <app-comment-component
+                    [post]="selectPost"></app-comment-component> -->
             </div>
         </div>
 

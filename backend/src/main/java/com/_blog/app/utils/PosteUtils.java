@@ -6,6 +6,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 import org.slf4j.Logger;
@@ -22,11 +24,13 @@ import com._blog.app.repository.PosteRepo;
 import com._blog.app.service.PostesService;
 import com._blog.app.shared.CustomResponseException;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
 @Component
 public class PosteUtils {
+
     @Autowired
     private PosteRepo posteRepo;
 
@@ -53,9 +57,28 @@ public class PosteUtils {
         return post.getUser().getId().equals(user.getId()) || user.getRole().equals("ADMIN");
     }
 
-    public MediaData saveMedia(MultipartFile file) {
-        MediaData mediaData = new MediaData();
-        if (file != null && !file.isEmpty()) {
+    public List<MediaData> saveMedia(List<MultipartFile> files) {
+        List<MediaData> mediaData = new ArrayList<>();
+        for (MultipartFile file : files) {
+            String type = "text";
+            String fileContentType = file.getContentType();
+            if (fileContentType != null) {
+                String fileType = fileContentType.split("/")[0];
+                if (!fileType.equals("image") && !fileType.equals("video")) {
+                    throw CustomResponseException.CustomException(400, "Only image/video allowed");
+                }
+                type = fileType;
+            } 
+            if (type.equals("image")){
+                if (file.getSize() > 8 * (1024 * 1024)) {
+                    throw CustomResponseException.CustomException(400, "post too large");
+                }
+            }else if (type.equals("video")){
+                if (file.getSize() > 20 * (1024 * 1024)) {
+                    throw CustomResponseException.CustomException(400, "video too large");
+                }
+            }
+
             String uploadDir = "../uploads/postes/";
             File dir = new File(uploadDir);
             if (!dir.exists()) {
@@ -69,16 +92,8 @@ public class PosteUtils {
                 logger.error("Error saving media file", ex);
                 throw CustomResponseException.CustomException(500, "Failed to save media file");
             }
-            mediaData.setFilePath("../" + uploadDir + fileName);
-            if (file.getContentType() != null) {
-                String type = file.getContentType().split("/")[0];
-                if (!type.equals("image") && !type.equals("video")) {
-                    throw CustomResponseException.CustomException(400, "Only image/video allowed");
-                }
-                mediaData.setType(type);
-            } else {
-                mediaData.setType("other");
-            }
+    
+            mediaData.add(new MediaData("/uploads/postes/" + fileName, type));
         }
 
         return mediaData;
@@ -86,8 +101,10 @@ public class PosteUtils {
 
     @Getter
     @Setter
+    @AllArgsConstructor
     public class MediaData {
         private String filePath;
         private String type;
     }
+
 }

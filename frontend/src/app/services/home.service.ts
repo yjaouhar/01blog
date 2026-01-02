@@ -12,11 +12,9 @@ export class HomeService {
   http = inject(HttpClient)
 
   getPodteData() {
-
-    return this.http.get<GlobalResponce<any>>("http://localhost:8080/api/post").pipe(
+    return this.http.get<GlobalResponce<PostModel>>("http://localhost:8080/api/post").pipe(
       catchError(
         err => {
-
           console.log("error in get post : ", err);
           return throwError(() => err)
         }

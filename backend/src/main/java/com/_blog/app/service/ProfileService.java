@@ -58,22 +58,18 @@ public class ProfileService {
 
     public GlobalDataResponse<List<PostResponse>> getProfilePoste(UserAccount profileUser, UserAccount currentUser, int page, int size) {
         Page<Postes> postPage = posteRepo.findAllByUser(profileUser, PageRequest.of(page, size,
-                Sort.by(Sort.Direction.DESC, "create_at")));
+                Sort.by(Sort.Direction.DESC, "createdAt")));
         List<PostResponse> posts = postPage.getContent().stream().map(post -> {
             boolean liked = likeRepo.existsByUserIdAndPostId(currentUser.getId(), post.getId());
             long totaLike = likeRepo.countByPostId(post.getId());
             long totalComment = commentRepo.countByPostId(post.getId());
-
-            GlobalDataResponse.PostResponse respo = new GlobalDataResponse.PostResponse();
-            respo.setId(post.getId());
-            respo.setTitle(post.getTitle());
-            respo.setDescreption(post.getDescription());
-            respo.setMediaType(post.getMedia_type());
-            respo.setMediaUrl(post.getMedia_url());
-            respo.setTotalComment(totalComment);
-            respo.setTotalLike(totaLike);
-            respo.setLiked(liked);
-            return new GlobalDataResponse.PostResponse();
+            return GlobalDataResponse.PostResponse.builder()
+                    .id(post.getId())
+                    .descreption(post.getDescription())
+                    .media(post.getMedia())
+                    .totalComment(totalComment)
+                    .totalLike(totaLike)
+                    .liked(liked).build();
         }).toList();
         return new GlobalDataResponse<>(posts, postPage.getNumber(),
                 postPage.getTotalPages(), postPage.hasNext());

@@ -33,10 +33,11 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> {
                     auth.requestMatchers("/api/auth/**").permitAll()
+                            .requestMatchers("/uploads/**").permitAll()
                             .requestMatchers(HttpMethod.GET, "/api/post").hasAnyRole("USER", "ADMIN")
-                            .requestMatchers(HttpMethod.POST, "/api/post/create").hasAnyRole("USER", "ADMIN")
-                            .requestMatchers(HttpMethod.DELETE, "/api/post/delete/{postId}").hasAnyRole("USER", "ADMIN")
-                            .requestMatchers(HttpMethod.PUT, "/api/post/update").hasAnyRole("USER", "ADMIN")
+                            .requestMatchers(HttpMethod.POST, "/api/post").hasAnyRole("USER", "ADMIN")
+                            .requestMatchers(HttpMethod.DELETE, "/api/post/{postId}").hasAnyRole("USER", "ADMIN")
+                            .requestMatchers(HttpMethod.PATCH, "/api/post").hasAnyRole("USER", "ADMIN")
                             .requestMatchers(HttpMethod.POST, "/api/post/like/{postId}").hasAnyRole("USER", "ADMIN")
                             .requestMatchers(HttpMethod.POST, "/api/post/update/comment").hasAnyRole("USER", "ADMIN")
                             .requestMatchers(HttpMethod.PUT, "/api/post/update/comment/edit")
@@ -75,7 +76,7 @@ public class SecurityConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
         config.setAllowedOrigins(List.of("http://localhost:4200"));
-        config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
         config.setAllowedHeaders(List.of("*"));
         config.setAllowCredentials(true);
 

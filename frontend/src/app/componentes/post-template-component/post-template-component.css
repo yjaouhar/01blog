@@ -1,3 +1,11 @@
-    .dropdown-item{
+    .dropdown-item {
         cursor: pointer;
     }
+
+/* .media-wrapper {
+    flex: 0 0 auto;
+    item ma ytkbarsh w ma ytdrarch
+    display: flex;
+    align-items: center;
+    justify-content: center;
+} */
