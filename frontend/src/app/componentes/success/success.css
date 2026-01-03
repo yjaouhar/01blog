@@ -1,0 +1,47 @@
+/* Success Icon - Animated Checkmark */
+.success {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    border: 2px solid #10b981;
+    border-radius: 50%;
+    position: relative;
+    animation: successBounce 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+}
+
+.success::after {
+    content: '';
+    position: absolute;
+    left: 5px;
+    top: 2px;
+    width: 5px;
+    height: 10px;
+    border: solid white;
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg);
+    animation: checkDraw 0.3s 0.2s ease-out forwards;
+    opacity: 0;
+}
+
+@keyframes successBounce {
+    0% {
+        transform: scale(0) rotate(-180deg);
+        opacity: 0;
+    }
+
+    50% {
+        transform: scale(1.1) rotate(10deg);
+    }
+
+    100% {
+        transform: scale(1) rotate(0deg);
+        opacity: 1;
+    }
+}
+
+@keyframes checkDraw {
+    to {
+        opacity: 1;
+    }
+}

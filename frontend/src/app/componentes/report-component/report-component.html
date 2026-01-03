@@ -26,9 +26,14 @@
                     {{ errorMessage }}
                 </div>
                 }
+                @if (refus()) {
+                    <div style="width: 100%; text-align: center;">
+                        <app-refuse style="margin: auto;"></app-refuse>
+                    </div>
+                }
                 <div
-                class="text-center mt-4 d-flex justify-content-between">
-                @if(!loading() && !success()){
+                    class="text-center mt-4 d-flex justify-content-between">
+                    @if(!loading() && !success()){
                     <button type="button" class="btn btn-outline-secondary"
                         data-bs-dismiss="modal">cancel</button>
 
@@ -39,12 +44,15 @@
                         Save
                     </button>
                     }
+
                     @if (loading()) {
-                    <span class="spinner"></span>
+                    <app-spinner style="margin: auto;"></app-spinner>
+
                     }
                     @if (success()) {
-                    <span class="success">✔</span>
+                    <app-success style="margin: auto;"></app-success>
                     }
+
                 </div>
 
             </form>

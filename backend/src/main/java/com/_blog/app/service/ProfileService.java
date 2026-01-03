@@ -81,8 +81,8 @@ public class ProfileService {
         if (!user.getId().equals(profileId)) {
             UUID userId = user.getId();
             user = userUtils.findUserById(profileId);
-            boolean reported = reportRepo.existsByReporter(user);
-            profileDetails.setReported(reported);
+            // boolean reported = reportRepo.existsByReporter(user);//
+            // profileDetails.setReported(reported);
             profileDetails.setReacted(subscriberRepo.existsByUserId_IdAndTarget_Id(userId, profileId));
         } else {
             profileDetails.setPersonelProfile(true);

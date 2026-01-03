@@ -41,9 +41,19 @@ public class ReportService {
         report.setReason(reportRequest.reason());
         report.setReporter(reporter);
         if (reportRequest.reportedUser() != null) {
+            boolean exist = reportRepo.existsByReporterIdAndReportedUserId(reporter.getId(),
+                    reportRequest.reportedUser());
+            if (exist) {
+                throw CustomResponseException.CustomException(409, "You have already reported this content");
+            }
             report.setReportedUser(userUtils.findUserById(reportRequest.reportedUser()));
         }
         if (reportRequest.reportedPost() != null) {
+            boolean exist = reportRepo.existsByReporterIdAndReportedPostId(reporter.getId(),
+                    reportRequest.reportedPost());
+            if (exist) {
+                throw CustomResponseException.CustomException(409, "You have already reported this content");
+            }
             report.setReportedPost(posteUtils.findPostById(reportRequest.reportedPost()));
         }
         reportRepo.save(report);

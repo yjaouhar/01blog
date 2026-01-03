@@ -35,11 +35,7 @@ export class PostTemplateComponent {
   }
   reportPost(reason: string) {
     if (!this.post) return;
-    this.postService.reportPost(this.post.id, reason).subscribe({
-      next: res => {
-        console.log("=====> " + res);
-      }
-    })
+  
 
   }
   active(index: number) {
