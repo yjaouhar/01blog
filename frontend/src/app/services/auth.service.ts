@@ -9,9 +9,6 @@ type Response = {
   success: boolean,
   message: string[] | null;
 }
-// type message = {
-//   message: string
-// }
 @Injectable({
   providedIn: 'root',
 })

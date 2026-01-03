@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output, output } from '@angular/core';
+import { Component, EventEmitter, Input, Output, output, signal } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 
 declare var bootstrap: any;
@@ -12,6 +12,8 @@ export class ReportComponent {
   form: FormGroup;
   @Input() id!: string;
   @Output() reason = new EventEmitter<string>()
+  loading = signal(true);
+  success = signal(true);
   showError = false;
   errorMessage = '';
   constructor(private fb: FormBuilder) {
@@ -31,6 +33,8 @@ export class ReportComponent {
     this.showError = false;
   }
   onSubmit() {
+    this.loading.set(true);
+    this.success.set(true);
     const reason: string = this.form.value.userInput.trim();
     if (reason.length < 10) {
       this.errorMessage = 'Reason must be between 10 and 255 characters';
@@ -44,8 +48,8 @@ export class ReportComponent {
 
     this.reason.emit(reason)
 
-    const modalEl = document.getElementById('reportModel' + this.id);
-    const modal = bootstrap.Modal.getInstance(modalEl);
-    modal.hide();
+    // const modalEl = document.getElementById('reportModel' + this.id);
+    // const modal = bootstrap.Modal.getInstance(modalEl);
+    // modal.hide();
   }
 }

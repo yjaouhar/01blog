@@ -37,8 +37,14 @@ export class Login {
         this.router.navigate(['/'])
       } else {
         this.hasError.set(true)
-        const message = res.message?.map(m => '*' + m).join('\n');
-        this.messagError.set(message!)
+        let message = 'Something went wrong, please try again.';
+        const resMessage: any = (res as any).message;
+        if (typeof resMessage === 'string') {
+          message = resMessage;
+        } else if (Array.isArray(resMessage)) {
+          message = resMessage.map((m: any) => '*' + (m?.message ?? String(m))).join('\n');
+        }
+        this.messagError.set(message)
       }
     })
   }

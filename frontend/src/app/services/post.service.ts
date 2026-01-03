@@ -3,6 +3,7 @@ import { inject, Injectable } from '@angular/core';
 import { GlobalResponce } from '../model/globalResponce.type';
 import { catchError, throwError } from 'rxjs';
 import { Media } from '../model/post.type';
+import { environment } from '../../environments/enveronment';
 
 @Injectable({
   providedIn: 'root',
@@ -52,7 +53,20 @@ export class PostService {
     );
   }
 
+  reportPost(postId: string , reason : string) {
+    const body = {
+      reportedPost: postId,
+      reason :reason
+    }
+    return this.http.post<GlobalResponce<string>>(`${environment.apiUrl}/api/report` , body)
+      .pipe(
+      catchError(err => {
+        console.log("catch Error in report : ", err);
 
+        return throwError(() => err)
+      })
+    );
+  }
 
   cropImageToSquare(file: File, size = 150): Promise<Blob> {
     return new Promise((resolve, reject) => {

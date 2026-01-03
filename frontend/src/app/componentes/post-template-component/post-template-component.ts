@@ -7,6 +7,7 @@ import { UtilsService } from '../../services/utils.service';
 import { environment } from '../../../environments/enveronment';
 import { PostService } from '../../services/post.service';
 import { EMPTY } from 'rxjs';
+import { LoadingService } from '../../services/loading.service';
 
 @Component({
   selector: 'app-post-template-component',
@@ -18,21 +19,27 @@ export class PostTemplateComponent {
   @Input() post: Post | null = null;
   utils = inject(UtilsService);
   postService = inject(PostService);
+  loadingService = inject(LoadingService)
   url = environment.apiUrl;
   @Output() remove = new EventEmitter<string>();
   deletPost() {
     if (!this.post) return;
+    this.loadingService.show()
     this.postService.deletPost(this.post.id).subscribe({
       next: res => {
         console.log("post deleted : ", res);
         this.remove.emit(this.post?.id);
-        // this.post = null;
+        this.loadingService.hide()
       }
     });
   }
   reportPost(reason: string) {
     if (!this.post) return;
-    console.log("reason for report post " + this.post.id + ": ", reason);
+    this.postService.reportPost(this.post.id, reason).subscribe({
+      next: res => {
+        console.log("=====> " + res);
+      }
+    })
 
   }
   active(index: number) {
