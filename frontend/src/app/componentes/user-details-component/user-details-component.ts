@@ -2,7 +2,7 @@ import { Component, inject, Input, NgModule } from '@angular/core';
 import { PostService } from '../../services/post.service';
 import { HomeService } from '../../services/home.service';
 import { PosteComponent } from "../poste.component/poste-component";
-import { UserProfileService } from '../../services/user-profile.service';
+import { ProfileService } from '../../services/user-profile.service';
 import { DiscoverService } from '../../services/discover.service';
 import { ListUsersComponent } from "../list-users-component/list-users-component";
 import { ProfileModel } from '../../model/profileInfo.type';
@@ -24,8 +24,8 @@ export class UserDetailsComponent {
   posteServic = inject(HomeService)
   discoverService = inject(DiscoverService)
   postes = [];
-  subscribed = this.discoverService.getUsers().filter(u => u.subscribed)
-  subscriber = this.discoverService.getUsers().filter(u => !u.subscribed)
+  // subscribed = this.discoverService.getUsers().filter(u => u.subscribed)
+  // subscriber = this.discoverService.getUsers().filter(u => !u.subscribed)
   togglePosts() {
     this.showPostes = true;
     this.selectedFollowing = false;

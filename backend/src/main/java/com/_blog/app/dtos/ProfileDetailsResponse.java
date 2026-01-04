@@ -10,6 +10,7 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ProfileDetailsResponse {
+
     private String firstName;
     private String lasteName;
     private String age;

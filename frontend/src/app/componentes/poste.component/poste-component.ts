@@ -26,27 +26,18 @@ export class PosteComponent implements OnInit {
     this.postesData.data = this.postesData.data.filter(p => p.id !== id);
   }
   handelLike(post: Post) {
-
-    // const success = this.postService.likePoste(post.id);
-    // if (success) {
-    // this.postes = this.postes.map(p => {
-    //   if (p.id === post.id) {
-    //     p.totalLike = p.liked ? p.totalLike - 1 : p.totalLike + 1
-    //     p.liked = !p.liked;
-    //     return p
-    //   }
-    //   return p
-    // })
-    // this.post = {
-    //   ...this.post,
-    //   liked: !this.post.liked,
-    //   totalLike: this.post.liked ? this.post.totalLike - 1 : this.post.totalLike + 1
-    // };
-
-
-
-
-    // }
-
+    this.postService.likePoste(post.id).subscribe({
+      next: res => {
+        console.log("like success : ", res);
+        this.postesData.data = this.postesData.data.map(p => {
+          if (p.id === post.id) {
+            p.totalLike = p.liked ? p.totalLike - 1 : p.totalLike + 1;
+            p.liked = !p.liked
+            return p;
+          }
+          return p
+        })
+      }
+    })
   }
 }

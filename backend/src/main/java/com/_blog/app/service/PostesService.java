@@ -2,7 +2,6 @@ package com._blog.app.service;
 
 import java.io.File;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -15,7 +14,6 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import com._blog.app.dtos.CommentEditRequest;
 import com._blog.app.dtos.CommentPosteRequest;
 import com._blog.app.dtos.PosteCreationRequest;
 import com._blog.app.dtos.PosteUpdateRequest;
@@ -172,11 +170,12 @@ public class PostesService {
         return post.getMedia();
     }
 
+    @Transactional
     public String likePost(UUID postId, UserAccount currentUser) {
         Postes post = posteUtils.findPostById(postId);
         if (likeRepo.existsByUserIdAndPostId(currentUser.getId(), post.getId())) {
             likeRepo.deleteByUserIdAndPostId(currentUser.getId(), post.getId());
-            return "Like removed!";
+            return "diselike";
         } else {
             Liks like = new Liks();
             like.setUser(currentUser);
@@ -185,10 +184,26 @@ public class PostesService {
             String content = currentUser.getUsername() + " Liked your post titled '" + "'" + post.getDescription();
             notificationService.insertNotification(post.getUser(), content);
         }
-        return "Like added!";
+        return "Like";
     }
 
-    public void commentPost(CommentPosteRequest commentPosteRequest, UserAccount currentUser) {
+    public List<GlobalDataResponse.Comment> getComment(UUID postId, UserAccount currentUser) {
+
+        List<Comment> comments = commentRepo.findAllByUserIdAndPostId(currentUser.getId(), postId);
+        return comments.stream().map(c -> {
+            String avatar = c.getUser().getAvatar();
+            String authore = c.getUser().getUsername();
+            return GlobalDataResponse.Comment.builder()
+                    .id(c.getId())
+                    .authore(authore)
+                    .avatar(avatar)
+                    .content(c.getContente())
+                    .createTime(c.getCrat_at())
+                    .build();
+        }).toList();
+    }
+
+    public GlobalDataResponse.Comment commentPost(CommentPosteRequest commentPosteRequest, UserAccount currentUser) {
         Postes post = posteUtils.findPostById(commentPosteRequest.postId());
         Comment comment = new Comment();
         comment.setContente(commentPosteRequest.description());
@@ -197,23 +212,17 @@ public class PostesService {
         commentRepo.save(comment);
         String content = currentUser.getUsername() + " comment your post titled '" + "'" + post.getDescription();
         notificationService.insertNotification(post.getUser(), content);
+        return GlobalDataResponse.Comment.builder()
+                .id(comment.getId())
+                .authore(comment.getUser().getUsername())
+                .avatar(comment.getUser().getAvatar())
+                .content(comment.getContente())
+                .createTime(comment.getCrat_at())
+                .build();
     }
 
-    public void editComment(CommentEditRequest commentEditRequest, UserAccount currentUser) {
 
-        Comment comment = posteUtils.findComentById(commentEditRequest.commentId());
-        if (!posteUtils.haveAccess(comment, currentUser)) {
-            throw CustomResponseException.CustomException(403, "You can't edit this comment");
-        }
-
-        if (!commentEditRequest.description().isEmpty()) {
-            comment.setContente(commentEditRequest.description());
-            comment.setEdit_at(LocalTime.now());
-        }
-
-        commentRepo.save(comment);
-    }
-
+@Transactional
     public void deletComment(UUID commentId, UserAccount currentUser) {
         Comment comment = posteUtils.findComentById(commentId);
 

@@ -1,6 +1,6 @@
 package com._blog.app.entities;
 
-import java.time.LocalTime;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 import org.hibernate.annotations.UuidGenerator;
@@ -25,14 +25,15 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Comment {
-     @Id
+
+    @Id
     @GeneratedValue(generator = "UUID")
     @UuidGenerator
-     private UUID id;
-      @Column(length = 500)
-     private String contente;
-     private LocalTime crat_at = LocalTime.now();
-     private LocalTime edit_at = LocalTime.now();
+    private UUID id;
+    @Column(length = 500)
+    private String contente;
+    private LocalDateTime crat_at = LocalDateTime.now();
+    private LocalDateTime edit_at = LocalDateTime.now();
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "post_id", nullable = false)
     private Postes post;

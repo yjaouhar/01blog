@@ -13,5 +13,7 @@ import com._blog.app.entities.UserAccount;
 public interface  PosteRepo  extends JpaRepository<Postes, UUID> {
     Page<Postes> findAllByUser(UserAccount user, Pageable pageable);
     @EntityGraph(attributePaths = {"user"})
-    Page<Postes> findByUserIn(List<UserAccount> users , Pageable pageable );
+    Page<Postes> findByUserIn(List<UserAccount> users, Pageable pageable);
+    long countByUserId(UUID userId);
+
 }

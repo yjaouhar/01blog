@@ -21,25 +21,20 @@ import org.springframework.web.multipart.MultipartFile;
 import com._blog.app.dtos.EditProfileRequest;
 import com._blog.app.dtos.ProfileDetailsResponse;
 import com._blog.app.entities.Postes;
-import com._blog.app.entities.Subscribers;
 import com._blog.app.entities.UserAccount;
 import com._blog.app.repository.CommentRepo;
 import com._blog.app.repository.LikeRepo;
 import com._blog.app.repository.PosteRepo;
-import com._blog.app.repository.ReportRepo;
 import com._blog.app.repository.SubscriberRepo;
 import com._blog.app.repository.UserRepo;
 import com._blog.app.shared.CustomResponseException;
 import com._blog.app.shared.GlobalDataResponse;
 import com._blog.app.shared.GlobalDataResponse.PostResponse;
-import com._blog.app.shared.GlobalDataResponse.UserResponse;
 import com._blog.app.utils.UserUtils;
 
 @Service
 public class ProfileService {
 
-    @Autowired
-    private ReportRepo reportRepo;
     @Autowired
     private SubscriberRepo subscriberRepo;
     @Autowired
@@ -52,8 +47,7 @@ public class ProfileService {
     private LikeRepo likeRepo;
     @Autowired
     private CommentRepo commentRepo;
-    @Autowired
-    private NotificationService notificationService;
+
     private static final Logger logger = LoggerFactory.getLogger(PostesService.class);
 
     public GlobalDataResponse<List<PostResponse>> getProfilePoste(UserAccount profileUser, UserAccount currentUser, int page, int size) {
@@ -166,73 +160,7 @@ public class ProfileService {
         userRepo.save(profileUser);
     }
 
-    public void subscribHandel(UserAccount currentUser, UserAccount targetUser) {
 
-        if (currentUser.getId().equals(targetUser.getId())) {
-            throw CustomResponseException.CustomException(400, "can't follow yourself");
-        }
 
-        if (subscriberRepo.existsByUserId_IdAndTarget_Id(currentUser.getId(), targetUser.getId())) {
-            subscriberRepo.deleteByUser_IdAndTarget_Id(currentUser.getId(), targetUser.getId());
-        } else {
-            Subscribers subscribers = new Subscribers();
-            subscribers.setTarget(targetUser);
-            subscribers.setUser(currentUser);
-            subscriberRepo.save(subscribers);
-            String content = currentUser.getUsername() + " started follwing you ";
-            notificationService.insertNotification(targetUser, content);
 
-        }
-    }
-
-    public GlobalDataResponse<List<UserResponse>> followers(UserAccount currentUser, int page, int size) {
-
-        Page<Subscribers> followersPage = subscriberRepo.findByTarget(currentUser, PageRequest.of(page, size));
-        List<GlobalDataResponse.UserResponse> followers = followersPage.getContent().stream()
-                .map(follow -> {
-                    UserAccount user = follow.getUser();
-                    return new GlobalDataResponse.UserResponse(user.getAvatar(), user.getFirstName(),
-                            user.getLastName(), user.getUsername(),
-                            subscriberRepo.existsByUserId_IdAndTarget_Id(currentUser.getId(), user.getId()));
-                }).toList();
-        return new GlobalDataResponse<>(followers, followersPage.getNumber(), followersPage.getTotalPages(),
-                followersPage.hasNext());
-    }
-
-    public GlobalDataResponse<List<UserResponse>> following(UserAccount currentUser, int page, int size) {
-
-        Page<Subscribers> followingPage = subscriberRepo.findByUser(currentUser, PageRequest.of(page, size));
-        List<GlobalDataResponse.UserResponse> following = followingPage.getContent().stream()
-                .map(follow -> {
-                    UserAccount user = follow.getUser();
-                    return new GlobalDataResponse.UserResponse(user.getAvatar(), user.getFirstName(),
-                            user.getLastName(), user.getUsername(), true);
-                }).toList();
-        return new GlobalDataResponse<>(
-                following, followingPage.getNumber(), followingPage.getTotalPages(),
-                followingPage.hasNext());
-    }
-
-    public List<GlobalDataResponse.UserResponse> users(UUID currentUserId, int page, int size) {
-        Page<UserAccount> allusers = userRepo.findByIdNot(currentUserId,
-                PageRequest.of(page, size, Sort.by(Sort.Direction.ASC, "username")));
-        List<GlobalDataResponse.UserResponse> users = allusers.getContent().stream().map(user -> {
-            boolean isfollowed = subscriberRepo.existsByUserId_IdAndTarget_Id(currentUserId, user.getId());
-            return new GlobalDataResponse.UserResponse(user.getAvatar(), user.getFirstName(), user.getLastName(),
-                    user.getUsername(),
-                    isfollowed);
-        }).toList();
-        return users;
-    }
-
-    public List<GlobalDataResponse.UserResponse> explor(UUID currentUserId, String keyword, int page, int size) {
-        Page<UserAccount> allusers = userRepo.searchByFullName(currentUserId, keyword,
-                PageRequest.of(page, size, Sort.by(Sort.Direction.ASC, "firstname")));
-        List<GlobalDataResponse.UserResponse> users = allusers.getContent().stream().map(user -> {
-            boolean isfollowed = subscriberRepo.existsByUserId_IdAndTarget_Id(currentUserId, user.getId());
-            return new GlobalDataResponse.UserResponse(user.getAvatar(), user.getFirstName(), user.getLastName(),
-                    user.getUsername(), isfollowed);
-        }).toList();
-        return users;
-    }
 }

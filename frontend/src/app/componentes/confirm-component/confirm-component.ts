@@ -22,11 +22,8 @@ export class ConfirmComponent {
   }
   confirmDelete() {
     this.conferm.emit(true)
-
     const modalEl = document.getElementById('confermModal' + this.id);
     const modal = bootstrap.Modal.getInstance(modalEl);
-
-    console.log("******** ", modalEl);
     if (modal) {
       modal.hide();
     }

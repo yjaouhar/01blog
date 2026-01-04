@@ -21,9 +21,10 @@
                 </div>
             </div>
             <!-- </div> -->
-            @for (comment of comments; track $index) {
+            @if (comments().length>0) {
+            @for (comment of comments(); track $index) {
             <div class="comment d-flex align-items-start gap-2 mb-3">
-                <img [src]="comment.avatar"
+                <img [src]="url+comment.avatar"
                     alt="User"
                     class="rounded-circle border"
                     width="40" height="40">
@@ -32,20 +33,42 @@
                     class="comment-content bg-light p-2 px-3 rounded-3 flex-grow-1">
                     <div
                         class="d-flex justify-content-between align-items-center">
-                        <span class="fw-semibold">{{ comment.author }} </span>
-                        <small class="text-muted">{{ comment.time }}</small>
+                        <span class="fw-semibold">{{ comment.authore }} </span>
+                        <small class="text-muted">{{
+                            utils.timeAgo(comment.createTime) }}</small>
                     </div>
-                    <p class="mb-1">{{ comment.text }}</p>
+                    <p class="mb-1" style="word-break:break-all;">{{
+                        comment.content }}</p>
+                    <div style="width: 100%; text-align: end; "
+                        [attr.data-id]="comment.id">
+                        <i class="bi bi-trash3-fill text-danger"
+                            style="cursor: pointer;"
+                            (click)="selctedComment(comment.id)"></i>
 
+                        @if (showConfermation()) {
+                        <app-confermation
+                            message="Do you want to remove this comment?"
+                            (react)="confirm($event)"></app-confermation>
+                        }
+                    </div>
                 </div>
             </div>
             }
+            }@else {
+            <app-not-resorce type="comment"
+                message="No Comment Yet"></app-not-resorce>
+            }
         </div>
-
+        @if (showError()) {
+        <div class="text-danger small text-center">
+            <pre style="white-space: pre-wrap;">{{errorMessage()}}</pre>
+        </div>
+        }
         <!-- Footer -->
         <div class="modal-footer d-flex">
             <input type="text" class="form-control me-2"
-                placeholder="Write a comment..." [(ngModel)]="commentText">
+                placeholder="Write a comment..." [(ngModel)]="commentText"
+                (keypress)="chane()">
             <button class="btn btn-primary"
                 (click)="handelComment(post.id)">Send</button>
         </div>

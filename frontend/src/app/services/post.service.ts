@@ -1,41 +1,56 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { GlobalResponce } from '../model/globalResponce.type';
-import { catchError, throwError } from 'rxjs';
+import { catchError, map, throwError } from 'rxjs';
 import { Media } from '../model/post.type';
 import { environment } from '../../environments/enveronment';
+import { CommentModal } from '../model/comment.type';
 
 @Injectable({
   providedIn: 'root',
 })
 export class PostService {
   http = inject(HttpClient)
-  likePoste(postId: string): boolean {
-    console.log("----> like the post ", postId);
-    return true
+  likePoste(postId: string) {
+    return this.http.post(`${environment.apiUrl}/api/post/like/${postId}`, {}).pipe(
+      catchError(err => throwError(() => err))
+    )
   }
 
 
-  commentPoste(commentDetails: object): boolean {
-    console.log("----> new comment for the post ", commentDetails);
-    return true
+  commentPoste(postId: string, description: string) {
+    return this.http.post<GlobalResponce<CommentModal>>(`${environment.apiUrl}/api/post/comment`, {
+      description,
+      postId
+    }).pipe(
+      catchError(err => throwError(() => err))
+    );
   }
 
 
-  getComment(postId: number) {
-    return [
-      { author: 'Yassine', avatar: '/prof.png', text: 'Great post!', time: '5 min ago' },
-      { author: 'Sara', avatar: '/p.jpg', text: 'Thanks for sharing', time: '10 min ago' }
-    ]
+  getComment(postId: string) {
+
+    return this.http.get<GlobalResponce<CommentModal[]>>(`${environment.apiUrl}/api/post/comment/${postId}`).pipe(
+      catchError(err => throwError(() => err))
+    );
   }
+  deletComment(commentId: string) {
+    return this.http.delete<GlobalResponce<string>>(`${environment.apiUrl}/api/post/comment/${commentId}`).pipe(
+      catchError(err => {
+        return throwError(() => err)
+      })
+    );
+  }
+
+  
   creatPost(form: FormData) {
-    return this.http.post<GlobalResponce<string>>("http://localhost:8080/api/post", form).pipe(
+    return this.http.post<GlobalResponce<string>>(`${environment.apiUrl}/api/post`, form).pipe(
       catchError(err => throwError(() => err))
     );
   }
 
   editePost(form: FormData) {
-    return this.http.patch<GlobalResponce<Media[]>>("http://localhost:8080/api/post", form).pipe(
+    return this.http.patch<GlobalResponce<Media[]>>(`${environment.apiUrl}/api/post`, form).pipe(
       catchError(err => {
         console.log("catch Error : ", err);
 
@@ -43,8 +58,8 @@ export class PostService {
       })
     );
   }
-  deletPost(postId:string) {
-    return this.http.delete<GlobalResponce<string>>(`http://localhost:8080/api/post/${postId}`).pipe(
+  deletPost(postId: string) {
+    return this.http.delete<GlobalResponce<string>>(`${environment.apiUrl}/api/post/${postId}`).pipe(
       catchError(err => {
         console.log("catch Error : ", err);
 
@@ -53,19 +68,19 @@ export class PostService {
     );
   }
 
-  reportPost(postId: string , reason : string) {
+  reportPost(postId: string, reason: string) {
     const body = {
       reportedPost: postId,
-      reason :reason
+      reason: reason
     }
-    return this.http.post<GlobalResponce<string>>(`${environment.apiUrl}/api/report` , body)
+    return this.http.post<GlobalResponce<string>>(`${environment.apiUrl}/api/report`, body)
       .pipe(
-      catchError(err => {
-        console.log("catch Error in report : ", err);
+        catchError(err => {
+          console.log("catch Error in report : ", err);
 
-        return throwError(() => err)
-      })
-    );
+          return throwError(() => err)
+        })
+      );
   }
 
   cropImageToSquare(file: File, size = 150): Promise<Blob> {

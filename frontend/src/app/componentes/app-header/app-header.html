@@ -1,4 +1,5 @@
  <header class="header-custom">
+    @if (authService.user$ | async; as user) {
     <div class="container-fluid px-3">
         <div class="d-flex justify-content-between align-items-center">
             <!-- Logo Section -->
@@ -41,11 +42,12 @@
                     </ul>
                 </div>
 
-                @if (false) {
-                <img src="/d.jpg" alt="User Avatar"
+                @if (user.avatar) {
+                <img [src]="url+user.avatar" alt="User Avatar"
                     class="btn-user" width="50" height="50">
                 }@else {
-                <button type="button" class="btn  btn-user">U</button>
+                <button type="button"
+                    class="btn  btn-user">{{user.username.at(0)?.toLocaleUpperCase()}}</button>
                 }
                 <button type="button" class="btn btn-danger btn-logout"
                     (click)="logout()">
@@ -54,4 +56,5 @@
             </div>
         </div>
     </div>
+    }
 </header>

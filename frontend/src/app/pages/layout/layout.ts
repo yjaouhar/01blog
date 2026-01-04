@@ -12,10 +12,13 @@ import { Loading } from "../../componentes/loading/loading";
 import { PostCreateComponent } from "../../componentes/post-create-component/post-create-component";
 import { NotResorce } from "../../componentes/not-resorce/not-resorce";
 import { UtilsService } from '../../services/utils.service';
+import { AuthService } from '../../services/auth.service';
+import { CommonModule } from '@angular/common';
+import { User } from '../../model/user.type';
 
 @Component({
   selector: 'app-layout',
-  imports: [RouterOutlet, AppHeader, AppFooter, PosteComponent, Loading, NotResorce],
+  imports: [RouterOutlet, AppHeader, AppFooter, PosteComponent, Loading, NotResorce, CommonModule],
   templateUrl: './layout.html',
   styleUrl: './layout.css',
 })
@@ -24,27 +27,29 @@ export class Layout implements OnInit {
   loadingService = inject(LoadingService)
   router = inject(Router)
   utils = inject(UtilsService);
-  isHomePage = signal(true);
+  authService = inject(AuthService);
+  isHomePage = signal(this.router.url === "/");
   loding = signal(true);
   start = signal(true);
   postes = signal<PostModel | null>(null)
-
   ngOnInit(): void {
-    this.loadingService.show();
+    // this.loadingService.show();
     this.router.events.pipe(
       filter(event => event instanceof NavigationEnd)
     ).subscribe((event: NavigationEnd) => {
       this.isHomePage.set(event.urlAfterRedirects === '/');
     });
-    this.homeService.getPodteData().subscribe({
-      next: res => {
-        this.start.set(false)
-        console.log("++++++", res.data);
-        this.postes.set(res.data)
-      },
-      complete: () => {
-        this.loadingService.hide()
-      }
-    });
+    if (this.isHomePage()) {
+      this.homeService.getPodteData().subscribe({
+        next: res => {
+          this.start.set(false)
+          console.log("++++++", res.data);
+          this.postes.set(res.data)
+        },
+        complete: () => {
+          this.loadingService.hide()
+        }
+      });
+    }
   }
 }

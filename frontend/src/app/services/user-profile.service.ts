@@ -1,45 +1,17 @@
-import { Injectable } from '@angular/core';
-import { map } from 'rxjs';
+import { HttpClient } from '@angular/common/http';
+import { inject, Injectable } from '@angular/core';
+import { catchError, map, throwError } from 'rxjs';
+import { environment } from '../../environments/enveronment';
 
 @Injectable({
   providedIn: 'root',
 })
-export class UserProfileService {
-
+export class ProfileService {
+  http = inject(HttpClient);
   getUserProfileWithUsername(username: string) {
-    console.log("prof user ==> : ", username);
-    let m = new Map()
-    m.set("yjaouhar", {
-      id: "1",
-      avatar: '/prof.png',
-      username: 'yjaouhar',
-      name: 'yassine jaouhary',
-      age: '21',
-      gander: 'male',
-      bio: 'hello word',
-      email: 'yassine@gmail.com',
-      totalPoste: 100,
-      totalFollow: 1020,
-      totalFollowing: 300,
-
-    }
-    )
-    m.set("test1", {
-      id: "2",
-      username: 'test1',
-      avatar: '/prof.png',
-      name: 'yassine jaouhary',
-      age: '21',
-      gander: 'male',
-      bio: 'hello word',
-      email: 'yassine@gmail.com',
-      totalPoste: 100,
-      totalFollow: 1020,
-      totalFollowing: 300,
-
-    }
-    )
-    return m.get(username)
+    return this.http.get(`${environment.apiUrl}/profile/${username}`).pipe(
+      catchError(err => throwError(() => err))
+    );
   }
   getUserProfile() {
 

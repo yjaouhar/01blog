@@ -7,27 +7,31 @@
         </div>
     </div>
     <div class="user-list">
+        @if(users.length<=0){
+        <app-loading></app-loading>
+        }@else {
         @for (user of users; track user.id ) {
         <div
             class="user-item d-flex align-items-center justify-content-between p-2">
 
             <div class="user-info d-flex align-items-center">
-                <a [routerLink]="['/profile', user.username]"
+                <a [routerLink]="['/profile', user.name]"
                     class="user-link d-flex align-items-center text-decoration-none">
-                    <img [src]="user.avatar" alt="{{ user.name }}"
+                    <img [src]="url+user.avatar" alt="{{ user.name }}"
                         class="avatar rounded-circle" width="40" height="40">
                     <div class="ms-2">
                         <h6 class="name mb-0">{{ user.name }}</h6>
-                        <small class="stats">{{ user.totalPoste }} posts</small>
+                        <small class="stats">{{ user?.totalPoste ?? 0 }}
+                            posts</small>
                     </div>
                 </a>
             </div>
 
             <div>
-                @if (user.subscribed) {
+                @if (user.followed) {
                 <button
-                    class="btn btn-sm btn-outline-danger" data-bs-toggle="modal"
-                    [attr.data-bs-target]="'#confermModal'+user.id"> Remove
+                    class="btn btn-sm btn-outline-danger"
+                    (click)="unfollow(user)"> Remove
                 </button>
                 }@else{
                 <button class="btn btn-sm btn-primary"
@@ -37,15 +41,13 @@
 
         </div>
 
-        <div class="modal fade" [id]="'confermModal'+user.id"
-            tabindex="-1"
-            aria-modal="true" role="dialog"
-            [attr.data-bs-backdrop]="'static'"
-            [attr.data-bs-keyboard]="false">
-            <app-confirm-component [id]="user.id"
-                (conferm)="confermation($event , user)"
-                message="Are you sure you want to unfollow"></app-confirm-component>
-        </div>
+        }
+
+        }
+        @if (showConfermation()) {
+        <app-confermation
+            message="Do you want to unfollow this user?"
+            (react)="confermation($event)"></app-confermation>
         }
 
     </div>

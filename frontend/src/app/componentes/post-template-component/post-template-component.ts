@@ -8,10 +8,11 @@ import { environment } from '../../../environments/enveronment';
 import { PostService } from '../../services/post.service';
 import { EMPTY } from 'rxjs';
 import { LoadingService } from '../../services/loading.service';
+import { Confermation } from '../confermation/confermation';
 
 @Component({
   selector: 'app-post-template-component',
-  imports: [EditePostComponent, ConfirmComponent, ReportComponent],
+  imports: [EditePostComponent, ReportComponent, Confermation],
   templateUrl: './post-template-component.html',
   styleUrl: './post-template-component.css',
 })
@@ -20,10 +21,15 @@ export class PostTemplateComponent {
   utils = inject(UtilsService);
   postService = inject(PostService);
   loadingService = inject(LoadingService)
+  showConfermation = signal(false)
   url = environment.apiUrl;
   @Output() remove = new EventEmitter<string>();
-  deletPost() {
+  deletPost(event: boolean) {
     if (!this.post) return;
+    this.showConfermation.set(false)
+    if (!event) {
+      return
+    }
     this.loadingService.show()
     this.postService.deletPost(this.post.id).subscribe({
       next: res => {
@@ -35,7 +41,7 @@ export class PostTemplateComponent {
   }
   reportPost(reason: string) {
     if (!this.post) return;
-  
+
 
   }
   active(index: number) {

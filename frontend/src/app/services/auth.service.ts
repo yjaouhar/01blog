@@ -5,6 +5,7 @@ import { BehaviorSubject, catchError, EMPTY, finalize, map, Observable, of, thro
 import { Router } from '@angular/router';
 import { User } from '../model/user.type';
 import { GlobalResponce } from '../model/globalResponce.type';
+import { environment } from '../../environments/enveronment';
 type Response = {
   success: boolean,
   message: string[] | null;
@@ -16,10 +17,15 @@ export class AuthService {
   router: Router = inject(Router);
   http = inject(HttpClient)
   private refreshInProgress = false;
+  private userSubject = new BehaviorSubject<User | null>(null);
+  user$ = this.userSubject.asObservable();
 
+  setUser(user: User) {
+    this.userSubject.next(user);
+  }
   register(formData: FormData): Observable<Response> {
 
-    return this.http.post<GlobalResponce<string>>('http://localhost:8080/api/auth/register', formData).pipe(
+    return this.http.post<GlobalResponce<string>>(`${environment.apiUrl}/api/auth/register`, formData).pipe(
       map((res) => {
         return { success: true, message: [res?.data] }
       }),
@@ -30,12 +36,13 @@ export class AuthService {
         return throwError(() => err);
       })
     )
-
   }
   logine(basicAuth: BasicAuthType): Observable<Response> {
-    return this.http.post<GlobalResponce<string>>('http://localhost:8080/api/auth/login', basicAuth, { withCredentials: true }).pipe(
+    return this.http.post<GlobalResponce<User>>(`${environment.apiUrl}/api/auth/login`, basicAuth, { withCredentials: true }).pipe(
       map((res) => {
-        return { success: true, message: [res?.data] }
+        console.log("logine", res.data);
+        this.setUser(res.data);
+        return { success: true, message: [] }
       }),
       catchError((err) => {
         if (err.status === 400 || err.status === 401) {
@@ -46,7 +53,7 @@ export class AuthService {
     )
   }
   logout(): void {
-    this.http.post<GlobalResponce<string>>('http://localhost:8080/api/auth/logout', {}).pipe(
+    this.http.post<GlobalResponce<string>>(`${environment.apiUrl}/api/auth/logout`, {}).pipe(
       catchError(err => {
         return throwError(() => err);
       })
@@ -58,7 +65,12 @@ export class AuthService {
 
   }
   getMe(): Observable<any> {
-    return this.http.get<GlobalResponce<string>>('http://localhost:8080/api/auth/me', { withCredentials: true })
+    return this.http.get<GlobalResponce<User>>(`${environment.apiUrl}/api/auth/me`, { withCredentials: true }).pipe(
+      map(res => {
+        this.setUser(res.data);
+        return res
+      })
+    )
   }
   refreshToken() {
     if (this.refreshInProgress) {
@@ -66,10 +78,14 @@ export class AuthService {
     }
     this.refreshInProgress = true;
 
-    return this.http.post<GlobalResponce<string>>(
-      'http://localhost:8080/api/auth/refresh',
+    return this.http.post<GlobalResponce<User>>(
+      `${environment.apiUrl}/api/auth/refresh`,
       {}, { withCredentials: true }
     ).pipe(
+      map(res => {
+        this.setUser(res.data);
+        return res;
+      }),
       finalize(() => this.refreshInProgress = false));
   }
 

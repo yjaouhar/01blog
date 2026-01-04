@@ -43,23 +43,26 @@ public class GlobalDataResponse<T> {
     @Getter
     @Setter
     @AllArgsConstructor
+    @Builder
     public static class UserResponse {
 
+        private UUID id;
         private String avatar;
-        private String lastName;
-        private String firstName;
-        private String userName;
-        private boolean folloewd;
+        private String name;
+        private Long totalPost;
+        private boolean followed;
 
     }
 
     @Getter
     @Setter
     @AllArgsConstructor
+    @Builder
     public static class LoginResponse {
 
         private String username;
-        private String token;
+        private String avatar;
+        private String role;
     }
 
     @Getter
@@ -76,7 +79,6 @@ public class GlobalDataResponse<T> {
 
     @Setter
     @Getter
-    // @AllArgsConstructor
     @Builder
     public static class PostResponse {
 
@@ -106,6 +108,18 @@ public class GlobalDataResponse<T> {
             this.mediaType = mediaType;
             this.mediaUrl = mediaUrl;
         }
+    }
+
+    @Builder
+    @Getter
+    @Setter
+    public static class Comment {
+
+        private UUID id;
+        private String authore;
+        private String avatar;
+        private LocalDateTime createTime;
+        private String content;
     }
 
 }

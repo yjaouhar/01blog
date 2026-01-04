@@ -30,6 +30,7 @@ import com._blog.app.model.JwtUserPrincipal;
 import com._blog.app.repository.RefreshTokenRepo;
 import com._blog.app.service.AuthService;
 import com._blog.app.shared.CustomResponseException;
+import com._blog.app.shared.GlobalDataResponse;
 import com._blog.app.shared.GlobalResponse;
 import com._blog.app.utils.UserUtils;
 
@@ -49,11 +50,13 @@ public class AuthController {
     @Autowired
     RefreshTokenRepo refreshTokenRepo;
 
+    @Autowired
+    UserUtils userUtils;
+
     @PostMapping(value = "/register", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<GlobalResponse<?>> registerRequest(
             @RequestPart("data") @Valid RegisterRequest regesterRequest,
             @RequestPart(value = "file", required = false) MultipartFile file) {
-        // System.out.println("-----> fiel: " + file.getName());
         authService.createUser(regesterRequest, file);
         return new ResponseEntity<>(new GlobalResponse<>("User registered successfully!"), HttpStatus.CREATED);
     }
@@ -78,8 +81,12 @@ public class AuthController {
         refreshTokenRepo.save(refreshToken);
         response.addHeader(HttpHeaders.SET_COOKIE, UserUtils.generatCookie("refreshToken", refToken, Duration.ofDays(7)));
         response.addHeader(HttpHeaders.SET_COOKIE, UserUtils.generatCookie("access_token", accessToken, Duration.ofMinutes(15)));
-
-        return new ResponseEntity<>(new GlobalResponse<>(user.getUsername()), HttpStatus.OK);
+        return new ResponseEntity<>(new GlobalResponse<>(GlobalDataResponse.LoginResponse.builder()
+                .username(user.getUsername())
+                .avatar(user.getAvatar())
+                .role(user.getRole())
+                .build()
+        ), HttpStatus.OK);
     }
 
     @PostMapping("/refresh")
@@ -106,7 +113,11 @@ public class AuthController {
         );
         response.addHeader(HttpHeaders.SET_COOKIE, UserUtils.generatCookie("refreshToken", newRefToken, Duration.ofDays(7)));
         response.addHeader(HttpHeaders.SET_COOKIE, UserUtils.generatCookie("access_token", newAccess, Duration.ofMinutes(15)));
-        return new ResponseEntity<>(new GlobalResponse<>("refresh success"), HttpStatus.OK);
+        return new ResponseEntity<>(new GlobalResponse<>(GlobalDataResponse.LoginResponse.builder()
+                .username(user.getUsername())
+                .avatar(user.getAvatar())
+                .role(user.getRole())
+                .build()), HttpStatus.OK);
     }
 
     @PostMapping("/logout")
@@ -123,7 +134,13 @@ public class AuthController {
 
     @GetMapping("/me")
     public ResponseEntity<GlobalResponse<?>> testEndpoint() {
-        JwtUserPrincipal principal = (JwtUserPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        return new ResponseEntity<>(new GlobalResponse<>(principal.getRole()), HttpStatus.OK);
+        JwtUserPrincipal principal = (JwtUserPrincipal) SecurityContextHolder.getContext().getAuthentication()
+                .getPrincipal();
+        UserAccount user = userUtils.findUserById(principal.getId());
+        return new ResponseEntity<>(new GlobalResponse<>(GlobalDataResponse.LoginResponse.builder()
+                .username(user.getUsername())
+                .avatar(user.getAvatar())
+                .role(user.getRole())
+                .build()), HttpStatus.OK);
     }
 }

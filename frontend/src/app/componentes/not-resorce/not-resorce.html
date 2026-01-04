@@ -4,8 +4,10 @@
         <div class="mb-2">
             @if (type==='post') {
             <i class="bi bi-camera fs-1 text-muted"></i>
-            }@else {
+            }@else if (type==='user') {
             <i class="bi bi-people-fill"></i>
+            }@else if (type==='comment'){
+            <i class="bi bi-chat-right-dots"></i>
             }
         </div>
         <p class="text-muted mb-0">{{message}}</p>

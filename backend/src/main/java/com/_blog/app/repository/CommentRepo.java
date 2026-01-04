@@ -1,6 +1,6 @@
 package com._blog.app.repository;
 
-import java.util.Optional;
+import java.util.List;
 import java.util.UUID;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -14,5 +14,5 @@ public interface  CommentRepo extends JpaRepository<Comment, UUID> {
     
     long countByPostId(UUID postId);
 
-    Optional<Comment> findByUserIdAndPostId(UUID userId, UUID postId);
+    List<Comment> findAllByUserIdAndPostId(UUID userId, UUID postId);
 }

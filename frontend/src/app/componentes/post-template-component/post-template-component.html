@@ -1,5 +1,4 @@
 @if (post) {
-
 <div>
     <div
         class="card-header d-flex align-items-center justify-content-between bg-white border-0">
@@ -26,15 +25,15 @@
                     <li>
                         <a class="dropdown-item" data-bs-toggle="modal"
                             [attr.data-bs-target]="'#editPostModal' + post.id">
-                            <i class="bi bi-pencil-fill text-success p-2"></i>
+                            Edit <i
+                                class="bi bi-pencil-fill text-success p-2"></i>
                         </a>
                     </li>
 
                     <li>
-                        <a class="dropdown-item text-danger"
-                            data-bs-toggle="modal"
-                            [attr.data-bs-target]="'#confermModal'+post.id">
-                            <i class="bi bi-trash-fill text-danger p-2"></i>
+                        <a class="dropdown-item">
+                            Delet <i class="bi bi-trash-fill text-danger p-2"
+                                (click)="showConfermation.set(true)"></i>
                         </a>
                     </li>
                     }
@@ -56,13 +55,10 @@
                     <app-edite-post-component
                         [post]="post"></app-edite-post-component>
                 </div>
-                <div class="modal fade" [id]="'confermModal'+post.id"
-                    tabindex="-1"
-                    aria-modal="true" role="dialog">
-                    <app-confirm-component [id]="post.id"
-                        (conferm)="deletPost()"
-                        message="do you want"></app-confirm-component>
-                </div>
+                @if (showConfermation()) {
+                <app-confermation message="Do you want to remove this poste?"
+                    (react)="deletPost($event)"></app-confermation>
+                }
                 }
                 <div class="modal fade" [id]="'reportModel'+post.id"
                     tabindex="-1"

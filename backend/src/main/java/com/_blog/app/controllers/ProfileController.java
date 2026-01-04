@@ -18,8 +18,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com._blog.app.dtos.EditProfileRequest;
 import com._blog.app.entities.UserAccount;
+import com._blog.app.model.JwtUserPrincipal;
 import com._blog.app.service.ProfileService;
-import com._blog.app.shared.GlobalDataResponse;
 import com._blog.app.shared.GlobalResponse;
 import com._blog.app.utils.UserUtils;
 
@@ -33,9 +33,10 @@ public class ProfileController {
     @Autowired
     private UserUtils userUtils;
 
-    @GetMapping
-    public ResponseEntity<GlobalResponse<?>> userDetails(@PathVariable UUID profileId, Principal principal) {
-        UserAccount user = userUtils.findUserByUsername(principal.getName());
+    @GetMapping("/{username}")
+    public ResponseEntity<GlobalResponse<?>> userDetails(@PathVariable String username) {
+        JwtUserPrincipal principal = UserUtils.getPrincipal();
+        UserAccount user = userUtils.findUserById(principal.getId());
         return new ResponseEntity<>(new GlobalResponse<>(profileService.userDetails(profileId, user)),
                 HttpStatus.OK);
     }
@@ -48,25 +49,6 @@ public class ProfileController {
         UserAccount profileUser = userUtils.findUserById(profileId);
         return new ResponseEntity<>(
                 new GlobalResponse<>(profileService.getProfilePoste(profileUser, currentUser, page, size)),
-                HttpStatus.OK);
-    }
-
-    @GetMapping("/users")
-    public ResponseEntity<GlobalResponse<?>> allUsers(@RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size, Principal principal) {
-        UserAccount currentUser = userUtils.findUserByUsername(principal.getName());
-        return new ResponseEntity<>(
-                new GlobalResponse<>(profileService.users(currentUser.getId(), page, size)),
-                HttpStatus.OK);
-    }
-
-    @GetMapping("/explore/{keyword}")
-    public ResponseEntity<GlobalResponse<?>> explore(@PathVariable String keyword,
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size, Principal principal) {
-        UserAccount currentUser = userUtils.findUserByUsername(principal.getName());
-        return new ResponseEntity<>(
-                new GlobalResponse<>(profileService.explor(currentUser.getId(), keyword, page, size)),
                 HttpStatus.OK);
     }
 
@@ -84,28 +66,18 @@ public class ProfileController {
 
     }
 
-    @GetMapping("/subscrib/{userId}")
-    public ResponseEntity<GlobalResponse<?>> subscibe(@PathVariable UUID userId, Principal principal) {
-        UserAccount currentUser = userUtils.findUserByUsername(principal.getName());
-        UserAccount targetUser = userUtils.findUserById(userId);
-        profileService.subscribHandel(currentUser, targetUser);
-        return new ResponseEntity<>(new GlobalResponse<>("subscrib seccess !"), HttpStatus.OK);
-    }
-
-    @GetMapping("/followers")
-    public ResponseEntity<GlobalResponse<?>> followers(@RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size, Principal principal) {
-        UserAccount currentUser = userUtils.findUserByUsername(principal.getName());
-        GlobalDataResponse followers = profileService.followers(currentUser, page, size);
-        return new ResponseEntity<>(new GlobalResponse<>(followers), HttpStatus.OK);
-    }
-    
-    @GetMapping("/following")
-    public ResponseEntity<GlobalResponse<?>> following(@RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size, Principal principal) {
-        UserAccount currentUser = userUtils.findUserByUsername(principal.getName());
-        GlobalDataResponse following = profileService.following(currentUser, page, size);
-        return new ResponseEntity<>(new GlobalResponse<>(following), HttpStatus.OK);
-    }
-
+    // @GetMapping("/followers")
+    // public ResponseEntity<GlobalResponse<?>> followers(@RequestParam(defaultValue = "0") int page,
+    //         @RequestParam(defaultValue = "10") int size, Principal principal) {
+    //     UserAccount currentUser = userUtils.findUserByUsername(principal.getName());
+    //     GlobalDataResponse followers = profileService.followers(currentUser, page, size);
+    //     return new ResponseEntity<>(new GlobalResponse<>(followers), HttpStatus.OK);
+    // }
+    // @GetMapping("/following")
+    // public ResponseEntity<GlobalResponse<?>> following(@RequestParam(defaultValue = "0") int page,
+    //         @RequestParam(defaultValue = "10") int size, Principal principal) {
+    //     UserAccount currentUser = userUtils.findUserByUsername(principal.getName());
+    //     GlobalDataResponse following = profileService.following(currentUser, page, size);
+    //     return new ResponseEntity<>(new GlobalResponse<>(following), HttpStatus.OK);
+    // }
 }
