@@ -1,15 +1,18 @@
 export interface ProfileModel {
     id: string,
-    avatar: string,
-    username: string,
-    firstName: string;
-    lastName: string,
-    age: string,
-    gander: string,
+    firstName: string,
+    lasteName: string,
+    birthday: string,
+    gender: string,
     bio: string,
+    userName: string,
     email: string,
-    totalPoste: number,
-    totalFollow: number,
-    totalFollowing: number,
-    isFollowing: boolean
+    avatar: string,
+    reported: boolean; 
+    role: string,
+    postes: number;
+    followers: number;
+    following: number;
+    personelProfile: boolean;
+    reacted: boolean;
 }

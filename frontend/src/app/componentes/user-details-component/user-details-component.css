@@ -65,3 +65,18 @@
 .bio-text {
     padding: 10px
 }
+
+.avatar-user {
+    width: 110px;
+    height: 110px;
+    border-radius: 50%;
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    font-size: xx-large;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+}

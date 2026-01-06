@@ -2,6 +2,8 @@ import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { catchError, map, throwError } from 'rxjs';
 import { environment } from '../../environments/enveronment';
+import { GlobalResponce } from '../model/globalResponce.type';
+import { ProfileModel } from '../model/profileInfo.type';
 
 @Injectable({
   providedIn: 'root',
@@ -9,25 +11,28 @@ import { environment } from '../../environments/enveronment';
 export class ProfileService {
   http = inject(HttpClient);
   getUserProfile(username: string) {
-    // return this.http.get(`${environment.apiUrl}/profile/${username}`).pipe(
-    //   catchError(err => throwError(() => err))
-    // );
-    return {
-      id: "45678f78d9",
-      avatar: "/d.jpg",
-      username: 'yjaouhr',
-      firstName: "yassine",
-      lastName : "jaouhary",
-      age: "20/30/2002",
-      gander: "male",
-      bio: "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec qu",
-      email: "yassinejaouhary@gmail.com",
-      totalPoste: 30,
-      totalFollow: 60,
-      totalFollowing: 2322,
-      isFollowing: true,
-    }
+    return this.http.get<GlobalResponce<ProfileModel>>(`${environment.apiUrl}/api/profile/${username}`).pipe(
+      catchError(err => throwError(() => err))
+    );
   }
 
+  updateProfile(form: FormData) {
+    return this.http.patch(`${environment.apiUrl}/api/profile`, form).pipe(
+      catchError(err => throwError(() => err))
+    )
 
+  }
+  reportUser(userId: string, reason: string) {
+    const body = {
+      reportedUser: userId,
+      reason: reason
+    }
+    return this.http.post<GlobalResponce<string>>(`${environment.apiUrl}/api/report`, body)
+      .pipe(
+        catchError(err => {
+          console.log("catch Error in report : ", err);
+          return throwError(() => err)
+        })
+      );
+  }
 }

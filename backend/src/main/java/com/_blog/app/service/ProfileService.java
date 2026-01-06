@@ -9,8 +9,6 @@ import java.nio.file.StandardCopyOption;
 import java.util.List;
 import java.util.UUID;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -25,12 +23,15 @@ import com._blog.app.entities.UserAccount;
 import com._blog.app.repository.CommentRepo;
 import com._blog.app.repository.LikeRepo;
 import com._blog.app.repository.PosteRepo;
+import com._blog.app.repository.ReportRepo;
 import com._blog.app.repository.SubscriberRepo;
 import com._blog.app.repository.UserRepo;
 import com._blog.app.shared.CustomResponseException;
 import com._blog.app.shared.GlobalDataResponse;
 import com._blog.app.shared.GlobalDataResponse.PostResponse;
 import com._blog.app.utils.UserUtils;
+
+import jakarta.transaction.Transactional;
 
 @Service
 public class ProfileService {
@@ -47,8 +48,8 @@ public class ProfileService {
     private LikeRepo likeRepo;
     @Autowired
     private CommentRepo commentRepo;
-
-    private static final Logger logger = LoggerFactory.getLogger(PostesService.class);
+    @Autowired
+    private ReportRepo reportRepo;
 
     public GlobalDataResponse<List<PostResponse>> getProfilePoste(UserAccount profileUser, UserAccount currentUser, int page, int size) {
         Page<Postes> postPage = posteRepo.findAllByUser(profileUser, PageRequest.of(page, size,
@@ -70,39 +71,55 @@ public class ProfileService {
 
     }
 
-    public ProfileDetailsResponse userDetails(UUID profileId, UserAccount user) {
+    public ProfileDetailsResponse userDetails(UserAccount profile, UUID currentUserId) {
         ProfileDetailsResponse profileDetails = new ProfileDetailsResponse();
-        if (!user.getId().equals(profileId)) {
-            UUID userId = user.getId();
-            user = userUtils.findUserById(profileId);
-            // boolean reported = reportRepo.existsByReporter(user);//
-            // profileDetails.setReported(reported);
-            profileDetails.setReacted(subscriberRepo.existsByUserId_IdAndTarget_Id(userId, profileId));
-        } else {
+        profileDetails.setId(profile.getId());
+        profileDetails.setFirstName(profile.getFirstName());
+        profileDetails.setLasteName(profile.getLastName());
+        profileDetails.setBirthday(profile.getBirthday());
+        profileDetails.setGender(profile.getGender());
+        profileDetails.setBio(profile.getBio());
+        profileDetails.setUserName(profile.getUsername());
+        profileDetails.setEmail(profile.getEmail());
+        profileDetails.setAvatar(profile.getAvatar());
+        profileDetails.setRole(profile.getRole());
+        profileDetails.setPostes(posteRepo.countByUserId(profile.getId()));
+        profileDetails.setFollowers(subscriberRepo.countByTarget(profile));
+        profileDetails.setFollowing(subscriberRepo.countByUser(profile));
+        if (profile.getId().equals(currentUserId)) {
             profileDetails.setPersonelProfile(true);
+        } else {
+            profileDetails.setPersonelProfile(false);
+            profileDetails.setReacted(subscriberRepo.existsByUserId_IdAndTarget_Id(currentUserId, profile.getId()));
+            profileDetails.setReported(reportRepo.existsByReporterIdAndReportedUserId(currentUserId, profile.getId()));
         }
-        profileDetails.setFollowers(subscriberRepo.countByTarget(user));
-        profileDetails.setFollowing(subscriberRepo.countByUser(user));
-        profileDetails.setFirstName(user.getFirstName());
-        profileDetails.setLasteName(user.getLastName());
-        profileDetails.setAge(user.getBirthday());
-        profileDetails.setAvatar(user.getAvatar());
-        profileDetails.setBio(user.getBio());
-        profileDetails.setEmail(user.getEmail());
-        profileDetails.setGender(user.getGender());
-        profileDetails.setUserName(user.getUsername());
-        profileDetails.setRol(user.getRole());
-        profileDetails.setActive(user.isActive());
         return profileDetails;
     }
 
+    @Transactional
     public void editInfo(EditProfileRequest editRequest, UserAccount currentUser, MultipartFile file) {
+
         UserAccount profileUser = userUtils.findUserById(editRequest.profileId());
 
+        // System.out.println("=======> new data "
+        //         + UserUtils.validBirthday(editRequest.birthday())
+        // );
         if (!currentUser.getId().equals(profileUser.getId())) {
             throw CustomResponseException.CustomException(403, "You can't have access to edit profile");
         }
 
+        if (editRequest.email() != null && !editRequest.email().isBlank()) {
+            if (userRepo.existsByEmail(editRequest.email())) {
+                throw CustomResponseException.CustomException(409, "Email already exists");
+            }
+            profileUser.setEmail(editRequest.email());
+        }
+        if (editRequest.username() != null && !editRequest.username().isBlank()) {
+            if (userRepo.existsByUsername(editRequest.username())) {
+                throw CustomResponseException.CustomException(409, "Username already exists");
+            }
+            profileUser.setUsername(editRequest.username());
+        }
         if (editRequest.firstName() != null && !editRequest.firstName().isBlank()) {
             profileUser.setFirstName(editRequest.firstName());
         }
@@ -110,8 +127,12 @@ public class ProfileService {
         if (editRequest.lastName() != null && !editRequest.lastName().isBlank()) {
             profileUser.setLastName(editRequest.lastName());
         }
-        if (!editRequest.age().isBlank()) {
-            profileUser.setBirthday(editRequest.age());
+        if (editRequest.birthday() != null) {
+            if (UserUtils.validBirthday(editRequest.birthday())) {
+                profileUser.setBirthday(editRequest.birthday());
+            } else {
+                throw CustomResponseException.CustomException(400, "must have 10 years old.");
+            }
         }
         if (editRequest.gender() != null && !editRequest.gender().isBlank()) {
             profileUser.setGender(editRequest.gender());
@@ -119,48 +140,52 @@ public class ProfileService {
         if (editRequest.bio() != null && !editRequest.bio().isBlank()) {
             profileUser.setBio(editRequest.bio());
         }
-        if (editRequest.username() != null && !editRequest.username().isBlank()) {
-            if (userRepo.existsByUsername(editRequest.username())) {
-                throw CustomResponseException.CustomException(400, "Username already exists");
+        if (editRequest.removeMedia() != null && Boolean.TRUE.equals(editRequest.removeMedia())) {
+            String media = profileUser.getAvatar();
+            if (media != null && !media.isBlank()) {
+                File f = new File(".." + media);
+                if (f.exists()) {
+                    f.delete();
+                }
+                profileUser.setAvatar(null);
             }
-            profileUser.setUsername(editRequest.username());
-        }
-        if (editRequest.email() != null && !editRequest.email().isBlank()) {
-            if (userRepo.existsByEmail(editRequest.email())) {
-                throw CustomResponseException.CustomException(400, "Email already exists");
-            }
-            profileUser.setEmail(editRequest.email());
+
         }
         if (file != null && !file.isEmpty()) {
-            try {
-                if (profileUser.getAvatar() != null && !profileUser.getAvatar().isBlank()) {
-                    Path oldFilePath = Paths.get(profileUser.getAvatar().substring(1));
-                    try {
-                        Files.deleteIfExists(oldFilePath);
-                    } catch (IOException e) {
-                        logger.warn("Failed to delete old media file: {}", oldFilePath, e);
-                    }
+            String contentType = file.getContentType();
+            if (contentType != null) {
+                String fileType = contentType.split("/")[0];
+                if (!fileType.equals("image")) {
+                    throw CustomResponseException.CustomException(400, "Only image allowed");
                 }
-                String uploadDir = "uploads/avatar/";
+            }
+            if (file.getSize() > 2 * (1024 * 1024)) {
+                throw CustomResponseException.CustomException(400, "avatar too large");
+            }
+            try {
+                String uploadDir = "../uploads/avatar/";
                 File dir = new File(uploadDir);
                 if (!dir.exists()) {
                     dir.mkdirs();
                 }
                 String fileName = System.currentTimeMillis() + "_" + file.getOriginalFilename();
-                Path filePath = Paths.get(uploadDir + fileName);
-                Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
-                profileUser.setAvatar("/" + uploadDir + fileName);
+                Path path = Paths.get(uploadDir + fileName);
+                Files.copy(file.getInputStream(), path, StandardCopyOption.REPLACE_EXISTING);
+                String media = profileUser.getAvatar();
+                if (media != null && !media.isBlank()) {
+                    File f = new File(".." + media);
+                    if (f.exists()) {
+                        f.delete();
+                    }
+                    profileUser.setAvatar(null);
+                }
+                profileUser.setAvatar("/uploads/avatar/" + fileName);
             } catch (IOException ex) {
-                logger.error("Error saving media file", ex);
-
                 throw CustomResponseException.CustomException(500, "Failed to save media file");
             }
         }
 
         userRepo.save(profileUser);
     }
-
-
-
 
 }

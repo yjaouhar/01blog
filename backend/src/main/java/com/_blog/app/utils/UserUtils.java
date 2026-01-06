@@ -53,7 +53,7 @@ public class UserUtils {
         return (JwtUserPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
     }
 
-    public boolean validBirthday(String birthday) {
+    public static boolean validBirthday(String birthday) {
         LocalDate birthDate = LocalDate.parse(birthday);
         LocalDate currentDate = LocalDate.now();
 
@@ -86,10 +86,12 @@ public class UserUtils {
     }
 
     public static String removeCookies(String key) {
-        return ResponseCookie.from(key, "").
-                path("/").
-                maxAge(0)
+        return ResponseCookie.from(key, "").path("/").maxAge(0)
                 .build().toString();
 
+    }
+
+    public static boolean haveAccess(UserAccount profile, UserAccount user) {
+        return profile.getId().equals(user.getId());
     }
 }

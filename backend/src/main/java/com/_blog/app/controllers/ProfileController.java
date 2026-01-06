@@ -8,8 +8,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
@@ -22,6 +22,8 @@ import com._blog.app.model.JwtUserPrincipal;
 import com._blog.app.service.ProfileService;
 import com._blog.app.shared.GlobalResponse;
 import com._blog.app.utils.UserUtils;
+
+import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/api/profile")
@@ -37,8 +39,22 @@ public class ProfileController {
     public ResponseEntity<GlobalResponse<?>> userDetails(@PathVariable String username) {
         JwtUserPrincipal principal = UserUtils.getPrincipal();
         UserAccount user = userUtils.findUserById(principal.getId());
-        return new ResponseEntity<>(new GlobalResponse<>(profileService.userDetails(profileId, user)),
+        UserAccount profile = userUtils.findUserByUsername(username);
+        return new ResponseEntity<>(new GlobalResponse<>(profileService.userDetails(profile, user.getId())),
                 HttpStatus.OK);
+    }
+
+    @PatchMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<GlobalResponse<?>> edit(@RequestPart("data") @Valid EditProfileRequest editProfileRequest,
+            @RequestPart(value = "file", required = false) MultipartFile file) {
+        JwtUserPrincipal principal = UserUtils.getPrincipal();
+        UserAccount currentUser = userUtils.findUserById(principal.getId());
+        profileService.editInfo(editProfileRequest, currentUser, file);
+
+        return new ResponseEntity<>(
+                new GlobalResponse<>("profile edited"),
+                HttpStatus.OK);
+
     }
 
     @GetMapping("/post")
@@ -50,20 +66,6 @@ public class ProfileController {
         return new ResponseEntity<>(
                 new GlobalResponse<>(profileService.getProfilePoste(profileUser, currentUser, page, size)),
                 HttpStatus.OK);
-    }
-
-    @PutMapping(value = "/edit", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<GlobalResponse<?>> edit(@RequestPart("data") EditProfileRequest editProfileRequest,
-            @RequestPart(value = "file", required = false) MultipartFile file, Principal principal) {
-
-        UserAccount currentUser = userUtils.findUserByUsername(principal.getName());
-
-        profileService.editInfo(editProfileRequest, currentUser, file);
-
-        return new ResponseEntity<>(
-                new GlobalResponse<>("profile edited"),
-                HttpStatus.OK);
-
     }
 
     // @GetMapping("/followers")

@@ -16,7 +16,7 @@ export class UtilsService {
   ): Result {
 
 
-    if ( !hasChange) {
+    if (!hasChange) {
       return { valid: false, message: 'No changes detected' };
     }
     if (username.length < 3 || username.length > 15) {
@@ -104,5 +104,8 @@ export class UtilsService {
 
   isEmpty<T>(arr: T[] | null) {
     return arr && arr !== null && arr.length > 0;
+  }
+  isBlank(str: string ) {
+    return !str.trim()
   }
 }

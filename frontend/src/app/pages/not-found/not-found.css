@@ -1,0 +1,35 @@
+.container {
+    text-align: center;
+    padding: 40px;
+}
+
+h1 {
+    font-size: 120px;
+    font-weight: bold;
+    color: #00d4ff;
+}
+
+h2 {
+    font-size: 32px;
+    margin-bottom: 15px;
+}
+
+p {
+    font-size: 18px;
+    opacity: 0.9;
+    margin-bottom: 30px;
+}
+
+.btn {
+    text-decoration: none;
+    background: #00d4ff;
+    color: #003344;
+    padding: 12px 25px;
+    border-radius: 6px;
+    font-weight: bold;
+    transition: 0.3s;
+}
+
+.btn:hover {
+    background: #00b8e6;
+}

@@ -33,7 +33,7 @@ export class Layout implements OnInit {
   start = signal(true);
   postes = signal<PostModel | null>(null)
   ngOnInit(): void {
-    // this.loadingService.show();
+    this.loadingService.show();
     this.router.events.pipe(
       filter(event => event instanceof NavigationEnd)
     ).subscribe((event: NavigationEnd) => {

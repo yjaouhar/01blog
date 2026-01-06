@@ -17,7 +17,6 @@ public class CustomResponseException extends RuntimeException {
     private final String message;
 
     public static CustomResponseException CustomException(int code, String message) {
-        System.out.println("RRRRRRRRRRRRRRRRRRR  : " + code);
         return new CustomResponseException(code, message);
     }
 

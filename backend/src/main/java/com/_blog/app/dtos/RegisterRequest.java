@@ -10,11 +10,11 @@ import jakarta.validation.constraints.Size;
 public record RegisterRequest(
         @NotBlank(message = "First Name is required")
         @Pattern(regexp = "^[A-Za-z]+( [A-Za-z]+)*$", message = "First Name must contain only letters")
-        @Size(min = 4, max = 20, message = "First Name must be between 4 and 20 characters")
+        @Size(min = 2, max = 20, message = "First Name must be between 4 and 20 characters")
         String firstName,
         @NotBlank(message = "Last Name is required")
         @Pattern(regexp = "^[A-Za-z]+( [A-Za-z]+)*$", message = "Last Name must contain only letters")
-        @Size(min = 4, max = 20, message = "Last Name must be between 4 and 20 characters")
+        @Size(min = 2, max = 20, message = "Last Name must be between 4 and 20 characters")
         String lastName,
         @NotBlank(message = "Birthday is required")
         String birthday,

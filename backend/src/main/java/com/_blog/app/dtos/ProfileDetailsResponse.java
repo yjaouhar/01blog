@@ -1,29 +1,32 @@
 package com._blog.app.dtos;
 
-import lombok.AllArgsConstructor;
+import java.util.UUID;
+
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Getter
 @Setter
-@AllArgsConstructor
+// @AllArgsConstructor
 @NoArgsConstructor
 public class ProfileDetailsResponse {
 
+    private UUID id;
     private String firstName;
     private String lasteName;
-    private String age;
+    private String birthday;
     private String gender;
     private String bio;
     private String userName;
     private String email;
     private String avatar;
-    private boolean active;
-    private boolean reported;
-    private String rol;
+    private boolean reported = false; //
+    private String role;
+    private Long postes;
     private Long followers;
     private Long following;
     private boolean personelProfile = false;
     private boolean reacted = false;
+
 }

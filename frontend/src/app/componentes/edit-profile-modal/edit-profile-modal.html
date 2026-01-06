@@ -127,7 +127,7 @@
                             @if (currentMedia()){
                             <div
                                 class="position-relative rounded overflow-hidden">
-                                <img [src]="currentMedia()" />
+                                <img [src]="difindUrl(currentMedia()!)+currentMedia()" />
                                 <button
                                     class="btn btn-dark btn-sm position-absolute top-0 end-0 m-1"
                                     (click)="deletMedia()">✕</button>

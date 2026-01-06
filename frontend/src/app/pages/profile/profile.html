@@ -1,1 +1,8 @@
-<app-user-details-component [profileDetails]="profileDetails"></app-user-details-component>
+
+@if (!profileDetails && resevData()) {
+<app-not-resorce message="This profile not exicte"
+    type="profile"></app-not-resorce>
+}@else {
+<app-user-details-component
+    [profileDetails]="profileDetails"></app-user-details-component>
+}

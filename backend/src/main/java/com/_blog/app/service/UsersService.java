@@ -41,6 +41,7 @@ public class UsersService {
             boolean followed = subscriberRepo.existsByUserId_IdAndTarget_Id(currentUser.getId(), u.getId());
             return GlobalDataResponse.UserResponse.builder()
                     .id(u.getId())
+                    .username(u.getUsername())
                     .avatar(u.getAvatar())
                     .name(u.getFirstName() + " " + u.getLastName())
                     .totalPost(totalPost)

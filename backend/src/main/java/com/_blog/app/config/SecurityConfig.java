@@ -47,7 +47,7 @@ public class SecurityConfig {
                             .requestMatchers(HttpMethod.POST, "/api/users/subscrib/{userId}").hasAnyRole("USER", "ADMIN")
                             .requestMatchers(HttpMethod.GET, "/api/profile/{username}").hasAnyRole("USER", "ADMIN")
                             .requestMatchers(HttpMethod.GET, "/api/profile/post").hasAnyRole("USER", "ADMIN")
-                            .requestMatchers(HttpMethod.PUT, "/api/profile/edit").hasAnyRole("USER", "ADMIN")
+                            .requestMatchers(HttpMethod.PATCH, "/api/profile").hasAnyRole("USER", "ADMIN")
                             .requestMatchers(HttpMethod.GET, "/api/profile/followers").hasAnyRole("USER", "ADMIN")
                             .requestMatchers(HttpMethod.GET, "/api/profile/following").hasAnyRole("USER", "ADMIN")
                             .requestMatchers(HttpMethod.POST, "/api/report").hasAnyRole("USER", "ADMIN")

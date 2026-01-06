@@ -1,49 +1,86 @@
 <!-- @if (authService.user$ | async ; as currentUser){ -->
 <div class="container py-4">
-
+    @if(profileDetails){
     <div class="bg-white rounded shadow-sm p-4 mb-4">
-        <div class="d-flex align-items-center gap-3">
-            <img [src]="profileDetails.avatar" class="profile-avatar">
-            <div>
-                <h3 class="fw-bold m-0">{{
-                    profileDetails.firstName+" "+profileDetails.lastName }}</h3>
-                <span class="text-secondary">@{{profileDetails.username}}</span>
+        <div class="d-flex align-items-center justify-content-between gap-3">
+            <div class="d-flex align-items-center gap-3">
+                <div class="position-relative">
+                    <span
+                        class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-success">
+                        {{profileDetails.role}}
+                    </span>
+                    @if (profileDetails.avatar) {
+                    <img [src]="url+profileDetails.avatar"
+                        class="profile-avatar">
+                    }@else {
+                    <div class="avatar-user">
+                        {{profileDetails.userName.at(0)?.toLocaleUpperCase()}}
+                    </div>
+                    }
+                </div>
+                <div>
+                    <h3 class="fw-bold m-0">{{
+                        profileDetails.firstName+" "+profileDetails.lasteName
+                        }}</h3>
+                    <span
+                        class="text-secondary">@{{profileDetails.userName}}</span>
+                </div>
             </div>
-            @if (profileDetails.id!=="currentUser.id") {
-            <div class="ms-auto d-flex gap-3">
-                <button class="btn btn-outline-primary btn-sm"
-                    (click)="showEditeComponent.set(true)">Edit Profile</button>
-            </div>
-            @if (showEditeComponent()) {
-            <app-edit-profile-modal
-                [profile]="profileDetails"
-                (hide)="hidEditComponent()">
-            </app-edit-profile-modal>
-            }
-            }@else {
-            @if (!profileDetails.isFollowing) {
-            <div class="ms-auto d-flex gap-3">
-                <button class="btn btn-primary btn-sm"
-                    (click)="followRequest()">Follow</button>
-            </div>
-            }@else {
-            <div class="ms-auto d-flex gap-3">
-                <button class="btn btn-outline-danger btn-sm"
-                    (click)="showConfermation.set(true)">Ufollow</button>
-            </div>
+            <div class="d-flex gap-3">
+                @if (profileDetails.personelProfile) {
+                <div class="ms-auto d-flex gap-3">
+                    <button class="btn btn-outline-primary btn-sm"
+                        (click)="showEditeComponent.set(true)">Edit
+                        Profile</button>
+                </div>
+                @if (showEditeComponent()) {
+                <app-edit-profile-modal
+                    [profile]="profileDetails"
+                    (hide)="hidEditComponent()">
+                </app-edit-profile-modal>
+                }
+                }@else {
+                @if (!profileDetails.reacted) {
+                <div class="ms-auto d-flex gap-3">
+                    <button class="btn btn-primary btn-sm"
+                        (click)="followRequest()">Follow</button>
+                </div>
+                }@else {
+                <div class="ms-auto d-flex gap-3">
+                    <button class="btn btn-outline-danger btn-sm"
+                        (click)="showConfermation.set(true)">Ufollow</button>
+                </div>
 
-            }
-            }
+                }
+                @if (profileDetails.reported) {
+                <div class="ms-auto d-flex gap-3">
+                    <button
+                        class="btn btn-outline-success btn-sm"
+                        disabled>Reported✅</button>
+                </div>
+                }@else {
+                <div class="ms-auto d-flex gap-3">
+                    <button class="btn btn-success btn-sm"
+                        (click)="report()">Report</button>
+                </div>
+                }
+                }
+                @if (showReport()) {
+                <app-report [id]="profileDetails.id"></app-report>
+                }
+            </div>
             @if(showConfermation()){
             <app-confermation
                 message="Do you want to unfollow this user?"
                 (react)="unfollow($event)"></app-confermation>
             }
         </div>
+        @if (!utils.isBlank(profileDetails.bio??'')) {
         <div class="bio-box">
             <i class="bi bi-feather text-secondary"></i>
             <small class="bio-text">{{ profileDetails.bio }}</small>
         </div>
+        }
 
     </div>
 
@@ -56,11 +93,11 @@
 
                 <p class="mb-1">
                     <i class="bi bi-person-fill me-2"></i>
-                    {{profileDetails.gander}}
+                    {{profileDetails.gender}}
                 </p>
                 <p class="mb-1">
                     <i class="bi bi-calendar-event-fill me-2"></i>
-                    {{profileDetails.age}}
+                    {{profileDetails.birthday}}
                 </p>
 
                 <p class="mb-1" style="word-break: break-all;">
@@ -81,7 +118,7 @@
                     [class.active]="showPostes"
                     (click)="togglePosts()">
                     <span class="count">Posts</span>
-                    <span class="label">{{ profileDetails.totalPoste }}</span>
+                    <span class="label">{{ profileDetails.postes }}</span>
                 </div>
 
                 <div
@@ -89,7 +126,7 @@
                     [class.active]="selectedFollowers"
                     (click)="toggleFollowers()">
                     <span class="count">Followers</span>
-                    <span class="label">{{ profileDetails.totalFollow }}</span>
+                    <span class="label">{{ profileDetails.followers }}</span>
                 </div>
 
                 <div
@@ -98,7 +135,7 @@
                     (click)="toggleFollowing()">
                     <span class="count">Following</span>
                     <span class="label">
-                        {{profileDetails.totalFollowing}}</span>
+                        {{profileDetails.following}}</span>
                 </div>
 
             </div>
@@ -128,8 +165,5 @@
         </div>
 
     </div>
-
+    }
 </div>
-<!-- }@else {
-    <app-not-resorce message="This profile not exicte" type="profile"></app-not-resorce>
-} -->

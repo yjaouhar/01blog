@@ -67,6 +67,7 @@ export class AuthService {
   getMe(): Observable<any> {
     return this.http.get<GlobalResponce<User>>(`${environment.apiUrl}/api/auth/me`, { withCredentials: true }).pipe(
       map(res => {
+     
         this.setUser(res.data);
         return res
       })

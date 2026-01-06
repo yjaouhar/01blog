@@ -12,10 +12,14 @@ import { ConfirmComponent } from "../confirm-component/confirm-component";
 import { AuthService } from '../../services/auth.service';
 import { Confermation } from "../confermation/confermation";
 import { NotResorce } from "../not-resorce/not-resorce";
+import { environment } from '../../../environments/enveronment';
+import { NotFound } from "../../pages/not-found/not-found";
+import { UtilsService } from '../../services/utils.service';
+import { Report } from "../report/report";
 
 @Component({
   selector: 'app-user-details-component',
-  imports: [PosteComponent, ListUsersComponent, CommonModule, EditProfileModal, ConfirmComponent, Confermation, NotResorce],
+  imports: [PosteComponent, ListUsersComponent, CommonModule, EditProfileModal, Confermation, NotResorce, Report],
   templateUrl: './user-details-component.html',
   styleUrl: './user-details-component.css',
 })
@@ -26,12 +30,14 @@ export class UserDetailsComponent {
   showPostes = true;
   authService = inject(AuthService);
   posteServic = inject(HomeService);
+  utils = inject(UtilsService);
   discoverService = inject(DiscoverService)
   postes = [];
   showConfermation = signal(false);
-  showEditeComponent= signal(true)
-  // subscribed = this.discoverService.getUsers().filter(u => u.subscribed)
-  // subscriber = this.discoverService.getUsers().filter(u => !u.subscribed)
+  showEditeComponent = signal(false)
+  showReport = signal(false)
+  url = environment.apiUrl;
+
   togglePosts() {
     this.showPostes = true;
     this.selectedFollowing = false;
@@ -50,9 +56,13 @@ export class UserDetailsComponent {
 
   }
   followRequest() {
-    console.log("----> follow : ", this.profileDetails.id);
-    this.profileDetails.isFollowing = !this.profileDetails.isFollowing
-    this.profileDetails.totalFollow = true ? this.profileDetails.totalFollow + 1 : this.profileDetails.totalFollow - 1;
+    this.discoverService.subscribe(this.profileDetails.id).subscribe({
+      next: () => {
+        this.profileDetails.reacted = !this.profileDetails.reacted
+        this.profileDetails.followers = true ? this.profileDetails.followers + 1 : this.profileDetails.followers - 1;
+      }
+    })
+
   }
   unfollow(conferm: boolean) {
     if (!conferm) {
@@ -62,7 +72,9 @@ export class UserDetailsComponent {
     this.showConfermation.set(false)
     this.followRequest()
   }
-
+  report() {
+this.showReport.set(true)
+  }
   hidEditComponent() {
     this.showEditeComponent.set(false)
   }

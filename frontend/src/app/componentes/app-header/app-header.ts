@@ -1,4 +1,4 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject, OnInit, signal } from '@angular/core';
 import { AuthService } from '../../services/auth.service';
 import { PostCreateComponent } from "../post-create-component/post-create-component";
 import { User } from '../../model/user.type';
@@ -7,11 +7,12 @@ import { environment } from '../../../environments/enveronment';
 
 @Component({
   selector: 'app-app-header',
-  imports: [PostCreateComponent , CommonModule],
+  imports: [PostCreateComponent, CommonModule],
   templateUrl: './app-header.html',
   styleUrl: './app-header.css',
 })
 export class AppHeader {
+
   authService = inject(AuthService);
   url = environment.apiUrl;
   logout() {

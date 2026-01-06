@@ -37,7 +37,7 @@ public class AuthService {
         if (registerRequest.username() != null && userRepo.existsByUsername(registerRequest.username())) {
             throw CustomResponseException.CustomException(400, "Username already exists");
         }
-        if (!utils.validBirthday(registerRequest.birthday())) {
+        if (!UserUtils.validBirthday(registerRequest.birthday())) {
             throw CustomResponseException.CustomException(400, "must have 10 years old.");
         }
 
