@@ -15,15 +15,8 @@ export class UtilsService {
     email: string, age: string, hasChange: boolean, profDetails: ProfileModel
   ): Result {
 
-    const noChanges =
-      username === profDetails.username &&
-      name === profDetails.name &&
-      gender === profDetails.gander &&
-      bio === profDetails.bio &&
-      email === profDetails.email &&
-      age === profDetails.age;
 
-    if (noChanges && !hasChange) {
+    if ( !hasChange) {
       return { valid: false, message: 'No changes detected' };
     }
     if (username.length < 3 || username.length > 15) {
@@ -36,7 +29,7 @@ export class UtilsService {
       return { valid: false, message: 'Gender value is not valid' };
     }
 
-    if (bio.length < 10 || bio.length > 100) {
+    if (bio.length < 10 || bio.length > 200) {
       return { valid: false, message: 'Bio must be between 10 and 100 characters' };
     }
 

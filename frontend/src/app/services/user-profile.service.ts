@@ -8,27 +8,26 @@ import { environment } from '../../environments/enveronment';
 })
 export class ProfileService {
   http = inject(HttpClient);
-  getUserProfileWithUsername(username: string) {
-    return this.http.get(`${environment.apiUrl}/profile/${username}`).pipe(
-      catchError(err => throwError(() => err))
-    );
-  }
-  getUserProfile() {
-
+  getUserProfile(username: string) {
+    // return this.http.get(`${environment.apiUrl}/profile/${username}`).pipe(
+    //   catchError(err => throwError(() => err))
+    // );
     return {
-      id: "!",
-      avatar: '/prof.png',
-      username: 'admin',
-      name: 'yassine jaouhary',
-      age: '21',
-      gander: 'male',
-      bio: 'hello word',
-      email: 'yassine@gmail.com',
-      totalPoste: 100,
-      totalFollow: 1020,
-      totalFollowing: 300,
-
+      id: "45678f78d9",
+      avatar: "/d.jpg",
+      username: 'yjaouhr',
+      firstName: "yassine",
+      lastName : "jaouhary",
+      age: "20/30/2002",
+      gander: "male",
+      bio: "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec qu",
+      email: "yassinejaouhary@gmail.com",
+      totalPoste: 30,
+      totalFollow: 60,
+      totalFollowing: 2322,
+      isFollowing: true,
     }
   }
+
 
 }

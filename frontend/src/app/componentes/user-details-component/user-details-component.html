@@ -1,58 +1,57 @@
+<!-- @if (authService.user$ | async ; as currentUser){ -->
 <div class="container py-4">
 
     <div class="bg-white rounded shadow-sm p-4 mb-4">
         <div class="d-flex align-items-center gap-3">
             <img [src]="profileDetails.avatar" class="profile-avatar">
             <div>
-                <h3 class="fw-bold m-0">{{ profileDetails.username }}</h3>
-                <span class="text-secondary">{{profileDetails.name}}</span>
+                <h3 class="fw-bold m-0">{{
+                    profileDetails.firstName+" "+profileDetails.lastName }}</h3>
+                <span class="text-secondary">@{{profileDetails.username}}</span>
             </div>
-            @if (false) {
+            @if (profileDetails.id!=="currentUser.id") {
             <div class="ms-auto d-flex gap-3">
                 <button class="btn btn-outline-primary btn-sm"
-                    data-bs-toggle="modal"
-                    [attr.data-bs-target]="'#editProfileModal'+profileDetails.id">Edit
-                    Profile</button>
+                    (click)="showEditeComponent.set(true)">Edit Profile</button>
             </div>
-            <div class="modal fade" [id]="'editProfileModal'+profileDetails.id"
-                tabindex="-1">
-                <app-edit-profile-modal
-                    [profile]="profileDetails"
-                    [id]="profileDetails.id"
-                    (onSave)="updateProfile($event)">
-                </app-edit-profile-modal>
-            </div>
+            @if (showEditeComponent()) {
+            <app-edit-profile-modal
+                [profile]="profileDetails"
+                (hide)="hidEditComponent()">
+            </app-edit-profile-modal>
+            }
             }@else {
-            @if (true) {
+            @if (!profileDetails.isFollowing) {
             <div class="ms-auto d-flex gap-3">
                 <button class="btn btn-primary btn-sm"
-                    (click)="followRequest(profileDetails.id)">Follow</button>
+                    (click)="followRequest()">Follow</button>
             </div>
             }@else {
             <div class="ms-auto d-flex gap-3">
                 <button class="btn btn-outline-danger btn-sm"
-                    data-bs-toggle="modal"
-                    [attr.data-bs-target]="'#confermModalUnfollow'+profileDetails.id">Ufollow</button>
+                    (click)="showConfermation.set(true)">Ufollow</button>
             </div>
-            <div class="modal fade"
-                [id]="'confermModalUnfollow'+profileDetails.id"
-                tabindex="-1"
-                aria-modal="true" role="dialog">
-                <app-confirm-component [id]="'Unfollow'+profileDetails.id"
-                    (conferm)="unfollow($event , profileDetails.id)"
-                    message="do you want to unfollow"></app-confirm-component>
-            </div>
+
             }
+            }
+            @if(showConfermation()){
+            <app-confermation
+                message="Do you want to unfollow this user?"
+                (react)="unfollow($event)"></app-confermation>
             }
         </div>
+        <div class="bio-box">
+            <i class="bi bi-feather text-secondary"></i>
+            <small class="bio-text">{{ profileDetails.bio }}</small>
+        </div>
+
     </div>
 
     <div class="row">
 
         <!-- LEFT SIDEBAR -->
-        <div class="col-md-3">
+        <div class="col-md-4">
             <div class="bg-white rounded shadow-sm p-3">
-
                 <h5 class="fw-bold mb-3">About</h5>
 
                 <p class="mb-1">
@@ -64,7 +63,7 @@
                     {{profileDetails.age}}
                 </p>
 
-                <p class="mb-1">
+                <p class="mb-1" style="word-break: break-all;">
                     <i
                         class="bi bi-envelope-fill me-2"></i>{{profileDetails.email}}
                 </p>
@@ -73,32 +72,35 @@
         </div>
 
         <!-- CENTER CONTENT -->
-        <div class="col-md-9">
-
-            <!-- Tabs -->
+        <div class="col-md-8">
             <div
                 class="d-flex justify-content-around bg-white rounded shadow-sm p-3 mb-3 tabs">
 
-                <span
+                <div
                     class="tab-item"
                     [class.active]="showPostes"
                     (click)="togglePosts()">
-                    Posts
-                </span>
+                    <span class="count">Posts</span>
+                    <span class="label">{{ profileDetails.totalPoste }}</span>
+                </div>
 
-                <span
+                <div
                     class="tab-item"
                     [class.active]="selectedFollowers"
                     (click)="toggleFollowers()">
-                    Followers
-                </span>
+                    <span class="count">Followers</span>
+                    <span class="label">{{ profileDetails.totalFollow }}</span>
+                </div>
 
-                <span
+                <div
                     class="tab-item"
                     [class.active]="selectedFollowing"
                     (click)="toggleFollowing()">
-                    Following
-                </span>
+                    <span class="count">Following</span>
+                    <span class="label">
+                        {{profileDetails.totalFollowing}}</span>
+                </div>
+
             </div>
 
             <!-- Posts -->
@@ -128,3 +130,6 @@
     </div>
 
 </div>
+<!-- }@else {
+    <app-not-resorce message="This profile not exicte" type="profile"></app-not-resorce>
+} -->

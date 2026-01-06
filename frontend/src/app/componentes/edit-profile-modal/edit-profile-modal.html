@@ -1,100 +1,161 @@
 
-<div class="modal-dialog modal-dialog-centered">
-    <div class="modal-content">
 
-        <div class="modal-header">
-            <h5 class="modal-title">Edit Profile</h5>
-            <button class="btn-close" data-bs-dismiss="modal"></button>
-        </div>
+<div class="custom-overlay">
+    <div class="edit-profile-modal">
+        <div class="edit-profile-modal">
 
-        <div class="modal-body">
+            <!-- Header -->
+            <div class="modal-header-custom">
+                <h5>Edit Profile</h5>
+                <button class="btn-close" (click)="close()"></button>
+            </div>
 
-            <form [formGroup]="form">
-                <div class="mb-3">
-                    <label class="form-label">Full Name</label>
-                    <input type="text" class="form-control"
-                        formControlName="name" (click)="change()">
-                </div>
-                <div class="mb-3">
-                    <label class="form-label">Username</label>
-                    <input type="text" class="form-control"
-                        formControlName="username" (click)="change()">
-                </div>
-                <div class="mb-3">
-                    <label class="form-label">Gender</label>
-                    <select class="form-select" formControlName="gender">
-                        <option value="male">Male</option>
-                        <option value="female">Female</option>
-                    </select>
-                </div>
+            <!-- Body -->
+            <div class="modal-body-custom">
+                <form [formGroup]="form">
 
-                <div class="mb-3">
-                    <label class="form-label">Age</label>
-                    <label class="form-label">Birthdate</label>
-                    <input type="date" class="form-control"
-                        formControlName="age" (click)="change()">
-                </div>
-                <div class="mb-3">
-                    <label class="form-label">Bio</label>
-                    <textarea class="form-control" rows="3"
-                        formControlName="bio" (click)="change()"></textarea>
-                </div>
-
-                <div class="mb-3">
-                    <label class="form-label">Email</label>
-                    <input type="email" class="form-control"
-                        formControlName="email" (click)="change()">
-                </div>
-
-                <div class="mb-3">
-                    <div class="d-flex justify-content-between mb-3">
-                        @if( currentMedia()){
-                        <button
-                            type="button"
-                            class="btn btn-outline-danger px-4"
-                            (click)="deletMedia()">
-                            Delete
-                        </button>
-                        }
-
-                        <label class="btn btn-outline-primary px-4 mb-0">
-                            Upload
-                            <input
-                                type="file"
-                                hidden
-                                (change)="onFileSelected($event)" />
-                        </label>
-                    </div>
-                    <div class="d-flex justify-content-center">
-                        <div
-                            class="border p-2"
-                            style="border-radius: 18px; max-width: 320px;">
-
-                            @if (currentMedia() ){
-                            <img [src]="currentMedia()"
-                                class="img-fluid rounded"
-                                style="max-height: 300px; object-fit: cover;"
-                                width="300" height="300" />
+                    <div class="mb-3">
+                        <div>
+                            <label class="form-label">First Name</label>
+                            <input type="text" class="form-control"
+                                formControlName="firstName">
+                            @if (form.get('firstName')?.touched &&
+                            form.get('firstName')?.invalid) {
+                            <div
+                                class="text-danger small">
+                                First Name must be between 2 and 20 characters
+                            </div>
+                            }
+                        </div>
+                        <div>
+                            <label class="form-label">Last Name</label>
+                            <input type="text" class="form-control"
+                                formControlName="lastName">
+                            @if (form.get('lastName')?.touched &&
+                            form.get('lastName')?.invalid) {
+                            <div
+                                class="text-danger small">
+                                Last Name must be between 2 and 20 characters
+                            </div>
                             }
                         </div>
                     </div>
-                </div>
 
-            </form>
+                    <div class="mb-3">
+                        <label class="form-label">Username</label>
+                        <input type="text" class="form-control"
+                            formControlName="username">
+                        @if (form.get('username')?.touched &&
+                        form.get('username')?.invalid) {
+                        <div
+                            class="text-danger small">
+                            Username must be between 4 and 15 characters.
+                        </div>
+                        }
+                    </div>
+
+                    <div class="row">
+                        <div class="col-6 mb-3">
+                            <label class="form-label">Gender</label>
+                            <select class="form-select"
+                                formControlName="gender">
+                                <option value="male">Male</option>
+                                <option value="female">Female</option>
+                            </select>
+                            @if (form.get('gender')?.touched &&
+                            form.get('gender')?.invalid) {
+                            <div
+                                class="text-danger small">
+                                Gender must be 'male' or 'female'. </div>
+                            }
+                        </div>
+
+                        <div class="col-6 mb-3">
+                            <label class="form-label">Birthdate</label>
+                            <input type="date" class="form-control"
+                                formControlName="birthday"
+                                (change)="changeBirthaday($event)">
+                            @if (form.get('birthday')?.touched &&
+                            form.get('birthday')?.invalid || birthdayError()) {
+                            <div
+                                class="text-danger small">
+                                must have 10 years old.
+                            </div>
+                            }
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Bio</label>
+                        <textarea class="form-control" rows="3"
+                            formControlName="bio"></textarea>
+                        @if (form.get('bio')?.touched &&
+                        form.get('bio')?.invalid) {
+                        <div
+                            class="text-danger small">
+                            Max 200 characters.
+                        </div>
+                        }
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Email</label>
+                        <input type="email" class="form-control"
+                            formControlName="email">
+                        @if (form.get('email')?.touched &&
+                        form.get('email')?.invalid) {
+                        <div
+                            class="text-danger small">
+                            Enter a valid email.
+                        </div>
+                        }
+                    </div>
+
+                    <!-- Media -->
+                    <div class="media-section">
+
+                        <div class="d-flex justify-content-between mb-3">
+
+                            <label class="btn btn-outline-primary px-4 mb-0">
+                                Upload
+                                <input type="file" hidden
+                                    (change)="onFileSelected($event)" />
+                            </label>
+                        </div>
+
+                        <div class="media-preview">
+                            @if (currentMedia()){
+                            <div
+                                class="position-relative rounded overflow-hidden">
+                                <img [src]="currentMedia()" />
+                                <button
+                                    class="btn btn-dark btn-sm position-absolute top-0 end-0 m-1"
+                                    (click)="deletMedia()">✕</button>
+                            </div>
+                            }
+                        </div>
+                    </div>
+
+                </form>
+
+            </div>
+            @if (showErrore()) {
+            <p class="text-center text-danger mt-2">
+                {{ errorMessage }}
+            </p>
+            }
+            <!-- Footer -->
+            <div class="modal-footer-custom">
+                <button class="btn btn-light" (click)="close()">
+                    Cancel
+                </button>
+
+                <button class="btn btn-primary"
+                    (click)="submit()">
+                    Save
+                </button>
+            </div>
 
         </div>
-        @if (showErrore()) {
-        <p class="text-center text-danger"> {{errorMessage}}</p>
-        }
-        <div class="modal-footer">
-            <button class="btn btn-secondary"
-                data-bs-dismiss="modal">Cancel</button>
-
-            <button class="btn btn-primary"
-                (click)="submit()">
-                Save
-            </button>
-        </div>
-
     </div>
 </div>

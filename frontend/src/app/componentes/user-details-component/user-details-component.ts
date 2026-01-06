@@ -1,4 +1,4 @@
-import { Component, inject, Input, NgModule } from '@angular/core';
+import { Component, inject, Input, NgModule, signal } from '@angular/core';
 import { PostService } from '../../services/post.service';
 import { HomeService } from '../../services/home.service';
 import { PosteComponent } from "../poste.component/poste-component";
@@ -9,10 +9,13 @@ import { ProfileModel } from '../../model/profileInfo.type';
 import { CommonModule } from '@angular/common';
 import { EditProfileModal } from "../edit-profile-modal/edit-profile-modal";
 import { ConfirmComponent } from "../confirm-component/confirm-component";
+import { AuthService } from '../../services/auth.service';
+import { Confermation } from "../confermation/confermation";
+import { NotResorce } from "../not-resorce/not-resorce";
 
 @Component({
   selector: 'app-user-details-component',
-  imports: [PosteComponent, ListUsersComponent, CommonModule, EditProfileModal, ConfirmComponent],
+  imports: [PosteComponent, ListUsersComponent, CommonModule, EditProfileModal, ConfirmComponent, Confermation, NotResorce],
   templateUrl: './user-details-component.html',
   styleUrl: './user-details-component.css',
 })
@@ -21,9 +24,12 @@ export class UserDetailsComponent {
   selectedFollowers = false;
   selectedFollowing = false;
   showPostes = true;
-  posteServic = inject(HomeService)
+  authService = inject(AuthService);
+  posteServic = inject(HomeService);
   discoverService = inject(DiscoverService)
   postes = [];
+  showConfermation = signal(false);
+  showEditeComponent= signal(true)
   // subscribed = this.discoverService.getUsers().filter(u => u.subscribed)
   // subscriber = this.discoverService.getUsers().filter(u => !u.subscribed)
   togglePosts() {
@@ -43,28 +49,21 @@ export class UserDetailsComponent {
     this.selectedFollowing = true;
 
   }
-  followRequest(id: string) {
-    console.log("----> follow : ", id);
-
+  followRequest() {
+    console.log("----> follow : ", this.profileDetails.id);
+    this.profileDetails.isFollowing = !this.profileDetails.isFollowing
+    this.profileDetails.totalFollow = true ? this.profileDetails.totalFollow + 1 : this.profileDetails.totalFollow - 1;
   }
-  unfollow(conferm: boolean, id: string) {
-
+  unfollow(conferm: boolean) {
     if (!conferm) {
+      this.showConfermation.set(false)
       return
     }
-    console.log("===> unfollow : ", id);
-
+    this.showConfermation.set(false)
+    this.followRequest()
   }
-  changeFollowersView(event: any) {
-    this.selectedFollowers = event.target.value;
-    console.log("******", this.selectedFollowers);
 
-  }
-  updateProfile(data: FormData) {
-    const d = data.get('data');
-
-    console.log("________ ", d);
-
-
+  hidEditComponent() {
+    this.showEditeComponent.set(false)
   }
 }

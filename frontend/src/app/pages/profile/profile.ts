@@ -22,12 +22,9 @@ export class Profile implements OnInit {
     this.route.paramMap.subscribe(params => {
       this.username.set(params.get('username') ?? '')
     });
-    this.prosfileService.getUserProfileWithUsername(this.username());
+    this.profileDetails = this.prosfileService.getUserProfile(this.username());
 
   }
 
-  loadData(username: string) {
-    this.prosfileService.getUserProfileWithUsername(username);
 
-  }
 }
