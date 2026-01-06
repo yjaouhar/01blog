@@ -87,7 +87,6 @@ public class GlobalDataResponse<T> {
         private String authore;
         private String avatar;
         private LocalDateTime createTime;
-        private LocalDateTime updateTime;
         private String descreption;
         private List<Media> media;
         private long totalLike;

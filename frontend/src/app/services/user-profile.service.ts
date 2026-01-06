@@ -4,6 +4,7 @@ import { catchError, map, throwError } from 'rxjs';
 import { environment } from '../../environments/enveronment';
 import { GlobalResponce } from '../model/globalResponce.type';
 import { ProfileModel } from '../model/profileInfo.type';
+import { PostModel } from '../model/post.type';
 
 @Injectable({
   providedIn: 'root',
@@ -34,5 +35,11 @@ export class ProfileService {
           return throwError(() => err)
         })
       );
+  }
+
+  getPostes(id: string) {
+    return this.http.get<GlobalResponce<PostModel>>(`${environment.apiUrl}/api/profile/postes/${id}`).pipe(
+      catchError(err => throwError(() => err))
+    );
   }
 }

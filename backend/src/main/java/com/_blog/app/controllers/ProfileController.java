@@ -1,6 +1,5 @@
 package com._blog.app.controllers;
 
-import java.security.Principal;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -57,24 +56,28 @@ public class ProfileController {
 
     }
 
-    @GetMapping("/post")
+    @GetMapping("postes/{profileId}")
     public ResponseEntity<GlobalResponse<?>> post(@PathVariable UUID profileId,
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size, Principal principal) {
-        UserAccount currentUser = userUtils.findUserByUsername(principal.getName());
+            @RequestParam(defaultValue = "10") int size) {
+        JwtUserPrincipal principal = UserUtils.getPrincipal();
+        UserAccount currentUser = userUtils.findUserById(principal.getId());
         UserAccount profileUser = userUtils.findUserById(profileId);
         return new ResponseEntity<>(
                 new GlobalResponse<>(profileService.getProfilePoste(profileUser, currentUser, page, size)),
                 HttpStatus.OK);
     }
 
-    // @GetMapping("/followers")
-    // public ResponseEntity<GlobalResponse<?>> followers(@RequestParam(defaultValue = "0") int page,
-    //         @RequestParam(defaultValue = "10") int size, Principal principal) {
-    //     UserAccount currentUser = userUtils.findUserByUsername(principal.getName());
-    //     GlobalDataResponse followers = profileService.followers(currentUser, page, size);
-    //     return new ResponseEntity<>(new GlobalResponse<>(followers), HttpStatus.OK);
-    // }
+    @GetMapping("/followers/{profileId}")
+    public ResponseEntity<GlobalResponse<?>> followers(@PathVariable UUID profileId,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        JwtUserPrincipal principal = UserUtils.getPrincipal();
+        UserAccount currentUser = userUtils.findUserById(principal.getId());
+        UserAccount profileUser = userUtils.findUserById(profileId);
+        GlobalDataResponse followers = profileService.followers(currentUser, page, size);
+        return new ResponseEntity<>(new GlobalResponse<>(followers), HttpStatus.OK);
+    }
     // @GetMapping("/following")
     // public ResponseEntity<GlobalResponse<?>> following(@RequestParam(defaultValue = "0") int page,
     //         @RequestParam(defaultValue = "10") int size, Principal principal) {

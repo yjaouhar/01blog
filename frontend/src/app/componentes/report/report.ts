@@ -1,4 +1,4 @@
-import { Component, inject, Input, signal } from '@angular/core';
+import { Component, EventEmitter, inject, Input, Output, signal } from '@angular/core';
 import { Spinner } from "../spinner/spinner";
 import { Success } from "../success/success";
 import { Refuse } from "../refuse/refuse";
@@ -14,6 +14,7 @@ import { ProfileService } from '../../services/user-profile.service';
 })
 export class Report {
   @Input() id!: string
+  @Output() hide = new EventEmitter()
   profileService = inject(ProfileService)
   loading = signal(false);
   success = signal(false);
@@ -22,6 +23,9 @@ export class Report {
   form = new FormGroup({
     userInput: new FormControl('', [Validators.required, Validators.minLength(10), Validators.maxLength(255)])
   })
+  close() {
+    this.hide.emit()
+  }
   submit() {
     if (this.form.invalid) {
       this.form.markAllAsTouched();
@@ -37,6 +41,9 @@ export class Report {
         this.loading.set(false);
         this.refus.set(true)
         throw err;
+      },
+      complete: () => {
+        this.close()
       }
     })
   }

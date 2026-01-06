@@ -51,7 +51,6 @@ public class UsersService {
     }
 
     public List<GlobalDataResponse.UserResponse> explor(UUID currentUserId, String keyword, int page, int size) {
-        System.out.println("-----> keyword : " + keyword);
         Page<UserAccount> allusers = userRepo.searchByFullName(currentUserId, "%" + keyword.toLowerCase() + "%",
                 PageRequest.of(page, size));
         List<GlobalDataResponse.UserResponse> users = allusers.getContent().stream().map(u -> {

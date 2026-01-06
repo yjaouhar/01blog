@@ -21,9 +21,9 @@ public interface SubscriberRepo extends JpaRepository<Subscribers, UUID> {
    Optional< List<Subscribers>> findByTarget(UserAccount target);
 
 
-    Page<Subscribers> findByUser(UserAccount user, Pageable pageable);
+    Page<UserAccount> findByUser(UserAccount user, Pageable pageable);
 
-    Page<Subscribers> findByTarget(UserAccount target, Pageable pageable);
+    Page<UserAccount> findByTarget(UserAccount target, Pageable pageable);
     
     long countByTarget(UserAccount target);
 

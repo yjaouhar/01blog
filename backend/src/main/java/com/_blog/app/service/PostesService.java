@@ -74,7 +74,6 @@ public class PostesService {
                         authore(post.getUser().getUsername()).
                         avatar(post.getUser().getAvatar()).
                         createTime(post.getCreatedAt()).
-                        updateTime(post.getUpdateAt()).
                         descreption(post.getDescription()).
                         media(post.getMedia()).
                         totalComment(totalComment).
@@ -221,8 +220,7 @@ public class PostesService {
                 .build();
     }
 
-
-@Transactional
+    @Transactional
     public void deletComment(UUID commentId, UserAccount currentUser) {
         Comment comment = posteUtils.findComentById(commentId);
 

@@ -61,12 +61,13 @@
                 }@else {
                 <div class="ms-auto d-flex gap-3">
                     <button class="btn btn-success btn-sm"
-                        (click)="report()">Report</button>
+                        (click)="report(true)">Report</button>
                 </div>
                 }
                 }
                 @if (showReport()) {
-                <app-report [id]="profileDetails.id"></app-report>
+                <app-report [id]="profileDetails.id"
+                    (hide)="report(false)"></app-report>
                 }
             </div>
             @if(showConfermation()){
@@ -143,7 +144,8 @@
             <!-- Posts -->
             @if (showPostes) {
             <div class="bg-white rounded shadow-sm ">
-                <!-- <app-poste-component [postes]="postes"></app-poste-component> -->
+                <app-poste-component [showReaction]="false"
+                    [postesData]="postes()!"></app-poste-component>
             </div>
             }
 

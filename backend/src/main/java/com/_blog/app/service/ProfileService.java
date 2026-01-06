@@ -41,7 +41,7 @@ public class ProfileService {
     @Autowired
     private UserRepo userRepo;
     @Autowired
-    private PosteRepo posteRepo;
+    private PosteRepo postRepo;
     @Autowired
     private UserUtils userUtils;
     @Autowired
@@ -52,19 +52,23 @@ public class ProfileService {
     private ReportRepo reportRepo;
 
     public GlobalDataResponse<List<PostResponse>> getProfilePoste(UserAccount profileUser, UserAccount currentUser, int page, int size) {
-        Page<Postes> postPage = posteRepo.findAllByUser(profileUser, PageRequest.of(page, size,
+        Page<Postes> postPage = postRepo.findAllByUser(profileUser, PageRequest.of(page, size,
                 Sort.by(Sort.Direction.DESC, "createdAt")));
         List<PostResponse> posts = postPage.getContent().stream().map(post -> {
             boolean liked = likeRepo.existsByUserIdAndPostId(currentUser.getId(), post.getId());
             long totaLike = likeRepo.countByPostId(post.getId());
             long totalComment = commentRepo.countByPostId(post.getId());
             return GlobalDataResponse.PostResponse.builder()
-                    .id(post.getId())
-                    .descreption(post.getDescription())
-                    .media(post.getMedia())
-                    .totalComment(totalComment)
-                    .totalLike(totaLike)
-                    .liked(liked).build();
+                    .id(post.getId()).
+                    authore(post.getUser().getUsername()).
+                    avatar(post.getUser().getAvatar()).
+                    createTime(post.getCreatedAt()).
+                    descreption(post.getDescription()).
+                    media(post.getMedia()).
+                    totalComment(totalComment).
+                    totalLike(totaLike).
+                    liked(liked)
+                    .build();
         }).toList();
         return new GlobalDataResponse<>(posts, postPage.getNumber(),
                 postPage.getTotalPages(), postPage.hasNext());
@@ -83,7 +87,7 @@ public class ProfileService {
         profileDetails.setEmail(profile.getEmail());
         profileDetails.setAvatar(profile.getAvatar());
         profileDetails.setRole(profile.getRole());
-        profileDetails.setPostes(posteRepo.countByUserId(profile.getId()));
+        profileDetails.setPostes(postRepo.countByUserId(profile.getId()));
         profileDetails.setFollowers(subscriberRepo.countByTarget(profile));
         profileDetails.setFollowing(subscriberRepo.countByUser(profile));
         if (profile.getId().equals(currentUserId)) {
@@ -101,9 +105,6 @@ public class ProfileService {
 
         UserAccount profileUser = userUtils.findUserById(editRequest.profileId());
 
-        // System.out.println("=======> new data "
-        //         + UserUtils.validBirthday(editRequest.birthday())
-        // );
         if (!currentUser.getId().equals(profileUser.getId())) {
             throw CustomResponseException.CustomException(403, "You can't have access to edit profile");
         }
@@ -186,6 +187,44 @@ public class ProfileService {
         }
 
         userRepo.save(profileUser);
+    }
+
+    public GlobalDataResponse<List<GlobalDataResponse.UserResponse>> followers(UserAccount currentUser,
+            UserAccount profileUser, int page, int size) {
+        Page<UserAccount> followersPage = subscriberRepo.findByTarget(profileUser, PageRequest.of(page, size));
+        List<GlobalDataResponse.UserResponse> followers = followersPage.getContent().stream().map(f -> {
+            Long totalPost = postRepo.countByUserId(f.getId());
+            boolean isfollowed = subscriberRepo.existsByUserId_IdAndTarget_Id(currentUser.getId(), f.getId());
+            return GlobalDataResponse.UserResponse.builder()
+                    .id(f.getId())
+                    .username(f.getUsername())
+                    .avatar(f.getAvatar())
+                    .name(f.getFirstName() + " " + f.getLastName())
+                    .totalPost(totalPost)
+                    .followed(isfollowed)
+                    .build();
+        }).toList();
+        return new GlobalDataResponse<>(followers, followersPage.getNumber(), followersPage.getTotalPages(),
+                followersPage.hasNext());
+    }
+
+    public GlobalDataResponse<List<GlobalDataResponse.UserResponse>> following(UserAccount currentUser,  UserAccount profileUser , int page, int size) {
+        Page<UserAccount> followersPage = subscriberRepo.findByUser(profileUser, PageRequest.of(page, size));
+        List<GlobalDataResponse.UserResponse> followers = followersPage.getContent().stream().map(f -> {
+            Long totalPost = postRepo.countByUserId(f.getId());
+            boolean isfollowed = subscriberRepo.existsByUserId_IdAndTarget_Id(currentUser.getId(), f.getId());
+            return GlobalDataResponse.UserResponse.builder()
+                    .id(f.getId())
+                    .username(f.getUsername())
+                    .avatar(f.getAvatar())
+                    .name(f.getFirstName() + " " + f.getLastName())
+                    .totalPost(totalPost)
+                    .followed(isfollowed)
+                    .build();
+        }).toList();
+        return new GlobalDataResponse<>(
+                following, followingPage.getNumber(), followingPage.getTotalPages(),
+                followingPage.hasNext());
     }
 
 }
