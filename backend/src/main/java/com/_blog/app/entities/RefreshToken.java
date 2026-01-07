@@ -41,5 +41,5 @@ public class RefreshToken {
         this.user = user;
         this.expiryDate = expiryDate;
     }
-
+        
 }

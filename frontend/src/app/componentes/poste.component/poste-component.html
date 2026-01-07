@@ -2,22 +2,10 @@
 
 <!-- Button to trigger modal -->
 @if (postesData ){
-<!-- 
-<div class="d-flex justify-content-center align-items-center"
-    style="height: 200px; border: 1px dashed #ccc;">
-    <div class="text-center">
-        <div class="mb-2">
-            <i class="bi bi-camera fs-1 text-muted"></i>
-        </div>
-        <p class="text-muted mb-0">No Posts Yet</p>
-    </div>
-</div>
-}@else{ -->
-
 <div
     style="overflow-y: auto; max-height:100%;">
     @for (post of postesData.data; track post.id) {
-    <div class="d-flex justify-content-center my-4 row ">
+    <div class="d-flex justify-content-center my-4 row w-100 ">
         <div class="card post-card shadow-sm col-12 col-md-10 col-lg-6">
             <!-- Card Header -->
             <app-post-template-component
@@ -36,18 +24,18 @@
                     </button>
                     <button
                         class="btn btn-light d-flex align-items-center gap-1"
-                        data-bs-toggle="modal"
-                        [attr.data-bs-target]="'#commentModal'+post.id">
+                        (click)="open()">
                         <i class="bi bi-chat"></i>{{post.totalComment}}
                     </button>
                 </div>
             </div>
 
             <!-- Comment Modal -->
-            <div class="modal fade" [id]="'commentModal'+post.id" tabindex="-1"
-                aria-hidden="true">
-                <app-comment-component [post]="post"></app-comment-component>
-            </div>
+            @if (showComment()) {
+            <app-comment-component [post]="post"
+                (close)="close()"></app-comment-component>
+            }
+
         </div>
     </div>
     }

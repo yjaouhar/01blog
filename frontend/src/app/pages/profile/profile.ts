@@ -27,7 +27,6 @@ export class Profile implements OnInit {
     });
     this.prosfileService.getUserProfile(this.username()).subscribe({
       next: res => {
-        // console.log("--------> user data ", res);
         this.profileDetails = res.data;
       },
       error: err => {
@@ -35,7 +34,6 @@ export class Profile implements OnInit {
         throw err
       },
       complete: () => {
-        // console.log("--------> complate", this.profileDetails);
         this.resevData.set(true)
       }
     

@@ -1,5 +1,5 @@
-export interface PostModel {
-    data: Post[];
+export interface PostModel<T> {
+    data: T[];
     currentPage: number;
     totalPages: number;
     hasNext: boolean;
@@ -21,4 +21,10 @@ export interface Post {
 }
 export type Media = {
     mediaType: string; mediaUrl: string;
+}
+export interface AdminPost {
+    id: string;
+    authore: string;
+    descreption: string;
+    post: string
 }

@@ -1,4 +1,4 @@
-import { Component, inject, Input, OnInit, signal } from '@angular/core';
+import { Component, inject, Input, OnChanges, OnInit, signal, SimpleChanges } from '@angular/core';
 import { HomeService } from '../../services/home.service';
 import { DiscoverService } from '../../services/discover.service';
 import { ProfileModel } from '../../model/profileInfo.type';
@@ -10,16 +10,19 @@ import { environment } from '../../../environments/enveronment';
 import { UtilsService } from '../../services/utils.service';
 import { Report } from "../report/report";
 import { ProfileService } from '../../services/user-profile.service';
-import { PostModel } from '../../model/post.type';
+import { Post, PostModel } from '../../model/post.type';
 import { PosteComponent } from "../poste.component/poste-component";
+import { ListUsersComponent } from "../list-users-component/list-users-component";
+import { DiscoverModel } from '../../model/discover.type';
 
 @Component({
   selector: 'app-user-details-component',
-  imports: [EditProfileModal, Confermation, Report, PosteComponent],
+  imports: [EditProfileModal, Confermation, Report, PosteComponent, ListUsersComponent],
   templateUrl: './user-details-component.html',
   styleUrl: './user-details-component.css',
 })
-export class UserDetailsComponent {
+export class UserDetailsComponent implements OnChanges {
+
 
   @Input() profileDetails!: ProfileModel;
   selectedFollowers = false;
@@ -30,14 +33,23 @@ export class UserDetailsComponent {
   utils = inject(UtilsService);
   discoverService = inject(DiscoverService);
   profileService = inject(ProfileService);
-  postes = signal<PostModel | null>(null);
+  postes = signal<PostModel<Post> | null>(null);
+  followers = signal<DiscoverModel | null>(null);
+  following = signal<DiscoverModel | null>(null);
   showConfermation = signal(false);
   showEditeComponent = signal(false)
+  loadFollowers = signal(false);
+  loadFollowing = signal(false);
+  loadPost = signal(false);
   showReport = signal(false)
   url = environment.apiUrl;
 
 
-
+  ngOnChanges(changes: SimpleChanges): void {
+    if (this.profileDetails) {
+      this.getPost()
+    }
+  }
 
   getPost() {
     this.profileService.getPostes(this.profileDetails.id).subscribe({
@@ -46,7 +58,25 @@ export class UserDetailsComponent {
       }
     })
   }
+  getFollowing() {
+    this.profileService.getFollowing(this.profileDetails.id).subscribe({
+      next: res => {
+        console.log("get Following ==> :", res.data);
 
+        this.following.set(res.data);
+        this.loadFollowing.set(true)
+      }
+    })
+  }
+  getFollowers() {
+    this.profileService.getFollowers(this.profileDetails.id).subscribe({
+      next: res => {
+        console.log("get Followers ==> :", res.data);
+        this.followers.set(res.data);
+        this.loadFollowers.set(true)
+      }
+    })
+  }
   togglePosts() {
     this.getPost()
     this.showPostes = true;
@@ -55,11 +85,13 @@ export class UserDetailsComponent {
   }
 
   toggleFollowers() {
+    this.getFollowers()
     this.showPostes = false;
     this.selectedFollowing = false;
     this.selectedFollowers = true
   }
   toggleFollowing() {
+    this.getFollowing()
     this.showPostes = false;
     this.selectedFollowers = false
     this.selectedFollowing = true;

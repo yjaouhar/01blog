@@ -6,6 +6,7 @@ import { CommonModule } from '@angular/common';
 import { LikeDirective } from "../../directive/like-directive";
 import { PostService } from '../../services/post.service';
 import { RouterLink } from '@angular/router';
+import { LoadingService } from '../../services/loading.service';
 
 @Component({
   selector: 'app-poste-component',
@@ -17,7 +18,9 @@ import { RouterLink } from '@angular/router';
 export class PosteComponent implements OnInit {
   postService = inject(PostService)
   // postes = signal<Post[]>([])
-  @Input({ required: true }) postesData!: PostModel;
+  loadingService = inject(LoadingService)
+  showComment = signal(false);
+  @Input({ required: true }) postesData!: PostModel<Post>;
   @Input() showReaction!: boolean;
 
   ngOnInit(): void {
@@ -26,6 +29,7 @@ export class PosteComponent implements OnInit {
     this.postesData.data = this.postesData.data.filter(p => p.id !== id);
   }
   handelLike(post: Post) {
+    this.loadingService.show()
     this.postService.likePoste(post.id).subscribe({
       next: res => {
         console.log("like success : ", res);
@@ -37,7 +41,14 @@ export class PosteComponent implements OnInit {
           }
           return p
         })
+        this.loadingService.hide()
       }
     })
+  }
+  open() {
+    this.showComment.set(true)
+  }
+  close() {
+    this.showComment.set(false)
   }
 }

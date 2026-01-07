@@ -4,10 +4,11 @@ import { PostCreateComponent } from "../post-create-component/post-create-compon
 import { User } from '../../model/user.type';
 import { CommonModule } from '@angular/common';
 import { environment } from '../../../environments/enveronment';
+import { Loading } from "../loading/loading";
 
 @Component({
   selector: 'app-app-header',
-  imports: [PostCreateComponent, CommonModule],
+  imports: [PostCreateComponent, CommonModule, Loading],
   templateUrl: './app-header.html',
   styleUrl: './app-header.css',
 })

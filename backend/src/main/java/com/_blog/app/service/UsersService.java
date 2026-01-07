@@ -32,15 +32,16 @@ public class UsersService {
     @Autowired
     NotificationService notificationService;
 
-    public List<GlobalDataResponse.UserResponse> getUsers(UserAccount currentUser) {
-        Page<UserAccount> users = userRepo.findByIdNot(currentUser.getId(),
+    public GlobalDataResponse<List<GlobalDataResponse.UserResponse>> getUsers(UserAccount currentUser) {
+        Page<UserAccount> usersPage = userRepo.findByIdNot(currentUser.getId(),
                 PageRequest.of(0, 10, Sort.by(Sort.Direction.ASC, "username")));
 
-        return users.getContent().stream().map(u -> {
+        List<GlobalDataResponse.UserResponse> users = usersPage.getContent().stream().map(u -> {
             Long totalPost = postRepo.countByUserId(u.getId());
             boolean followed = subscriberRepo.existsByUserId_IdAndTarget_Id(currentUser.getId(), u.getId());
             return GlobalDataResponse.UserResponse.builder()
                     .id(u.getId())
+                    .email(u.getEmail())
                     .username(u.getUsername())
                     .avatar(u.getAvatar())
                     .name(u.getFirstName() + " " + u.getLastName())
@@ -48,9 +49,10 @@ public class UsersService {
                     .followed(followed)
                     .build();
         }).toList();
+        return new GlobalDataResponse<>(users, usersPage.getNumber(), usersPage.getTotalPages(), usersPage.hasNext());
     }
 
-    public List<GlobalDataResponse.UserResponse> explor(UUID currentUserId, String keyword, int page, int size) {
+    public GlobalDataResponse<List<GlobalDataResponse.UserResponse>> explor(UUID currentUserId, String keyword, int page, int size) {
         Page<UserAccount> allusers = userRepo.searchByFullName(currentUserId, "%" + keyword.toLowerCase() + "%",
                 PageRequest.of(page, size));
         List<GlobalDataResponse.UserResponse> users = allusers.getContent().stream().map(u -> {
@@ -58,13 +60,14 @@ public class UsersService {
             Long totalPost = postRepo.countByUserId(u.getId());
             return GlobalDataResponse.UserResponse.builder()
                     .id(u.getId())
+                    .email(u.getEmail())
                     .avatar(u.getAvatar())
                     .name(u.getFirstName() + " " + u.getLastName())
                     .totalPost(totalPost)
                     .followed(isfollowed)
                     .build();
         }).toList();
-        return users;
+        return new GlobalDataResponse<>(users, allusers.getNumber(), allusers.getTotalPages(), allusers.hasNext());
     }
 
     @Transactional
@@ -85,28 +88,5 @@ public class UsersService {
         return "follow";
 
     }
-    // public GlobalDataResponse<List<UserResponse>> followers(UserAccount currentUser, int page, int size) {
-    //     Page<Subscribers> followersPage = subscriberRepo.findByTarget(currentUser, PageRequest.of(page, size));
-    //     List<GlobalDataResponse.UserResponse> followers = followersPage.getContent().stream()
-    //             .map(follow -> {
-    //                 UserAccount user = follow.getUser();
-    //                 return new GlobalDataResponse.UserResponse(user.getAvatar(), user.getFirstName(),
-    //                         user.getLastName(), user.getUsername(),
-    //                         subscriberRepo.existsByUserId_IdAndTarget_Id(currentUser.getId(), user.getId()));
-    //             }).toList();
-    //     return new GlobalDataResponse<>(followers, followersPage.getNumber(), followersPage.getTotalPages(),
-    //             followersPage.hasNext());
-    // }
-    // public GlobalDataResponse<List<UserResponse>> following(UserAccount currentUser, int page, int size) {
-    //     Page<Subscribers> followingPage = subscriberRepo.findByUser(currentUser, PageRequest.of(page, size));
-    //     List<GlobalDataResponse.UserResponse> following = followingPage.getContent().stream()
-    //             .map(follow -> {
-    //                 UserAccount user = follow.getUser();
-    //                 return new GlobalDataResponse.UserResponse(user.getAvatar(), user.getFirstName(),
-    //                         user.getLastName(), user.getUsername(), true);
-    //             }).toList();
-    //     return new GlobalDataResponse<>(
-    //             following, followingPage.getNumber(), followingPage.getTotalPages(),
-    //             followingPage.hasNext());
-    // }
+
 }

@@ -102,10 +102,11 @@ export class UtilsService {
     return `${years} year${years > 1 ? 's' : ''} ago`;
   }
 
-  isEmpty<T>(arr: T[] | null) {
+  NotEmpty<T>(arr: T[] | null) {
+    
     return arr && arr !== null && arr.length > 0;
   }
-  isBlank(str: string ) {
+  isBlank(str: string) {
     return !str.trim()
   }
 }

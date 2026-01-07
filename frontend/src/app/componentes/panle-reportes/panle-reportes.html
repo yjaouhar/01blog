@@ -1,0 +1,72 @@
+ <div class="card shadow-sm">
+    <div class="card-header bg-white">
+        <strong>Reports</strong>
+    </div>
+    <div class="table-responsive">
+        <table class="table table-hover mb-0">
+            <thead class="table-light">
+                <tr>
+                    <th style="width: 5%;">Type</th>
+                    <th>Report By</th>
+                    <th>REPORTS</th>
+                </tr>
+            </thead>
+            <tbody>
+                @for (r of reports(); track r.id) {
+                <tr>
+                    <td class="    align-content-center text-center">
+                        @if (r.type==='post') {
+                        <i class="bi bi-file-post text-primary fs-3"></i>
+                        }@else{
+                        <i class="bi bi-person-fill  text-primary fs-3"></i>
+                        }
+                    </td>
+                    <td>
+                        <div class="d-flex gap-3">
+                            <small>{{r.reportedBy}}</small>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="d-flex justify-content-between p-2">
+                            <div class="d-flex gap-3">
+                                <strong>{{r.reasone}}</strong>
+                                <small>{{r.time}}</small>
+                                <small>{{r.time}}</small>
+                            </div>
+
+                            <div class="d-flex gap-3">
+                                @if (r.reacted) {
+                                <i
+                                    class="btn btn-outline-success">solved</i>
+                                }@else {
+                                <i
+                                    class="bi bi-eye-slash-fill text-warning fs-4"
+                                    [title]="'Hide'+r.type"
+                                    (click)="changeSelectedPost(r,'hide')"></i>
+
+                                <i class="bi bi-trash-fill text-danger fs-4"
+                                    data-bs-toggle="tooltip"
+                                    [title]="'Delete '+r.type"
+                                    (click)="changeSelectedPost(r,'delet')"></i>
+                                }
+                                <i class="btn btn-close"
+                                    title="clear report"
+                                    (click)="removeReport(r.id)"></i>
+                            </div>
+                        </div>
+
+                    </td>
+                </tr>
+                }
+            </tbody>
+        </table>
+        @if (showHideConfirmation()) {
+        <app-bane message="Do you want to bane"
+            (react)="banTarget($event)"></app-bane>
+        }
+        @if (showDeletConfirmation()) {
+        <app-confermation message="Do you want to delet"
+            (react)="deleteTarget($event)"></app-confermation>
+        }
+    </div>
+</div>

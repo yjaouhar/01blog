@@ -39,11 +39,7 @@ export class PostTemplateComponent {
       }
     });
   }
-  reportPost(reason: string) {
-    if (!this.post) return;
 
-
-  }
   active(index: number) {
     if (index === 0) {
       return "active"

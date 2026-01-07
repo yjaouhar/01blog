@@ -49,6 +49,7 @@ public class GlobalDataResponse<T> {
         private UUID id;
         private String username;
         private String avatar;
+        private String email;
         private String name;
         private Long totalPost;
         private boolean followed;

@@ -75,14 +75,17 @@ public class ProfileController {
         JwtUserPrincipal principal = UserUtils.getPrincipal();
         UserAccount currentUser = userUtils.findUserById(principal.getId());
         UserAccount profileUser = userUtils.findUserById(profileId);
-        GlobalDataResponse followers = profileService.followers(currentUser, page, size);
-        return new ResponseEntity<>(new GlobalResponse<>(followers), HttpStatus.OK);
+        // GlobalDataResponse followers = 
+        return new ResponseEntity<>(
+                new GlobalResponse<>(profileService.followers(currentUser, profileUser, page, size)), HttpStatus.OK);
     }
-    // @GetMapping("/following")
-    // public ResponseEntity<GlobalResponse<?>> following(@RequestParam(defaultValue = "0") int page,
-    //         @RequestParam(defaultValue = "10") int size, Principal principal) {
-    //     UserAccount currentUser = userUtils.findUserByUsername(principal.getName());
-    //     GlobalDataResponse following = profileService.following(currentUser, page, size);
-    //     return new ResponseEntity<>(new GlobalResponse<>(following), HttpStatus.OK);
-    // }
+    @GetMapping("/following/{profileId}")
+    public ResponseEntity<GlobalResponse<?>> following(@PathVariable UUID profileId,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        JwtUserPrincipal principal = UserUtils.getPrincipal();
+        UserAccount currentUser = userUtils.findUserById(principal.getId());
+        UserAccount profileUser = userUtils.findUserById(profileId);
+        return new ResponseEntity<>(new GlobalResponse<>(profileService.following(currentUser, profileUser, page, size)), HttpStatus.OK);
+    }
 }

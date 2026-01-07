@@ -19,6 +19,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com._blog.app.dtos.EditProfileRequest;
 import com._blog.app.dtos.ProfileDetailsResponse;
 import com._blog.app.entities.Postes;
+import com._blog.app.entities.Subscribers;
 import com._blog.app.entities.UserAccount;
 import com._blog.app.repository.CommentRepo;
 import com._blog.app.repository.LikeRepo;
@@ -191,12 +192,14 @@ public class ProfileService {
 
     public GlobalDataResponse<List<GlobalDataResponse.UserResponse>> followers(UserAccount currentUser,
             UserAccount profileUser, int page, int size) {
-        Page<UserAccount> followersPage = subscriberRepo.findByTarget(profileUser, PageRequest.of(page, size));
-        List<GlobalDataResponse.UserResponse> followers = followersPage.getContent().stream().map(f -> {
+        Page<Subscribers> followersPage = subscriberRepo.findByTarget(profileUser, PageRequest.of(page, size));
+        List<GlobalDataResponse.UserResponse> followers = followersPage.getContent().stream().map(follower -> {
+            UserAccount f = follower.getUser();
             Long totalPost = postRepo.countByUserId(f.getId());
             boolean isfollowed = subscriberRepo.existsByUserId_IdAndTarget_Id(currentUser.getId(), f.getId());
             return GlobalDataResponse.UserResponse.builder()
                     .id(f.getId())
+                    .email(f.getEmail())
                     .username(f.getUsername())
                     .avatar(f.getAvatar())
                     .name(f.getFirstName() + " " + f.getLastName())
@@ -208,13 +211,15 @@ public class ProfileService {
                 followersPage.hasNext());
     }
 
-    public GlobalDataResponse<List<GlobalDataResponse.UserResponse>> following(UserAccount currentUser,  UserAccount profileUser , int page, int size) {
-        Page<UserAccount> followersPage = subscriberRepo.findByUser(profileUser, PageRequest.of(page, size));
-        List<GlobalDataResponse.UserResponse> followers = followersPage.getContent().stream().map(f -> {
+    public GlobalDataResponse<List<GlobalDataResponse.UserResponse>> following(UserAccount currentUser, UserAccount profileUser, int page, int size) {
+        Page<Subscribers> followingPage = subscriberRepo.findByUser(profileUser, PageRequest.of(page, size));
+        List<GlobalDataResponse.UserResponse> following = followingPage.getContent().stream().map(follower -> {
+            UserAccount f = follower.getTarget();
             Long totalPost = postRepo.countByUserId(f.getId());
             boolean isfollowed = subscriberRepo.existsByUserId_IdAndTarget_Id(currentUser.getId(), f.getId());
             return GlobalDataResponse.UserResponse.builder()
                     .id(f.getId())
+                    .email(f.getEmail())
                     .username(f.getUsername())
                     .avatar(f.getAvatar())
                     .name(f.getFirstName() + " " + f.getLastName())

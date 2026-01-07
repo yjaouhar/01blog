@@ -1,4 +1,4 @@
-import { Component, inject, Input, OnInit, signal } from '@angular/core';
+import { Component, EventEmitter, inject, Input, OnInit, Output, signal } from '@angular/core';
 import { PostService } from '../../services/post.service';
 import { Post, PostModel } from '../../model/post.type';
 import { CommonModule } from '@angular/common';
@@ -9,6 +9,7 @@ import { UtilsService } from '../../services/utils.service';
 import { NotResorce } from "../not-resorce/not-resorce";
 import { environment } from '../../../environments/enveronment';
 import { Confermation } from "../confermation/confermation";
+import { LoadingService } from '../../services/loading.service';
 
 @Component({
   selector: 'app-comment-component',
@@ -19,8 +20,10 @@ import { Confermation } from "../confermation/confermation";
 })
 export class CommentComponent implements OnInit {
   @Input() post!: Post;
+  @Output() close = new EventEmitter();
   postServices = inject(PostService);
   utils = inject(UtilsService);
+  loadingService = inject(LoadingService)
   url = environment.apiUrl;
   commentText = '';
   comments = signal<CommentModal[]>([]);
@@ -29,9 +32,11 @@ export class CommentComponent implements OnInit {
   errorMessage = signal('');
   showConfermation = signal(false);
   ngOnInit(): void {
+    this.loadingService.show()
     this.postServices.getComment(this.post.id).subscribe({
       next: res => {
         this.comments.set(res.data)
+        this.loadingService.hide()
       }
     })
   }
@@ -55,11 +60,13 @@ export class CommentComponent implements OnInit {
       return
     }
     this.showError.set(false)
+    this.loadingService.show()
     this.postServices.commentPoste(postId, this.commentText).subscribe({
       next: res => {
         if (res?.data) {
           this.comments.update(arr => [res?.data, ...arr])
         }
+        this.loadingService.hide()
       }
     });
     this.commentText = ''
@@ -70,6 +77,7 @@ export class CommentComponent implements OnInit {
     if (this.selectCommentId() === null) {
       return;
     }
+    this.loadingService.show()
     this.postServices.deletComment(this.selectCommentId()!).subscribe({
       next: () => {
         this.comments.update(comment => comment.filter(c => {
@@ -78,6 +86,7 @@ export class CommentComponent implements OnInit {
           }
           return true
         }))
+        this.loadingService.hide()
       }
     })
   }
@@ -97,5 +106,8 @@ export class CommentComponent implements OnInit {
 
   chane() {
     this.showError.set(false)
+  }
+  closeComponent() {
+    this.close.emit()
   }
 }

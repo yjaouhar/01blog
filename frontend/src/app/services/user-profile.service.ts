@@ -4,7 +4,8 @@ import { catchError, map, throwError } from 'rxjs';
 import { environment } from '../../environments/enveronment';
 import { GlobalResponce } from '../model/globalResponce.type';
 import { ProfileModel } from '../model/profileInfo.type';
-import { PostModel } from '../model/post.type';
+import { Post, PostModel } from '../model/post.type';
+import { DiscoverModel } from '../model/discover.type';
 
 @Injectable({
   providedIn: 'root',
@@ -38,7 +39,17 @@ export class ProfileService {
   }
 
   getPostes(id: string) {
-    return this.http.get<GlobalResponce<PostModel>>(`${environment.apiUrl}/api/profile/postes/${id}`).pipe(
+    return this.http.get<GlobalResponce<PostModel<Post>>>(`${environment.apiUrl}/api/profile/postes/${id}`).pipe(
+      catchError(err => throwError(() => err))
+    );
+  }
+  getFollowers(id: string) {
+    return this.http.get<GlobalResponce<DiscoverModel>>(`${environment.apiUrl}/api/profile/followers/${id}`).pipe(
+      catchError(err => throwError(() => err))
+    );
+  }
+  getFollowing(id: string) {
+    return this.http.get<GlobalResponce<DiscoverModel>>(`${environment.apiUrl}/api/profile/following/${id}`).pipe(
       catchError(err => throwError(() => err))
     );
   }

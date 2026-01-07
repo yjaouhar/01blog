@@ -152,15 +152,18 @@
             <!-- Followers / Following -->
             @else {
             <div class="bg-white rounded shadow-sm p-4 text-center">
-                <!-- @if (selectedFollowers) {
-                <app-list-users-component
-                    [users]="subscribed"></app-list-users-component>
-                } -->
+                @if (selectedFollowers) {
 
-                <!-- @else if (selectedFollowing) {
                 <app-list-users-component
-                    [users]="subscriber"></app-list-users-component>
-                } -->
+                    [users]="followers()!"
+                    [loadData]="loadFollowers()"></app-list-users-component>
+                }
+                @else if (selectedFollowing) {
+
+                <app-list-users-component
+                    [users]="following()!"
+                    [loadData]="loadFollowing()"></app-list-users-component>
+                }
             </div>
             }
 

@@ -1,0 +1,45 @@
+ <div class="card shadow-sm">
+
+    <div class="card-header bg-white">
+        <strong>Banned List</strong>
+    </div>
+
+    <div class="table-responsive">
+        <table class="table table-hover mb-0">
+            <thead class="table-light">
+                <tr>
+                    <th>Type</th>
+                    <th>Target</th>
+                    <th>Date</th>
+                    <th class="text-end">Actions</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                @for (b of banned; track b.date) {
+                <tr>
+                    <td>
+                        @if (b.type==='Post') {
+                        <i class="bi bi-file-post text-primary fs-3"></i>
+                        }@else{
+                        <i class="bi bi-person-fill  text-primary fs-3"></i>
+                        }
+                    </td>
+                    <td>{{ b.name }}</td>
+                    <td>{{ b.date }}</td>
+                    <td class="text-end ">
+                        <i class="bi bi-eye-fill fs-3 text-success me-3"
+                        [title]="'Reveal '+b.type"></i>
+                        <i class="bi bi-trash-fill text-danger fs-4 me-3"
+                            [title]="'Delete '+b.type"></i>
+                    </td>
+                </tr>
+                }
+            </tbody>
+        </table>
+        @if(showConfirmation()){
+            <app-confermation message="Do you want to delet this poste/user?" (react)="deletTarget($event)"></app-confermation>
+        }
+    </div>
+
+</div>

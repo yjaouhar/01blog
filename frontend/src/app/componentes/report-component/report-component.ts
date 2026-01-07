@@ -16,7 +16,6 @@ declare var bootstrap: any;
 export class ReportComponent {
   form: FormGroup;
   @Input() id!: string;
-  @Output() reason = new EventEmitter<string>()
   loading = signal(false);
   success = signal(false);
   refus = signal(false)

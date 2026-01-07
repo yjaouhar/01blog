@@ -1,10 +1,10 @@
+<app-app-header></app-app-header>
 <app-loading></app-loading>
- <app-app-header></app-app-header>
 <main class="flex-grow-1 mt-7"
     style="padding-top: 70px; padding-bottom: 70px; overflow: hidden;">
 
     @if(isHomePage()){
-    @if (start()|| utils.isEmpty(postes()?.data ?? [])) {
+    @if (start()|| utils.NotEmpty(postes()?.data ?? [])) {
     <app-poste-component [postesData]="postes()!"
         [showReaction]="true"></app-poste-component>
     }@else {

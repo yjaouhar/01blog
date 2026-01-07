@@ -1,4 +1,8 @@
+@if (users && !utils.NotEmpty(users.data) && loadData ) {
+<app-not-resorce message="No Useres Found" type="user"></app-not-resorce>
+}
 <div class="container mt-4 p-3">
+    @if (showSercheBare) {
     <div class="input-group mb-3">
         <input #searcheInput type="text" class="form-control"
             aria-label="Text input with checkbox">
@@ -6,19 +10,26 @@
             <i class="bi bi-search"></i>
         </div>
     </div>
+    }
     <div class="user-list">
-        @if(users.length<=0){
-        <app-loading></app-loading>
+        @if (!utils.NotEmpty(users?.data??[]) && serched()) {
+        <app-not-resorce message="No Usere Found" type="user"></app-not-resorce>
         }@else {
-        @for (user of users; track user.id ) {
+        @for (user of users?.data; track user?.id ) {
         <div
             class="user-item d-flex align-items-center justify-content-between p-2">
 
             <div class="user-info d-flex align-items-center">
                 <a [routerLink]="['/profile', user.username]"
                     class="user-link d-flex align-items-center text-decoration-none">
-                    <img [src]="url+user.avatar" alt="{{ user.name }}"
+                    @if (user.avatar) {
+                    <img [src]="url+user.avatar"
                         class="avatar rounded-circle" width="40" height="40">
+                    }@else {
+                    <div class="avatar-user">
+                        {{user.username.at(0)?.toLocaleUpperCase()}}
+                    </div>
+                    }
                     <div class="ms-2">
                         <h6 class="name mb-0">{{ user.name }}</h6>
                         <small class="stats">{{ user?.totalPoste ?? 0 }}
@@ -42,8 +53,8 @@
         </div>
 
         }
-
         }
+
         @if (showConfermation()) {
         <app-confermation
             message="Do you want to unfollow this user?"
@@ -52,3 +63,4 @@
 
     </div>
 </div>
+<!-- } -->
