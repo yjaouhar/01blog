@@ -42,13 +42,8 @@ public class Postes {
     @Column(name = "media")
     private List<GlobalDataResponse.Media> media;
 
-    // @Column(name = "media_type", nullable = false)
-    // private List<String> mediaType;
     @Column(name = "create_at", nullable = false)
     private LocalDateTime createdAt = LocalDateTime.now();
-
-    @Column(name = "update_at", nullable = false)
-    private LocalDateTime updateAt = LocalDateTime.now();
 
     private boolean hide = false;
 

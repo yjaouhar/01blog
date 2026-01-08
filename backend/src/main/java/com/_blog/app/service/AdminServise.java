@@ -1,20 +1,28 @@
 package com._blog.app.service;
 
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com._blog.app.dtos.ReportsReactionRequest;
+import com._blog.app.entities.Postes;
 import com._blog.app.entities.Report;
 import com._blog.app.entities.UserAccount;
 import com._blog.app.repository.PosteRepo;
 import com._blog.app.repository.ReportRepo;
 import com._blog.app.repository.UserRepo;
 import com._blog.app.shared.CustomResponseException;
+import com._blog.app.shared.GlobalDataResponse;
+import com._blog.app.utils.PosteUtils;
+
+import jakarta.transaction.Transactional;
 
 @Service
 public class AdminServise {
+
     @Autowired
     private UserRepo userRepo;
     @Autowired
@@ -23,6 +31,10 @@ public class AdminServise {
     private PosteRepo posteRepo;
     @Autowired
     private NotificationService notificationService;
+
+    @Autowired
+    private PosteUtils posteUtils;
+
     public void handleReport(ReportsReactionRequest reportsActionRequest, UserAccount admin) {
 
         if (!"ADMIN".equals(admin.getRole())) {
@@ -38,7 +50,8 @@ public class AdminServise {
             if (report.getReportedPost() != null) {
                 if (reportsActionRequest.remove()) {
                     posteRepo.delete(report.getReportedPost());
-                    String content = "Your post titled '" + report.getReportedPost().getDescription() + "' was removed by admin due to reports.";
+                    String content = "Your post titled '" + report.getReportedPost().getDescription()
+                            + "' was removed by admin due to reports.";
                     notificationService.insertNotification(report.getReportedPost().getUser(), content);
                 } else {
                     report.getReportedPost().setHide(true);
@@ -55,13 +68,98 @@ public class AdminServise {
             }
             report.setReactedAt(LocalDateTime.now());
         } else {
-            report.setStatus(Report.Status.REJECTED);
+            // report.setStatus(Report.Status.REJECTED);
             report.setReactedAt(LocalDateTime.now());
         }
 
         reportRepo.save(report);
     }
+
+    public GlobalDataResponse.Stats stats() {
+        long totalUsers = userRepo.countUsersExceptRole("ADMIN");
+        long totalPosts = posteRepo.count();
+        long activeReports = reportRepo.countActiveReport(Report.Status.PENDING);
+        long banned = userRepo.countByActiveFalse() + posteRepo.countByHideTrue();
+        return GlobalDataResponse.Stats.builder()
+                .totalPosts(totalPosts)
+                .totalUsers(totalUsers)
+                .activeReports(activeReports)
+                .banned(banned).build();
+    }
+
+    public List<GlobalDataResponse.Users> users() {
+        return userRepo.findUsersExceptRole("ADMIN").stream().map(u -> {
+            return GlobalDataResponse.Users.builder()
+                    .id(u.getId())
+                    .avatart(u.getAvatar())
+                    .username(u.getUsername())
+                    .email(u.getEmail())
+                    .status(u.isActive())
+                    .build();
+        }).toList();
+    }
+
+    @Transactional
+    public void deletUser(UserAccount user, UserAccount target) {
+        if (!user.getRole().equals("ADMIN")) {
+            throw CustomResponseException.CustomException(403, "This action special for Admin");
+        }
+        userRepo.deleteById(target.getId());
+    }
+
+    public void activeUser(UserAccount user, UserAccount target) {
+        if (!user.getRole().equals("ADMIN")) {
+            throw CustomResponseException.CustomException(403, "This action special for Admin");
+        }
+        target.setActive(true);
+        userRepo.save(target);
+    }
+
+    public void baneUser(UserAccount user, UserAccount target) {
+        if (!user.getRole().equals("ADMIN")) {
+            throw CustomResponseException.CustomException(403, "This action special for Admin");
+        }
+        target.setActive(false);
+        userRepo.save(target);
+    }
+
+    public List<GlobalDataResponse.Postes> getPostes(UserAccount user) {
+        if (!user.getRole().equals("ADMIN")) {
+            throw CustomResponseException.CustomException(403, "This action special for Admin");
+        }
+        return posteRepo.findAll().stream().map(p -> {
+            return GlobalDataResponse.Postes.builder()
+                    .id(p.getId())
+                    .authore(p.getUser().getUsername())
+                    .descreption(p.getDescription())
+                    .status(p.isHide())
+                    .build();
+        }).toList();
+    }
+
+    @Transactional
+    public void deletPoste(UserAccount user, UUID postId) {
+        if (!user.getRole().equals("ADMIN")) {
+            throw CustomResponseException.CustomException(403, "This action special for Admin");
+        }
+        posteRepo.deleteById(postId);
+    }
+
+    public void activePoste(UserAccount user, UUID poatId) {
+        if (!user.getRole().equals("ADMIN")) {
+            throw CustomResponseException.CustomException(403, "This action special for Admin");
+        }
+        Postes post = posteUtils.findPostById(poatId);
+        post.setHide(false);
+        posteRepo.save(post);
+    }
+
+    public void banePoste(UserAccount user, UUID poatId) {
+        if (!user.getRole().equals("ADMIN")) {
+            throw CustomResponseException.CustomException(403, "This action special for Admin");
+        }
+        Postes post = posteUtils.findPostById(poatId);
+        post.setHide(true);
+        posteRepo.save(post);
+    }
 }
-
-
-// eyJhbGciOiJIUzM4NCJ9.eyJyb2xlIjoiVVNFUiIsInVzZXJJZCI6IjFiNGZkODFhLWE4N2MtNGE4Mi05NGQ2LTQ3MDFkNzI2MjUyNSIsInN1YiI6InlqYW91aGFyIiwiaWF0IjoxNzYyODgxNDcxLCJleHAiOjE3NjQwOTEwNzF9.YK-B8UNGwmTAg6BdqIG-rtvMd6FvrtbOyYOyF7vX-rlk8wyla5QXeXmCOIr5jsUO

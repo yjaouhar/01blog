@@ -23,8 +23,8 @@ export type Media = {
     mediaType: string; mediaUrl: string;
 }
 export interface AdminPost {
-    id: string;
+    id: string
     authore: string;
     descreption: string;
-    post: string
+    status: boolean;
 }

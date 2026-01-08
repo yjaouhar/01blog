@@ -8,8 +8,11 @@ import org.springframework.stereotype.Service;
 import com._blog.app.dtos.ReportRequest;
 import com._blog.app.entities.Report;
 import com._blog.app.entities.UserAccount;
+import com._blog.app.repository.PosteRepo;
 import com._blog.app.repository.ReportRepo;
+import com._blog.app.repository.UserRepo;
 import com._blog.app.shared.CustomResponseException;
+import com._blog.app.shared.GlobalDataResponse;
 import com._blog.app.utils.PosteUtils;
 import com._blog.app.utils.UserUtils;
 
@@ -25,8 +28,32 @@ public class ReportService {
     @Autowired
     private PosteUtils posteUtils;
 
-    public List<Report> allReport() {
-        return reportRepo.findAll();
+    @Autowired
+    private PosteRepo posteRepo;
+
+    @Autowired
+    private UserRepo userRepo;
+
+    public List<GlobalDataResponse.Report> allReport() {
+        return reportRepo.findAll().stream().map(r -> {
+            String typ;
+            String target;
+            if (r.getReportedPost() != null) {
+                typ = "post";
+                target = r.getReportedPost().getDescription();
+            } else {
+                typ = "user";
+                target = r.getReportedUser().getUsername();
+            }
+            return GlobalDataResponse.Report.builder()
+                    .id(r.getId())
+                    .time(r.getCreatedAt())
+                    .type(typ)
+                    .reporter(r.getReporter().getUsername())
+                    .target(target)
+                    .reason(r.getReason())
+                    .status(r.getStatus().toString()).build();
+        }).toList();
     }
 
     public void report(ReportRequest reportRequest, UserAccount reporter) {
@@ -38,8 +65,6 @@ public class ReportService {
             throw CustomResponseException.CustomException(400, "You can only report either a user or a post, not both");
         }
         Report report = new Report();
-        report.setReason(reportRequest.reason());
-        report.setReporter(reporter);
         if (reportRequest.reportedUser() != null) {
             boolean exist = reportRepo.existsByReporterIdAndReportedUserId(reporter.getId(),
                     reportRequest.reportedUser());
@@ -56,6 +81,8 @@ public class ReportService {
             }
             report.setReportedPost(posteUtils.findPostById(reportRequest.reportedPost()));
         }
+        report.setReason(reportRequest.reason());
+        report.setReporter(reporter);
         reportRepo.save(report);
     }
 

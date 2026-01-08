@@ -124,7 +124,6 @@
       <div class="mb-3">
         <label>Avatar</label>
         <input type="file" class="form-control" #avatarInput
-          formControlName="avatar"
           (change)="onFileSelect($event)">
       </div>
       <!-- ==== Modal resoze avatar ==== -->
@@ -163,6 +162,8 @@
       </div>
       }
       <button class="btn btn-primary w-100 mb-2" type="submit">Register</button>
+      <a routerLink="/login" class="text-center"> i have acount </a>
     </form>
   </div>
+
 </div>

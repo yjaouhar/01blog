@@ -1,0 +1,6 @@
+@if(resevData() && !poste()){
+<app-not-resorce message="This Post Not Found" type="post"></app-not-resorce>
+}@else{
+<app-poste-component [postesData]="poste()!"
+    [showReaction]="true"></app-poste-component>
+}

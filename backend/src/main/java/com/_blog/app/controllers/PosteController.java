@@ -68,6 +68,14 @@ public class PosteController {
         return new ResponseEntity<>(new GlobalResponse<>("Deleted !"), HttpStatus.OK);
     }
 
+    @GetMapping("/{postId}")
+    public ResponseEntity<GlobalResponse<?>> getPost(@PathVariable UUID postId) {
+        JwtUserPrincipal principal = (JwtUserPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        UserAccount currentUser = userUtils.findUserById(principal.getId());
+        return new ResponseEntity<>(new GlobalResponse<>(postesService.getPostes(currentUser, postId)),
+                HttpStatus.CREATED);
+    }
+
     @PatchMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<GlobalResponse<?>> updatePost(
             @RequestPart("data") @Valid PosteUpdateRequest posteUpdateRequest,
@@ -98,8 +106,6 @@ public class PosteController {
         UserAccount currentUser = userUtils.findUserByUsername(principal.getUsername());
         return new ResponseEntity<>(new GlobalResponse<>(postesService.commentPost(commentPosteRequest, currentUser)), HttpStatus.OK);
     }
-
-
 
     @DeleteMapping("/comment/{commentId}")
     public ResponseEntity<GlobalResponse<?>> deletComment(@PathVariable UUID commentId) {

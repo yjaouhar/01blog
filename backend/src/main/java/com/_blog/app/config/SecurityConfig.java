@@ -37,6 +37,7 @@ public class SecurityConfig {
                             .requestMatchers(HttpMethod.GET, "/api/post").hasAnyRole("USER", "ADMIN")
                             .requestMatchers(HttpMethod.POST, "/api/post").hasAnyRole("USER", "ADMIN")
                             .requestMatchers(HttpMethod.DELETE, "/api/post/{postId}").hasAnyRole("USER", "ADMIN")
+                            .requestMatchers(HttpMethod.GET, "/api/post/{postId}").hasAnyRole("USER", "ADMIN")
                             .requestMatchers(HttpMethod.PATCH, "/api/post").hasAnyRole("USER", "ADMIN")
                             .requestMatchers(HttpMethod.POST, "/api/post/like/{postId}").hasAnyRole("USER", "ADMIN")
                             .requestMatchers(HttpMethod.POST, "/api/post/comment").hasAnyRole("USER", "ADMIN")
@@ -52,6 +53,16 @@ public class SecurityConfig {
                             .requestMatchers(HttpMethod.GET, "/api/profile/following/{profileId}").hasAnyRole("USER", "ADMIN")
                             .requestMatchers(HttpMethod.POST, "/api/report").hasAnyRole("USER", "ADMIN")
                             .requestMatchers(HttpMethod.GET, "/api/notification").hasAnyRole("USER", "ADMIN")
+                            // ===========================================================================================================
+                            .requestMatchers(HttpMethod.GET, "/api/admin/stats").hasAnyRole("ADMIN")
+                            .requestMatchers(HttpMethod.GET, "/api/admin/users").hasAnyRole("ADMIN")
+                            .requestMatchers(HttpMethod.PATCH, "/api/admin/user/active/{userId}").hasAnyRole("ADMIN")
+                            .requestMatchers(HttpMethod.PATCH, "/api/admin/user/bane/{userId}").hasAnyRole("ADMIN")
+                            .requestMatchers(HttpMethod.DELETE, "/api/admin/user/{userId}").hasAnyRole("ADMIN")
+                            .requestMatchers(HttpMethod.GET, "/api/admin/postes").hasAnyRole("ADMIN")
+                            .requestMatchers(HttpMethod.PATCH, "/api/admin/poste/active/{posteId}").hasAnyRole("ADMIN")
+                            .requestMatchers(HttpMethod.PATCH, "/api/admin/poste/bane/{posteId}").hasAnyRole("ADMIN")
+                            .requestMatchers(HttpMethod.DELETE, "/api/admin/poste/{posteId}").hasAnyRole("ADMIN")
                             .requestMatchers(HttpMethod.GET, "/api/admin/report").hasAnyRole("ADMIN")
                             .requestMatchers(HttpMethod.POST, "/api/admin/report_reaction").hasAnyRole("ADMIN");
                 }).addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);

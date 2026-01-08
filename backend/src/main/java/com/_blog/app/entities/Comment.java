@@ -33,7 +33,6 @@ public class Comment {
     @Column(length = 500)
     private String contente;
     private LocalDateTime crat_at = LocalDateTime.now();
-    private LocalDateTime edit_at = LocalDateTime.now();
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "post_id", nullable = false)
     private Postes post;

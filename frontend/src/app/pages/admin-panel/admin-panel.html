@@ -5,36 +5,52 @@
 
         <div class="col-md-3">
             <div class="card shadow-sm stat-card users-card">
-                <div class="card-body text-white">
+                <div class="card-body text-white text-center">
                     <h6>Total Users</h6>
-                    <h2>{{ stats.totalUsers }}</h2>
+                    @if (!loadData()) {
+                    <app-spinner></app-spinner>
+                    }@else {
+                    <h2>{{ stats()?.totalUsers??0 }}</h2>
+                    }
                 </div>
             </div>
         </div>
 
         <div class="col-md-3">
             <div class="card shadow-sm stat-card posts-card">
-                <div class="card-body text-white">
+                <div class="card-body text-white  text-center">
                     <h6>Total Posts</h6>
-                    <h2>{{ stats.totalPosts }}</h2>
+                    @if (!loadData()) {
+                    <app-spinner></app-spinner>
+                    }@else {
+                    <h2>{{ stats()?.totalPosts??0 }}</h2>
+                    }
                 </div>
             </div>
         </div>
 
         <div class="col-md-3">
             <div class="card shadow-sm stat-card reports-card">
-                <div class="card-body text-white">
+                <div class="card-body text-white text-center">
                     <h6>Active Reports</h6>
-                    <h2>{{ stats.activeReports }}</h2>
+                    @if (!loadData()) {
+                    <app-spinner></app-spinner>
+                    }@else {
+                    <h2>{{ stats()?.activeReports??0 }}</h2>
+                    }
                 </div>
             </div>
         </div>
 
         <div class="col-md-3">
             <div class="card shadow-sm stat-card banned-card">
-                <div class="card-body text-white">
+                <div class="card-body text-white  text-center">
                     <h6>Banned Items</h6>
-                    <h2>{{ stats.banned }}</h2>
+                    @if (!loadData()) {
+                    <app-spinner></app-spinner>
+                    }@else {
+                    <h2>{{ stats()?.banned??0 }}</h2>
+                    }
                 </div>
             </div>
         </div>
@@ -44,40 +60,40 @@
     <!-- ====== TABS ====== -->
     <ul class="nav nav-tabs mb-3" id="adminTabs">
         <li class="nav-item">
-            <button class="nav-link" [class.active]="tab === 'users'"
-                (click)="tab='users'">Users</button>
+            <button class="nav-link" [class.active]="tab() === 'users'"
+                (click)="tab.set('users')">Users</button>
         </li>
         <li class="nav-item">
-            <button class="nav-link" [class.active]="tab === 'posts'"
-                (click)="tab='posts'">Posts</button>
+            <button class="nav-link" [class.active]="tab() === 'posts'"
+                (click)="tab.set('posts')">Posts</button>
         </li>
         <li class="nav-item">
-            <button class="nav-link" [class.active]="tab === 'reports'"
-                (click)="tab='reports'">Reports</button>
+            <button class="nav-link" [class.active]="tab() === 'reports'"
+                (click)="tab.set('reports')">Reports</button>
         </li>
         <li class="nav-item">
-            <button class="nav-link" [class.active]="tab === 'banned'"
-                (click)="tab='banned'">Banned</button>
+            <button class="nav-link" [class.active]="tab() === 'banned'"
+                (click)="tab.set('banned')">Banned</button>
         </li>
     </ul>
 
     <!-- ========== USERS ========== -->
-    @if (tab === 'users') {
-   
+    @if (tab() === 'users') {
+    <app-panle-useres></app-panle-useres>
     }
 
     <!-- ========== POSTS ========== -->
-    @if (tab === 'posts') {
-  
+    @if (tab() === 'posts') {
+    <app-panle-postes></app-panle-postes>
     }
 
     <!-- ========== REPORTS ========== -->
-    @if (tab === 'reports') {
- 
+    @if (tab() === 'reports') {
+    <app-panle-reportes></app-panle-reportes>
     }
 
     <!-- ========== BANNED ========== -->
-    @if (tab === 'banned') {
+    @if (tab() === 'banned') {
 
     }
 

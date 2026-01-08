@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -57,7 +58,8 @@ public class PostesService {
             List<Subscribers> followinTarget = subscriberRepo.findByUser(user);
             // njib target mn row li ana dyr lihom follow 
             // useres li ghnjib lihomm postat
-            List<UserAccount> postUserTarget = new ArrayList<>(followinTarget.stream().map(Subscribers::getTarget).toList());
+            List<UserAccount> postUserTarget = new ArrayList<>(
+                    followinTarget.stream().map(Subscribers::getTarget).toList());
             // kanzid rasi bax njib postat dyali
             postUserTarget.add(user);
             postsPage = posteRepo.findByUserIn(postUserTarget, PageRequest.of(page, size,
@@ -69,16 +71,10 @@ public class PostesService {
                 boolean liked = likeRepo.existsByUserIdAndPostId(user.getId(), post.getId());
                 long totaLike = likeRepo.countByPostId(post.getId());
                 long totalComment = commentRepo.countByPostId(post.getId());
-                return GlobalDataResponse.PostResponse.builder().
-                        id(post.getId()).
-                        authore(post.getUser().getUsername()).
-                        avatar(post.getUser().getAvatar()).
-                        createTime(post.getCreatedAt()).
-                        descreption(post.getDescription()).
-                        media(post.getMedia()).
-                        totalComment(totalComment).
-                        totalLike(totaLike).
-                        liked(liked)
+                return GlobalDataResponse.PostResponse.builder().id(post.getId()).authore(post.getUser().getUsername())
+                        .avatar(post.getUser().getAvatar()).createTime(post.getCreatedAt())
+                        .descreption(post.getDescription()).media(post.getMedia()).totalComment(totalComment)
+                        .totalLike(totaLike).liked(liked)
                         .build();
             }).toList();
             System.out.println("post jaw ---> " + posts.size());
@@ -89,6 +85,27 @@ public class PostesService {
 
         return new GlobalDataResponse<>(posts, postsPage.getNumber(),
                 postsPage.getTotalPages(), postsPage.hasNext());
+    }
+
+    public GlobalDataResponse<List<GlobalDataResponse.PostResponse>> getPostes(UserAccount user, UUID id) {
+        Optional<Postes> poste = posteRepo.findById(id);
+        Postes post = poste.orElseThrow();
+        boolean liked = likeRepo.existsByUserIdAndPostId(user.getId(), post.getId());
+        long totaLike = likeRepo.countByPostId(post.getId());
+        long totalComment = commentRepo.countByPostId(post.getId());
+        List<GlobalDataResponse.PostResponse> list = List.of(GlobalDataResponse.PostResponse.builder().
+                id(post.getId()).
+                authore(post.getUser().getUsername()).
+                avatar(post.getUser().getAvatar()).
+                createTime(post.getCreatedAt()).
+                descreption(post.getDescription()).
+                media(post.getMedia()).
+                totalComment(totalComment).
+                totalLike(totaLike).
+                liked(liked)
+                .build());
+        return new GlobalDataResponse<>(list, 0, 0, false);
+
     }
 
     public void creatPoste(PosteCreationRequest postRequest, UserAccount currentUser, List<MultipartFile> file) {
@@ -109,7 +126,6 @@ public class PostesService {
             notificationService.insertNotification(follower.getUser(), content);
         }));
         post.setCreatedAt(LocalDateTime.now());
-        post.setUpdateAt(LocalDateTime.now());
         posteRepo.save(post);
 
     }

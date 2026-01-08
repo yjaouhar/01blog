@@ -2,13 +2,13 @@ import { Component, ElementRef, inject, signal, ViewChild } from '@angular/core'
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 
 import { AuthService } from '../../services/auth.service';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { UtilsService } from '../../services/utils.service';
 // import { Router } from 'express';
 declare var bootstrap: any;
 @Component({
   selector: 'app-register',
-  imports: [ReactiveFormsModule],
+  imports: [ReactiveFormsModule, RouterLink],
   templateUrl: './register.html',
   styleUrl: './register.css',
 })
@@ -31,7 +31,6 @@ export class Register {
     username: new FormControl('', [Validators.minLength(4), Validators.maxLength(15)]),
     email: new FormControl('', [Validators.required, Validators.email]),
     password: new FormControl('', [Validators.required, Validators.minLength(3), Validators.maxLength(50)]),
-
   })
 
 

@@ -3,24 +3,30 @@ import { Reports } from '../../model/reportes.type';
 import { AdminService } from '../../services/admin.service';
 import { Bane } from "../bane/bane";
 import { Confermation } from "../confermation/confermation";
+import { UtilsService } from '../../services/utils.service';
+import { NotResorce } from "../not-resorce/not-resorce";
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-panle-reportes',
-  imports: [Bane, Confermation],
+  imports: [Bane, Confermation, NotResorce, CommonModule],
   templateUrl: './panle-reportes.html',
   styleUrl: './panle-reportes.css',
 })
 export class PanleReportes implements OnInit {
 
   adminService = inject(AdminService);
+  utils = inject(UtilsService)
   showDeletConfirmation = signal(false);
   showHideConfirmation = signal(false);
   selectedTarget = signal<Reports | null>(null);
   reports = signal<Reports[] | null>(null)
+  loadData = signal(false)
   ngOnInit(): void {
     this.adminService.getReports().subscribe({
       next: res => {
         this.reports.set(res.data)
+        this.loadData.set(true)
       }
     })
   }
@@ -71,11 +77,5 @@ export class PanleReportes implements OnInit {
       }
     }
   }
-  removeReport(id: string) {
-    this.adminService.deletReport(id).subscribe({
-      next: res => {
-        console.log("===> report removed ", res);
-      }
-    })
-  }
+
 }

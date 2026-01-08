@@ -32,9 +32,6 @@ public class Notification {
     private UUID id;
     @NotNull
     private String content;
-    // @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    // @JoinColumn(name="senderId" , nullable=false)
-    // private UserAccount sender;
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "reseverId", nullable = false )
     private UserAccount resever;

@@ -72,7 +72,6 @@ public class GlobalDataResponse<T> {
     @AllArgsConstructor
     public static class NotificationResponse {
 
-        // private String sender;
         private String content;
         private boolean read;
         private LocalDateTime creatAt;
@@ -95,7 +94,6 @@ public class GlobalDataResponse<T> {
         private boolean liked;
     }
 
-    // @Builder
     @Embeddable
     @NoArgsConstructor
     @Getter
@@ -121,6 +119,55 @@ public class GlobalDataResponse<T> {
         private String avatar;
         private LocalDateTime createTime;
         private String content;
+    }
+
+    @Builder
+    @Getter
+    @Setter
+    public static class Stats {
+
+        private Long totalUsers;
+        private Long totalPosts;
+        private Long activeReports;
+        private Long banned;
+    }
+
+    @Builder
+    @Getter
+    @Setter
+    public static class Users {
+
+        private UUID id;
+        private String avatart;
+        private String username;
+        private String email;
+        private Boolean status;
+    }
+
+    @Builder
+    @Getter
+    @Setter
+    public static class Postes {
+
+        private UUID id;
+        private String authore;
+        private String descreption;
+        private Boolean status;
+    }
+
+    @Builder
+    @Getter
+    @Setter
+    public static class Report {
+
+        private UUID id;
+        private String type;
+        private String reporter;
+        private LocalDateTime time;
+        
+        private String target;
+        private String reason;
+        private String status;
     }
 
 }

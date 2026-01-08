@@ -10,10 +10,17 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import com._blog.app.entities.Postes;
 import com._blog.app.entities.UserAccount;
-public interface  PosteRepo  extends JpaRepository<Postes, UUID> {
+
+public interface PosteRepo extends JpaRepository<Postes, UUID> {
+
     Page<Postes> findAllByUser(UserAccount user, Pageable pageable);
+
     @EntityGraph(attributePaths = {"user"})
     Page<Postes> findByUserIn(List<UserAccount> users, Pageable pageable);
+
     long countByUserId(UUID userId);
 
+    // Optional<Postes> findById(UUID id);
+
+    long countByHideTrue();
 }

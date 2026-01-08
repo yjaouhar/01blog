@@ -2,6 +2,7 @@ package com._blog.app.config;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -11,6 +12,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import com._blog.app.model.JwtUserPrincipal;
+import com._blog.app.repository.UserRepo;
 import com._blog.app.shared.CustomResponseException;
 
 import io.jsonwebtoken.ExpiredJwtException;
@@ -26,6 +28,8 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
     @Autowired
     private JwtHelper jwtHelper;
+    @Autowired
+    UserRepo userRepo;
 
     private static final List<String> EXEMPT_ROUTES = List.of(
             "/api/auth/login",
@@ -57,7 +61,6 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                 }
             }
         }
-// System.out.println("Access Token in Filter: " + accessToken);
         if (accessToken == null) {
             CustomResponseException.returnError(response, "Missing access token", HttpServletResponse.SC_UNAUTHORIZED);
             return;
@@ -65,6 +68,12 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
         try {
             JwtUserPrincipal principal = jwtHelper.isTokenValid(accessToken);
+            boolean exist = userRepo.existsById(principal.getId());
+            if (!exist) {
+                CustomResponseException.returnError(response, "user not found", HttpServletResponse.SC_UNAUTHORIZED);
+                return;
+            }
+            System.out.println("--------Z ROLE : " + principal.getRole());
             UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(
                     principal,
                     null,

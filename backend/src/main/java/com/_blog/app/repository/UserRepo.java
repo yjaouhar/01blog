@@ -1,5 +1,6 @@
 package com._blog.app.repository;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -37,4 +38,20 @@ ORDER BY u.firstName ASC
     );
 
     Page<UserAccount> findByIdNot(UUID id, Pageable pageable);
+
+    long countByActiveFalse();
+
+    @Query("""
+    SELECT COUNT(u)
+    FROM UserAccount u
+    WHERE u.role <> :role
+""")
+    long countUsersExceptRole(@Param("role") String role);
+    @Query("""
+    SELECT  u FROM UserAccount u
+    WHERE u.role <> :role
+""")
+    List<UserAccount> findUsersExceptRole(@Param("role") String role);
+
+    // void deletById(UUID id);
 }

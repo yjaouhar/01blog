@@ -1,6 +1,7 @@
 package com._blog.app.entities;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 
 import org.hibernate.annotations.UuidGenerator;
@@ -56,8 +57,7 @@ public class Report {
 
     public enum Status {
         PENDING,
-        RESOLVED,
-        REJECTED
+        RESOLVED
     }
 
 }

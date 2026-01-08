@@ -9,27 +9,45 @@
                 <tr>
                     <th>ID</th>
                     <th>Author</th>
-                    <th>Excerpt</th>
+                    <th>Desc</th>
+                    <th>Status</th>
                     <th class="text-end">Actions</th>
                 </tr>
             </thead>
 
             <tbody>
-                @for (p of postes()?.data; track p.id) {
+                @for (p of postes(); track p.id) {
                 <tr>
                     <td>{{ p.id }}</td>
                     <td>{{ p.authore }}</td>
                     <td>{{ p.descreption }}</td>
+                    <td>
+                        @if (!p.status) {
+                        <i
+                            class="'bi bi-circle-fill text-success"></i>
+                        }@else {
+                        <i
+                            class="'bi bi-circle-fill text-danger "></i>
+                        }
+                    </td>
                     <td class="text-end">
                         <i class="bi bi-folder2-open text-primary fs-4 me-3"
                             title="Show post"
-                            (click)="viewpost(p.id)"></i>
+                            [routerLink]="['/poste',p.id]"></i>
+                        @if (!p.status) {
                         <i
                             class="bi bi-eye-slash-fill text-warning me-3 fs-4"
                             title="Hide post"
                             (click)="changeSelectedPost(p , 'hide')"></i>
+                        }@else {
+                        <i
+                            class="bi bi-eye-fill text-warning me-3 fs-4"
+                            title="active post"
+                            (click)="activePost(p.id)"></i>
+                        }
+
                         <i class="bi bi-trash-fill text-danger fs-4 me-3"
-                            title="'Delete poste"
+                            title="Delete poste"
                             (click)="changeSelectedPost(p , 'delet')"></i>
 
                     </td>
@@ -37,10 +55,6 @@
                 }
             </tbody>
         </table>
-        @if (showPost()) {
-        <app-comment-component
-            [post]="displayedPost()!" (close)="clos()"></app-comment-component>
-        }
         @if (showHideConfirmation()) {
         <app-bane message="Do you want to hide this post?"
             (react)="hidePost($event)"></app-bane>
@@ -52,5 +66,8 @@
         }
 
     </div>
-
+    @if (loadData() && !utils.NotEmpty(postes())) {
+    <app-not-resorce message="No Postes found"
+        type="post"></app-not-resorce>
+    }
 </div>

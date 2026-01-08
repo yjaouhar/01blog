@@ -22,7 +22,7 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
             if (error?.error?.errors?.length > 0) {
                 message = error?.error?.errors[0]?.message
             }
-            if (error.status === 401 && message === "Invalid token") {
+            if (error.status === 401) {
                 router.navigate(['/login']);
                 return throwError(() => error);
             } else if (error.status === 403) {

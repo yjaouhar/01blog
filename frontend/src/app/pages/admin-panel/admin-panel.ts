@@ -1,57 +1,30 @@
-import { Component, signal } from '@angular/core';
-import { AppRoutes } from "../../app.routes";
-import { RouterLink } from '@angular/router';
-import { ReportPosteModel } from '../../model/reportPost.type';
-import { ReportUserModel } from '../../model/reportUser.type';
-import { PosteComponent } from "../../componentes/poste.component/poste-component";
-import { PostModel } from '../../model/post.type';
-import { ConfirmComponent } from "../../componentes/confirm-component/confirm-component";
-import { CommentComponent } from "../../componentes/comment-component/comment-component";
+import { Component, inject, OnInit, signal } from '@angular/core';
+import { AdminService } from '../../services/admin.service';
+import { Stats } from '../../model/reportes.type';
+import { Spinner } from "../../componentes/spinner/spinner";
+import { PanleUseres } from "../../componentes/panle-useres/panle-useres";
+import { PanlePostes } from "../../componentes/panle-postes/panle-postes";
+import { PanleReportes } from "../../componentes/panle-reportes/panle-reportes";
+
 
 @Component({
   selector: 'app-admin-panel',
-  imports: [ ConfirmComponent],
+  imports: [Spinner, PanleUseres, PanlePostes, PanleReportes],
   templateUrl: './admin-panel.html',
   styleUrl: './admin-panel.css',
 })
-export class AdminPanel {
+export class AdminPanel implements OnInit {
+  tab = signal('users');
+  adminService = inject(AdminService)
+  stats = signal<Stats | null>(null)
+  loadData = signal(false)
 
-  selectUserId = signal('');
-  selectPostId = signal('');
-  tab: string = 'users';
-  viewPost = false;
-  // selectPost!: PostModel;
-  stats = {
-    totalUsers: 1234,
-    totalPosts: 5678,
-    activeReports: 23,
-    banned: 14
-  };
-
-
-  // posts: PostModel;
-
-
-
-
-
-  changeSelectedUser(id: string) {
-    this.selectUserId.update(v => id)
+  ngOnInit(): void {
+    this.adminService.stats().subscribe({
+      next: res => {
+        this.stats.set(res.data)
+        this.loadData.set(true)
+      }
+    })
   }
-  changeSelectedPost(id: string) {
-    this.selectPostId.update(v => id)
-  }
-
- 
-  banPoste(conferm: boolean, id: string) {
-    console.log('Ban', id);
-  }
-
-  deletePost(conferm: boolean, id: string) {
-    console.log('Delete post', id);
-  }
-  unban(conferm: boolean, target: string) {
-    console.log('Unban', target);
-  }
-
 }

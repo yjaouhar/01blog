@@ -11,6 +11,7 @@ import org.springframework.stereotype.Component;
 
 import com._blog.app.model.JwtUserPrincipal;
 
+
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
@@ -18,6 +19,7 @@ import io.jsonwebtoken.security.Keys;
 
 @Component
 public class JwtHelper {
+
 
     @Value("${jwt.secret}")
     private String JWT_SECRET;
@@ -27,7 +29,7 @@ public class JwtHelper {
     // }
     public JwtUserPrincipal isTokenValid(String token) {
         Claims claims = extractAllClaims(token);
-        // System.out.println("------> Claims jwt : " + claims);
+      
         JwtUserPrincipal userClaims = new JwtUserPrincipal(claims.getSubject(), claims.get("role", String.class), UUID.fromString(claims.get("userId", String.class)));
         return userClaims;
     }
