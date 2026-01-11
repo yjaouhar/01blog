@@ -10,3 +10,4 @@ public record ReportsReactionRequest(
         boolean status) {
 
 }
+ 

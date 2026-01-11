@@ -11,6 +11,7 @@ export interface Reports {
     reporter: string;
     time: Date;
     target: string;
+    targetId: string;
     reason: boolean;
     status: string
 
@@ -25,9 +26,8 @@ export interface Users {
 export interface Baned {
     id: string;
     type: string;
-    name: string
-    description: string;
-    time: Date;
+    target: string
+    targetId: string,
 }
 export interface Stats {
     totalUsers: number;

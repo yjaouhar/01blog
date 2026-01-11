@@ -40,7 +40,7 @@ public class UserUtils {
     }
 
     public String generatUsername(UserAccount user) {
-        String username = (user.getLastName() + user.getFirstName()).substring(0, 8);
+        String username = (user.getLastName() + user.getFirstName()).substring(0, 4);
         if (userRepo.existsByUsername(username)) {
             Random rand = new Random();
             int uniq = rand.nextInt(100) + 1;

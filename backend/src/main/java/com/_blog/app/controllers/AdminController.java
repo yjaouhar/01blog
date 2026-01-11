@@ -1,6 +1,5 @@
 package com._blog.app.controllers;
 
-import java.security.Principal;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -114,11 +113,15 @@ public class AdminController {
     }
 
     @PostMapping("/report_reaction")
-    public ResponseEntity<GlobalResponse<?>> reports(@RequestBody @Valid ReportsReactionRequest reportsActionRequest,
-            Principal principal) {
+    public ResponseEntity<GlobalResponse<?>> reports(@RequestBody @Valid ReportsReactionRequest reportsActionRequest) {
+        JwtUserPrincipal principal = UserUtils.getPrincipal();
+        UserAccount admin = userUtils.findUserById(principal.getId());
 
-        UserAccount admin = userUtils.findUserByUsername(principal.getName());
-        adminSercive.handleReport(reportsActionRequest, admin);
-        return new ResponseEntity<>(new GlobalResponse<>("report success !"), HttpStatus.OK);
+        return new ResponseEntity<>(new GlobalResponse<>(adminSercive.handleReport(reportsActionRequest, admin)),
+                HttpStatus.OK);
     }
+
+
+
+
 }

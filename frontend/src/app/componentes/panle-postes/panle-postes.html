@@ -1,6 +1,38 @@
  <div class="card shadow-sm">
-    <div class="card-header bg-white">
-        <strong>Posts</strong>
+    <div
+        class="card-header bg-white d-flex justify-content-between align-items-center">
+        <strong class="fs-6">Users</strong>
+
+        <div class="dropdown">
+            <button
+                class="btn btn-outline-secondary btn-sm dropdown-toggle"
+                type="button"
+                data-bs-toggle="dropdown"
+                aria-expanded="false">
+                <i class="bi bi-funnel me-1"></i> Filter
+            </button>
+
+            <ul class="dropdown-menu dropdown-menu-end">
+                <li>
+                    <button class="dropdown-item"
+                        (click)="filterByStatus('')">
+                        All users
+                    </button>
+                </li>
+                <li>
+                    <button class="dropdown-item"
+                        (click)="filterByStatus('active')">
+                        Active
+                    </button>
+                </li>
+                <li>
+                    <button class="dropdown-item"
+                        (click)="filterByStatus('banned')">
+                        Banned
+                    </button>
+                </li>
+            </ul>
+        </div>
     </div>
 
     <div class="table-responsive">
@@ -16,13 +48,13 @@
             </thead>
 
             <tbody>
-                @for (p of postes(); track p.id) {
+                @for (p of filteredPost(); track p.id) {
                 <tr>
                     <td>{{ p.id }}</td>
                     <td>{{ p.authore }}</td>
                     <td>{{ p.descreption }}</td>
                     <td>
-                        @if (!p.status) {
+                        @if (!p.hide) {
                         <i
                             class="'bi bi-circle-fill text-success"></i>
                         }@else {
@@ -31,22 +63,22 @@
                         }
                     </td>
                     <td class="text-end">
-                        <i class="bi bi-folder2-open text-primary fs-4 me-3"
+                        <i class="bi bi-folder2-open text-primary fs-5 me-3"
                             title="Show post"
                             [routerLink]="['/poste',p.id]"></i>
-                        @if (!p.status) {
+                        @if (!p.hide) {
                         <i
-                            class="bi bi-eye-slash-fill text-warning me-3 fs-4"
+                            class="bi bi-eye-slash-fill text-warning me-3 fs-5"
                             title="Hide post"
                             (click)="changeSelectedPost(p , 'hide')"></i>
                         }@else {
                         <i
-                            class="bi bi-eye-fill text-warning me-3 fs-4"
+                            class="bi bi-eye-fill text-warning me-3 fs-5"
                             title="active post"
-                            (click)="activePost(p.id)"></i>
+                            (click)="changeSelectedPost(p , 'active')"></i>
                         }
 
-                        <i class="bi bi-trash-fill text-danger fs-4 me-3"
+                        <i class="bi bi-trash-fill text-danger fs-5 me-3"
                             title="Delete poste"
                             (click)="changeSelectedPost(p , 'delet')"></i>
 
@@ -66,7 +98,7 @@
         }
 
     </div>
-    @if (loadData() && !utils.NotEmpty(postes())) {
+    @if (loadData() && !utils.NotEmpty(filteredPost())) {
     <app-not-resorce message="No Postes found"
         type="post"></app-not-resorce>
     }

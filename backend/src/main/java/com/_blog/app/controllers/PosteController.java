@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
@@ -43,11 +42,10 @@ public class PosteController {
     private UserUtils userUtils;
 
     @GetMapping
-    public ResponseEntity<GlobalResponse<?>> allPost(@RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size) {
+    public ResponseEntity<GlobalResponse<?>> allPost() {
         JwtUserPrincipal principal = (JwtUserPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         UserAccount currentUser = userUtils.findUserById(principal.getId());
-        return new ResponseEntity<>(new GlobalResponse<>(postesService.homePostes(currentUser, page, size)),
+        return new ResponseEntity<>(new GlobalResponse<>(postesService.homePostes(currentUser)),
                 HttpStatus.CREATED);
     }
 
@@ -56,8 +54,8 @@ public class PosteController {
             @RequestPart(value = "file", required = false) List<MultipartFile> file) {
         JwtUserPrincipal principal = (JwtUserPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         UserAccount currentUser = userUtils.findUserById(principal.getId());
-        postesService.creatPoste(posteRequest, currentUser, file);
-        return new ResponseEntity<>(new GlobalResponse<>("created !"), HttpStatus.CREATED);
+
+        return new ResponseEntity<>(new GlobalResponse<>(postesService.creatPoste(posteRequest, currentUser, file)), HttpStatus.CREATED);
     }
 
     @DeleteMapping("/{postId}")
@@ -88,7 +86,7 @@ public class PosteController {
     @PostMapping("/like/{postId}")
     public ResponseEntity<GlobalResponse<?>> likePost(@PathVariable UUID postId) {
         JwtUserPrincipal principal = UserUtils.getPrincipal();
-        UserAccount currentUser = userUtils.findUserByUsername(principal.getUsername());
+        UserAccount currentUser = userUtils.findUserById(principal.getId());
         String toggelLike = postesService.likePost(postId, currentUser);
         return new ResponseEntity<>(new GlobalResponse<>(toggelLike), HttpStatus.OK);
     }
@@ -96,21 +94,21 @@ public class PosteController {
     @GetMapping("/comment/{postId}")
     public ResponseEntity<GlobalResponse<?>> getComment(@PathVariable UUID postId) {
         JwtUserPrincipal principal = UserUtils.getPrincipal();
-        UserAccount currentUser = userUtils.findUserByUsername(principal.getUsername());
+        UserAccount currentUser = userUtils.findUserById(principal.getId());
         return new ResponseEntity<>(new GlobalResponse<>(postesService.getComment(postId, currentUser)), HttpStatus.OK);
     }
 
     @PostMapping("/comment")
     public ResponseEntity<GlobalResponse<?>> commentPost(@RequestBody @Valid CommentPosteRequest commentPosteRequest) {
         JwtUserPrincipal principal = UserUtils.getPrincipal();
-        UserAccount currentUser = userUtils.findUserByUsername(principal.getUsername());
+        UserAccount currentUser = userUtils.findUserById(principal.getId());
         return new ResponseEntity<>(new GlobalResponse<>(postesService.commentPost(commentPosteRequest, currentUser)), HttpStatus.OK);
     }
 
     @DeleteMapping("/comment/{commentId}")
     public ResponseEntity<GlobalResponse<?>> deletComment(@PathVariable UUID commentId) {
         JwtUserPrincipal principal = UserUtils.getPrincipal();
-        UserAccount currentUser = userUtils.findUserByUsername(principal.getUsername());
+        UserAccount currentUser = userUtils.findUserById(principal.getId());
         postesService.deletComment(commentId, currentUser);
         return new ResponseEntity<>(new GlobalResponse<>("Comment deleted !"), HttpStatus.OK);
     }

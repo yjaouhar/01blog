@@ -30,18 +30,9 @@ public class ReportController {
   @PostMapping()
   public ResponseEntity<GlobalResponse<?>> declaration(@RequestBody @Valid ReportRequest reportRequest) {
       JwtUserPrincipal principal = UserUtils.getPrincipal();
-      UserAccount reporter = userUtils.findUserByUsername(principal.getUsername());
-        System.out.println("===> report " + reporter.getUsername() + " <=====> "+reportRequest.reason() + " <====> " + reportRequest.reportedPost());
+      UserAccount reporter = userUtils.findUserById(principal.getId());
         reportService.report(reportRequest, reporter);
         return new ResponseEntity<>(new GlobalResponse<>("report success !"), HttpStatus.OK);
     }
-
-    // @PostMapping("/react")
-    // public ResponseEntity<GlobalResponse<?>> react(@RequestBody @Valid ReportRequest reportRequest,
-    //         Principal principal) {
-    //     UserAccount reporter = userUtils.findUserByUsername(principal.getName());
-    //     reportService.report(reportRequest, reporter);
-    //     return new ResponseEntity<>(new GlobalResponse<>("report success !"), HttpStatus.OK);
-    // }
 
 }

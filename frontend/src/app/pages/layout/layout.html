@@ -1,10 +1,10 @@
-<app-app-header></app-app-header>
+<app-app-header (newPost)="addPost($event)"></app-app-header>
 <app-loading></app-loading>
 <main class="flex-grow-1 mt-7"
     style="padding-top: 70px; padding-bottom: 70px; overflow: hidden;">
 
     @if(isHomePage()){
-    @if (start()|| utils.NotEmpty(postes()?.data ?? [])) {
+    @if (start()|| utils.NotEmpty(postes())) {
     <app-poste-component [postesData]="postes()!"
         [showReaction]="true"></app-poste-component>
     }@else {

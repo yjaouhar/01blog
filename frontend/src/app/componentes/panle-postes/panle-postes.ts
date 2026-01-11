@@ -1,13 +1,12 @@
 import { Component, inject, OnInit, signal } from '@angular/core';
 import { AdminService } from '../../services/admin.service';
-import { AdminPost, Post, PostModel } from '../../model/post.type';
+import { AdminPost } from '../../model/post.type';
 import { Bane } from "../bane/bane";
 import { Confermation } from "../confermation/confermation";
-import { CommentComponent } from "../comment-component/comment-component";
-import { AppRoutes } from "../../app.routes";
 import { RouterLink } from '@angular/router';
 import { UtilsService } from '../../services/utils.service';
 import { NotResorce } from "../not-resorce/not-resorce";
+import { LoadingService } from '../../services/loading.service';
 
 @Component({
   selector: 'app-panle-postes',
@@ -17,19 +16,24 @@ import { NotResorce } from "../not-resorce/not-resorce";
 })
 export class PanlePostes implements OnInit {
   adminService = inject(AdminService)
-    utils = inject(UtilsService)
-  postes = signal<AdminPost[] | null>(null);
-  displayedPost = signal<Post | null>(null);
+  utils = inject(UtilsService)
+  loadingService = inject(LoadingService)
+  postes = signal<AdminPost[]>([]);
+  filteredPost = signal<AdminPost[]>([]);
   selectedPost = signal<AdminPost | null>(null)
   showDeletConfirmation = signal(false);
   showHideConfirmation = signal(false);
   loadData = signal(false)
+  stat = signal('');
   ngOnInit(): void {
+    this.loadingService.show();
     this.adminService.getPostes().subscribe({
       next: res => {
         console.log("postes : ", res);
         this.postes.set(res.data);
+        this.filteredPost.set(res.data)
         this.loadData.set(true)
+        this.loadingService.hide();
       }
     })
   }
@@ -40,25 +44,44 @@ export class PanlePostes implements OnInit {
       this.showHideConfirmation.set(true)
     } else if (type === "delet") {
       this.showDeletConfirmation.set(true)
+    } else {
+      this.activePost();
     }
   }
 
-  activePost(id: string) {
+  activePost() {
+    if (this.selectedPost()) {
+      this.loadingService.show();
+      this.adminService.activePost(this.selectedPost()?.id!).subscribe({
+        next: (res) => {
 
-    this.adminService.activePost(id).subscribe({
-      next: res => {
-        console.log("poste actiive ", res);
+          this.postes.update(post => post.map(u => {
+            if (u.id === this.selectedPost()?.id) {
+              return { ...u, hide: false }
+            }
+            return u;
+          }));
+          this.refreshFilter()
+          this.loadingService.hide();
 
-      }
-    })
-
+        }
+      })
+    }
   }
   hidePost(conferm: boolean) {
     this.showHideConfirmation.set(false);
     if (conferm && this.selectedPost()) {
+      this.loadingService.show();
       this.adminService.banPost(this.selectedPost()!.id).subscribe({
-        next: res => {
-          console.log("poste hide ", res);
+        next: () => {
+          this.postes.update(post => post.map(u => {
+            if (u.id === this.selectedPost()?.id) {
+              return { ...u, hide: true }
+            }
+            return u;
+          }));
+          this.refreshFilter()
+          this.loadingService.hide();
 
         }
       })
@@ -67,12 +90,30 @@ export class PanlePostes implements OnInit {
   deletPost(conferm: boolean) {
     this.showDeletConfirmation.set(false);
     if (conferm && this.selectedPost()) {
+      this.loadingService.show();
       this.adminService.deletPost(this.selectedPost()!.id).subscribe({
-        next: res => {
-          console.log("poste deleted ", res);
+        next: () => {
+          this.postes.update(post => post.filter(u => u.id !== this.selectedPost()?.id));
+          this.refreshFilter();
+          this.loadingService.hide();
 
         }
       })
     }
+  }
+
+  refreshFilter() {
+    const status = this.stat();
+    this.filterByStatus(status);
+  }
+  filterByStatus(event: string) {
+    if (!event.trim()) {
+      this.filteredPost.update(() => this.postes())
+    } else {
+      this.filteredPost.update(() => this.postes().filter(p => event === 'active' ? !p.hide : p.hide))
+    }
+    this.stat.set(event)
+
+
   }
 }

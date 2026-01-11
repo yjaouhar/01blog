@@ -62,10 +62,12 @@ public class UserAccount {
     private List<Notification> notifecation = new ArrayList<>();
     @OneToMany(mappedBy = "target", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Subscribers> followTarget = new ArrayList<>();
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<Subscribers> folloerUser = new ArrayList<>();
     @OneToMany(mappedBy = "reportedUser", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Report> report = new ArrayList<>();
+    private List<Report> reported = new ArrayList<>();
+    @OneToMany(mappedBy = "reporter", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Report> reporter = new ArrayList<>();
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<RefreshToken> refreshtokens = new ArrayList<>();
 }

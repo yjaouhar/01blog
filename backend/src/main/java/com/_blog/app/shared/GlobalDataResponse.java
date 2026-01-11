@@ -69,9 +69,10 @@ public class GlobalDataResponse<T> {
 
     @Getter
     @Setter
-    @AllArgsConstructor
+    @Builder
     public static class NotificationResponse {
 
+        private UUID id;
         private String content;
         private boolean read;
         private LocalDateTime creatAt;
@@ -152,7 +153,7 @@ public class GlobalDataResponse<T> {
         private UUID id;
         private String authore;
         private String descreption;
-        private Boolean status;
+        private Boolean hide;
     }
 
     @Builder
@@ -164,8 +165,8 @@ public class GlobalDataResponse<T> {
         private String type;
         private String reporter;
         private LocalDateTime time;
-        
         private String target;
+        private UUID targetId;
         private String reason;
         private String status;
     }

@@ -94,6 +94,9 @@ public class AuthService {
         if (!encoder.matches(request.password(), user.getPassword())) {
             throw new CustomResponseException(401, "Invalid Credentials");
         }
+        if (!user.isActive()) {
+            throw new CustomResponseException(403, "user is baned");
+        }
         return user;
     }
 

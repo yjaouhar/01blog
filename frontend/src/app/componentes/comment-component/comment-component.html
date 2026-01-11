@@ -6,7 +6,7 @@
         <div class="modal-header text-center">
             <h5 class="modal-title">{{post.authore}} 's Postes</h5>
             <button type="button" class="btn-close"
-               (click)="closeComponent()" ></button>
+                (click)="closeComponent()"></button>
         </div>
 
         <!-- Body -->
@@ -20,7 +20,12 @@
                 </div>
             </div>
             <!-- </div> -->
-            @if (comments().length>0) {
+            @if (loadData() && !utils.NotEmpty(comments())) {
+            <app-not-resorce type="comment"
+                message="No Comment Yet"></app-not-resorce>
+            }@else {
+
+            <!-- @if (comments().length>0) { -->
             @for (comment of comments(); track $index) {
             <div class="comment d-flex align-items-start gap-2 mb-3">
                 <img [src]="url+comment.avatar"
@@ -52,11 +57,11 @@
                     </div>
                 </div>
             </div>
+            }@empty {
+            <app-spinner style="margin: auto;"></app-spinner>
             }
-            }@else {
-            <app-not-resorce type="comment"
-                message="No Comment Yet"></app-not-resorce>
             }
+            <!-- } -->
         </div>
         @if (showError()) {
         <div class="text-danger small text-center">

@@ -104,6 +104,9 @@ public class AuthController {
         }
         refreshTokenRepo.delete(oldToken);
         UserAccount user = oldToken.getUser();
+        if (!user.isActive()) {
+            return new ResponseEntity<>(new GlobalResponse<>(List.of(new GlobalResponse.ErrorItem("user is bane"))), HttpStatus.FORBIDDEN);
+        }
         String newRefToken = jwtHelper.generateRefreshToken();
         RefreshToken refreshToken = new RefreshToken(newRefToken, user, LocalDateTime.now().plusDays(7));
         refreshTokenRepo.save(refreshToken);
@@ -137,6 +140,9 @@ public class AuthController {
         JwtUserPrincipal principal = (JwtUserPrincipal) SecurityContextHolder.getContext().getAuthentication()
                 .getPrincipal();
         UserAccount user = userUtils.findUserById(principal.getId());
+        if (!user.isActive()) {
+            return new ResponseEntity<>(new GlobalResponse<>(List.of(new GlobalResponse.ErrorItem("user is bane"))), HttpStatus.FORBIDDEN);
+        }
         return new ResponseEntity<>(new GlobalResponse<>(GlobalDataResponse.LoginResponse.builder()
                 .username(user.getUsername())
                 .avatar(user.getAvatar())

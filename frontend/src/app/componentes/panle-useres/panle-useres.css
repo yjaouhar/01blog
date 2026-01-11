@@ -1,19 +1,25 @@
+.profile-avatar,
 .avatar-user {
     width: 40px;
     height: 40px;
     border-radius: 50%;
-    background-color: #007bff;
-    color: #fff;
-    border: none;
-    font-size: large;
-    font-weight: bold;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    object-fit: cover;
     cursor: pointer;
 }
 
+.avatar-user {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #e9ecef;
+    font-weight: 600;
+    color: #495057;
+}
+
 .op {
-    font-family: 'Courier New', Courier, monospace;
     cursor: pointer;
+}
+
+.op:hover {
+    opacity: 0.75;
 }

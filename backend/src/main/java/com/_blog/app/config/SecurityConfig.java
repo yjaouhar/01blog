@@ -37,7 +37,7 @@ public class SecurityConfig {
                             .requestMatchers(HttpMethod.GET, "/api/post").hasAnyRole("USER", "ADMIN")
                             .requestMatchers(HttpMethod.POST, "/api/post").hasAnyRole("USER", "ADMIN")
                             .requestMatchers(HttpMethod.DELETE, "/api/post/{postId}").hasAnyRole("USER", "ADMIN")
-                            .requestMatchers(HttpMethod.GET, "/api/post/{postId}").hasAnyRole("USER", "ADMIN")
+                            .requestMatchers(HttpMethod.GET, "/api/post/{postId}").hasAnyRole("ADMIN")
                             .requestMatchers(HttpMethod.PATCH, "/api/post").hasAnyRole("USER", "ADMIN")
                             .requestMatchers(HttpMethod.POST, "/api/post/like/{postId}").hasAnyRole("USER", "ADMIN")
                             .requestMatchers(HttpMethod.POST, "/api/post/comment").hasAnyRole("USER", "ADMIN")
@@ -53,6 +53,7 @@ public class SecurityConfig {
                             .requestMatchers(HttpMethod.GET, "/api/profile/following/{profileId}").hasAnyRole("USER", "ADMIN")
                             .requestMatchers(HttpMethod.POST, "/api/report").hasAnyRole("USER", "ADMIN")
                             .requestMatchers(HttpMethod.GET, "/api/notification").hasAnyRole("USER", "ADMIN")
+                            .requestMatchers(HttpMethod.PATCH, "/api/notification/{notificationId}").hasAnyRole("USER", "ADMIN")
                             // ===========================================================================================================
                             .requestMatchers(HttpMethod.GET, "/api/admin/stats").hasAnyRole("ADMIN")
                             .requestMatchers(HttpMethod.GET, "/api/admin/users").hasAnyRole("ADMIN")

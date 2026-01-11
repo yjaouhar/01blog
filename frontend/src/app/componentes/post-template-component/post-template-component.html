@@ -1,3 +1,4 @@
+ @if (authService.user$ | async; as user) {
 @if (post) {
 <div>
     <div
@@ -21,7 +22,7 @@
                     <i class="bi bi-three-dots-vertical"></i>
                 </button>
                 <ul class="dropdown-menu dropdown-menu-end">
-                    @if (true) {
+                    @if (post.authore===user.username) {
                     <li>
                         <a class="dropdown-item" data-bs-toggle="modal"
                             [attr.data-bs-target]="'#editPostModal' + post.id">
@@ -31,23 +32,23 @@
                     </li>
 
                     <li>
-                        <a class="dropdown-item">
-                            Delet <i class="bi bi-trash-fill text-danger p-2"
-                                (click)="showConfermation.set(true)"></i>
+                        <a class="dropdown-item"
+                            (click)="showDelet()">
+                            Delet <i
+                                class="bi bi-trash-fill text-danger p-2"></i>
                         </a>
                     </li>
                     }
                     <li>
-                        <a class="dropdown-item" data-bs-toggle="modal"
-                            [attr.data-bs-target]="'#reportModel'+post.id">
+                        <a class="dropdown-item"
+                            (click)="showReport.set(true)">
                             Report <i
                                 class="bi bi-flag-fill text-warning p-2"></i>
                         </a>
                     </li>
 
                 </ul>
-                @if (true) {
-
+                @if (post.authore===user.username) {
                 <div class="modal fade" [id]="'editPostModal' + post.id"
                     data-bs-backdrop="static" data-bs-keyboard="false"
                     tabindex="-1"
@@ -60,12 +61,11 @@
                     (react)="deletPost($event)"></app-confermation>
                 }
                 }
-                <div class="modal fade" [id]="'reportModel'+post.id"
-                    tabindex="-1"
-                    aria-hidden="true">
-                    <app-report-component [id]="post.id"
-                       ></app-report-component>
-                </div>
+                @if (showReport()) {
+                <app-report-component [id]="post.id"
+                    (hide)="showReport.set(false)"></app-report-component>
+                }
+
             </div>
 
         </div>
@@ -135,4 +135,5 @@
 
 </div>
 
+}
 }

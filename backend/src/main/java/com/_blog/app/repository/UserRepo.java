@@ -4,8 +4,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -31,13 +29,12 @@ WHERE u.id <> :userId
   )
 ORDER BY u.firstName ASC
 """)
-    Page<UserAccount> searchByFullName(
+    List<UserAccount> searchByFullName(
             @Param("userId") UUID userId,
-            @Param("fullName") String fullName,
-            Pageable pageable
+            @Param("fullName") String fullName
     );
 
-    Page<UserAccount> findByIdNot(UUID id, Pageable pageable);
+    List<UserAccount> findByIdNot(UUID id);
 
     long countByActiveFalse();
 
@@ -53,5 +50,6 @@ ORDER BY u.firstName ASC
 """)
     List<UserAccount> findUsersExceptRole(@Param("role") String role);
 
+    List<UserAccount> findAllByActiveFalse();
     // void deletById(UUID id);
 }

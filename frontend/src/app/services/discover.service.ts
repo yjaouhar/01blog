@@ -3,7 +3,7 @@ import { inject, Injectable } from '@angular/core';
 import { environment } from '../../environments/enveronment';
 import { catchError, throwError } from 'rxjs';
 import { GlobalResponce } from '../model/globalResponce.type';
-import { DiscoverModel } from '../model/discover.type';
+import { User } from '../model/discover.type';
 
 @Injectable({
   providedIn: 'root',
@@ -11,12 +11,12 @@ import { DiscoverModel } from '../model/discover.type';
 export class DiscoverService {
   http = inject(HttpClient);
   getUsers() {
-    return this.http.get<GlobalResponce<DiscoverModel>>(`${environment.apiUrl}/api/users`).pipe(
+    return this.http.get<GlobalResponce<User[]>>(`${environment.apiUrl}/api/users`).pipe(
       catchError(err => throwError(() => err))
     )
   };
   serche(keyword: string) {
-    return this.http.get<GlobalResponce<DiscoverModel>>(`${environment.apiUrl}/api/users/serche/${keyword}`).pipe(
+    return this.http.get<GlobalResponce<User[]>>(`${environment.apiUrl}/api/users/serche/${keyword}`).pipe(
       catchError(err => throwError(() => err))
     )
   }

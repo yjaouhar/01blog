@@ -22,7 +22,8 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
             if (error?.error?.errors?.length > 0) {
                 message = error?.error?.errors[0]?.message
             }
-            if (error.status === 401) {
+            const m = message === 'Missing access token' || message === 'Token expired';
+            if (error.status === 401 && !m) {
                 router.navigate(['/login']);
                 return throwError(() => error);
             } else if (error.status === 403) {

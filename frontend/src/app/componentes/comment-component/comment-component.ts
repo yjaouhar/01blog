@@ -1,6 +1,6 @@
 import { Component, EventEmitter, inject, Input, OnInit, Output, signal } from '@angular/core';
 import { PostService } from '../../services/post.service';
-import { Post, PostModel } from '../../model/post.type';
+import { Post } from '../../model/post.type';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { PostTemplateComponent } from "../post-template-component/post-template-component";
@@ -10,10 +10,11 @@ import { NotResorce } from "../not-resorce/not-resorce";
 import { environment } from '../../../environments/enveronment';
 import { Confermation } from "../confermation/confermation";
 import { LoadingService } from '../../services/loading.service';
+import { Spinner } from "../spinner/spinner";
 
 @Component({
   selector: 'app-comment-component',
-  imports: [CommonModule, FormsModule, PostTemplateComponent, NotResorce, Confermation, Confermation],
+  imports: [CommonModule, FormsModule, PostTemplateComponent, NotResorce, Confermation, Confermation, Spinner],
   standalone: true,
   templateUrl: './comment-component.html',
   styleUrl: './comment-component.css',
@@ -31,12 +32,14 @@ export class CommentComponent implements OnInit {
   showError = signal(false);
   errorMessage = signal('');
   showConfermation = signal(false);
+  loadData= signal(false)
   ngOnInit(): void {
     this.loadingService.show()
     this.postServices.getComment(this.post.id).subscribe({
       next: res => {
         this.comments.set(res.data)
         this.loadingService.hide()
+        this.loadData.set(true)
       }
     })
   }

@@ -1,8 +1,10 @@
 package com._blog.app.config;
 
 import java.io.IOException;
+import java.time.Duration;
 import java.util.List;
-import java.util.UUID;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -11,10 +13,13 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
+import com._blog.app.entities.UserAccount;
 import com._blog.app.model.JwtUserPrincipal;
-import com._blog.app.repository.UserRepo;
 import com._blog.app.shared.CustomResponseException;
+import com._blog.app.utils.UserUtils;
 
+import io.github.bucket4j.Bandwidth;
+import io.github.bucket4j.Bucket;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.JwtException;
 import jakarta.servlet.FilterChain;
@@ -29,8 +34,14 @@ public class JwtAuthFilter extends OncePerRequestFilter {
     @Autowired
     private JwtHelper jwtHelper;
     @Autowired
-    UserRepo userRepo;
+    UserUtils userUtils;
+    private final Map<String, Bucket> buckets = new ConcurrentHashMap<>();
 
+    private Bucket createBucket() {
+        return Bucket.builder()
+                .addLimit(Bandwidth.simple(50, Duration.ofMinutes(1)))
+                .build();
+    }
     private static final List<String> EXEMPT_ROUTES = List.of(
             "/api/auth/login",
             "/api/auth/register",
@@ -43,7 +54,16 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             HttpServletResponse response,
             FilterChain filterChain)
             throws ServletException, IOException {
+        String key = request.getRemoteAddr(); // دابا IP فقط
 
+        Bucket bucket = buckets.computeIfAbsent(key, k -> createBucket());
+
+        if (bucket.tryConsume(1)) {
+            filterChain.doFilter(request, response);
+        } else {
+            response.setStatus(429);
+            response.getWriter().write("Too many requests");
+        }
         String path = request.getRequestURI();
 
         if (EXEMPT_ROUTES.stream().anyMatch(path::equals)) {
@@ -68,12 +88,11 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
         try {
             JwtUserPrincipal principal = jwtHelper.isTokenValid(accessToken);
-            boolean exist = userRepo.existsById(principal.getId());
-            if (!exist) {
-                CustomResponseException.returnError(response, "user not found", HttpServletResponse.SC_UNAUTHORIZED);
+            UserAccount user = userUtils.findUserById(principal.getId());
+            if (!user.isActive()) {
+                CustomResponseException.returnError(response, "user is bane", HttpServletResponse.SC_UNAUTHORIZED);
                 return;
             }
-            System.out.println("--------Z ROLE : " + principal.getRole());
             UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(
                     principal,
                     null,

@@ -1,4 +1,4 @@
-@if (users && !utils.NotEmpty(users.data) && loadData ) {
+@if (users && !utils.NotEmpty(users) && loadData ) {
 <app-not-resorce message="No Useres Found" type="user"></app-not-resorce>
 }
 <div class="container mt-4 p-3">
@@ -12,10 +12,10 @@
     </div>
     }
     <div class="user-list">
-        @if (!utils.NotEmpty(users?.data??[]) && serched()) {
+        @if (!utils.NotEmpty(users) && serched()) {
         <app-not-resorce message="No Usere Found" type="user"></app-not-resorce>
         }@else {
-        @for (user of users?.data; track user?.id ) {
+        @for (user of users; track user?.id ) {
         <div
             class="user-item d-flex align-items-center justify-content-between p-2">
 

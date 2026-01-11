@@ -1,6 +1,38 @@
  <div class="card shadow-sm">
-    <div class="card-header bg-white">
-        <strong>Users</strong>
+    <div
+        class="card-header bg-white d-flex justify-content-between align-items-center">
+        <strong class="fs-6">Users</strong>
+
+        <div class="dropdown">
+            <button
+                class="btn btn-outline-secondary btn-sm dropdown-toggle"
+                type="button"
+                data-bs-toggle="dropdown"
+                aria-expanded="false">
+                <i class="bi bi-funnel me-1"></i> Filter
+            </button>
+
+            <ul class="dropdown-menu dropdown-menu-end">
+                <li>
+                    <button class="dropdown-item"
+                        (click)="filterByStatus('')">
+                        All users
+                    </button>
+                </li>
+                <li>
+                    <button class="dropdown-item"
+                        (click)="filterByStatus('active')">
+                        Active
+                    </button>
+                </li>
+                <li>
+                    <button class="dropdown-item"
+                        (click)="filterByStatus('banned')">
+                        Banned
+                    </button>
+                </li>
+            </ul>
+        </div>
     </div>
 
     <div class="table-responsive">
@@ -15,9 +47,9 @@
                 </tr>
             </thead>
             <tbody>
-                @for (u of users(); track u.id) {
+                @for (u of filteredUser(); track u.id) {
                 <tr>
-                    <td>
+                    <td [routerLink]="['/profile',u.username]">
                         @if (u.avatart) {
                         <img [src]="url+u.avatart" width="40" height="40"
                             class="profile-avatar">
@@ -26,7 +58,6 @@
                             {{u.username.at(0)?.toLocaleUpperCase()}}
                         </div>
                         }
-                        <img [src]="u.avatart" class="avatar-img">
                     </td>
                     <td>{{ u.username }}</td>
                     <td>{{ u.email }}</td>
@@ -41,10 +72,6 @@
                         }
                     </td>
                     <td class="text-end">
-                        <a
-                            class="me-3"
-                            [routerLink]="['/profile',u.username]"
-                            title="open profile">open</a>
                         @if (u.status) {
                         <i class="op bi bi-ban me-3"
                             title="bane"
@@ -60,6 +87,13 @@
 
                     </td>
 
+                </tr>
+                }
+                @empty {
+                <tr>
+                    <td colspan="5" class="text-center text-muted">
+                        No users found
+                    </td>
                 </tr>
                 }
             </tbody>

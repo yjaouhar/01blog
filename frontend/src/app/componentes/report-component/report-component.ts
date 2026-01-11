@@ -16,6 +16,7 @@ declare var bootstrap: any;
 export class ReportComponent {
   form: FormGroup;
   @Input() id!: string;
+  @Output() hide = new EventEmitter();
   loading = signal(false);
   success = signal(false);
   refus = signal(false)
@@ -27,14 +28,7 @@ export class ReportComponent {
       userInput: ['']
     });
   }
-  ngAfterViewInit() {
-    const modalEl = document.getElementById('reportModel' + this.id);
-    if (!modalEl) return;
 
-    modalEl.addEventListener('hide.bs.modal', () => {
-      (document.activeElement as HTMLElement)?.blur();
-    });
-  }
   inputChange() {
     this.refus.set(false);
     this.showError = false;
@@ -74,13 +68,14 @@ export class ReportComponent {
       }
     })
     setTimeout(() => {
-      const modalEl = document.getElementById('reportModel' + this.id);
-      const modal = bootstrap.Modal.getInstance(modalEl);
-      modal.hide();
+      this.hide.emit();
       this.loading.set(false);
       this.success.set(false);
       this.refus.set(false)
       this.form.reset();
     }, 2000)
+  }
+  clos() {
+    this.hide.emit();
   }
 }

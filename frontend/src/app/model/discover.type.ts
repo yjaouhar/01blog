@@ -1,12 +1,12 @@
 
 
-export interface DiscoverModel {
-    data: User[];
-    currentPage: number;
-    totalPages: number;
-    hasNext: boolean;
+// export interface DiscoverModel {
+//     data: User[];
+//     currentPage: number;
+//     totalPages: number;
+//     hasNext: boolean;
 
-}
+// }
 export interface User {
     id: string,
     username: string

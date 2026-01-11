@@ -71,10 +71,6 @@
             <button class="nav-link" [class.active]="tab() === 'reports'"
                 (click)="tab.set('reports')">Reports</button>
         </li>
-        <li class="nav-item">
-            <button class="nav-link" [class.active]="tab() === 'banned'"
-                (click)="tab.set('banned')">Banned</button>
-        </li>
     </ul>
 
     <!-- ========== USERS ========== -->
@@ -93,8 +89,6 @@
     }
 
     <!-- ========== BANNED ========== -->
-    @if (tab() === 'banned') {
 
-    }
 
 </div>

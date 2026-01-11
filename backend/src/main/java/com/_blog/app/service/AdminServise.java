@@ -1,6 +1,6 @@
 package com._blog.app.service;
 
-import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -30,12 +30,13 @@ public class AdminServise {
     @Autowired
     private PosteRepo posteRepo;
     @Autowired
-    private NotificationService notificationService;
+    private ReportService reportService;
 
     @Autowired
     private PosteUtils posteUtils;
 
-    public void handleReport(ReportsReactionRequest reportsActionRequest, UserAccount admin) {
+    @Transactional
+    public List<GlobalDataResponse.Report> handleReport(ReportsReactionRequest reportsActionRequest, UserAccount admin) {
 
         if (!"ADMIN".equals(admin.getRole())) {
             throw CustomResponseException.CustomException(403, "You are not allowed to handle reports");
@@ -43,36 +44,39 @@ public class AdminServise {
 
         Report report = reportRepo.findById(reportsActionRequest.reportId())
                 .orElseThrow(() -> CustomResponseException.CustomException(404, "Report not found"));
+        List<Report> allReports = new ArrayList<>();
 
         if (reportsActionRequest.status()) {
-            report.setStatus(Report.Status.RESOLVED);
 
             if (report.getReportedPost() != null) {
                 if (reportsActionRequest.remove()) {
                     posteRepo.delete(report.getReportedPost());
-                    String content = "Your post titled '" + report.getReportedPost().getDescription()
-                            + "' was removed by admin due to reports.";
-                    notificationService.insertNotification(report.getReportedPost().getUser(), content);
                 } else {
                     report.getReportedPost().setHide(true);
                     posteRepo.save(report.getReportedPost());
                 }
-            }
-            if (report.getReportedUser() != null) {
+                allReports = reportRepo.findAllByReportedPostId(report.getReportedPost().getId());
+            } else if (report.getReportedUser() != null) {
                 if (reportsActionRequest.remove()) {
                     userRepo.delete(report.getReportedUser());
                 } else {
                     report.getReportedUser().setActive(false);
                     userRepo.save(report.getReportedUser());
                 }
+                allReports = reportRepo.findAllByReportedUserId(report.getReportedUser().getId());
             }
-            report.setReactedAt(LocalDateTime.now());
         } else {
-            // report.setStatus(Report.Status.REJECTED);
-            report.setReactedAt(LocalDateTime.now());
+            if (report.getReportedPost() != null) {
+                allReports = reportRepo.findAllByReportedPostId(report.getReportedPost().getId());
+            } else if (report.getReportedUser() != null) {
+                allReports = reportRepo.findAllByReportedUserId(report.getReportedUser().getId());
+            }
         }
-
-        reportRepo.save(report);
+        for (Report r : allReports) {
+            r.setStatus(Report.Status.RESOLVED);
+        }
+        reportRepo.saveAll(allReports);
+        return reportService.allReport();
     }
 
     public GlobalDataResponse.Stats stats() {
@@ -107,6 +111,7 @@ public class AdminServise {
         userRepo.deleteById(target.getId());
     }
 
+    @Transactional
     public void activeUser(UserAccount user, UserAccount target) {
         if (!user.getRole().equals("ADMIN")) {
             throw CustomResponseException.CustomException(403, "This action special for Admin");
@@ -115,6 +120,7 @@ public class AdminServise {
         userRepo.save(target);
     }
 
+    @Transactional
     public void baneUser(UserAccount user, UserAccount target) {
         if (!user.getRole().equals("ADMIN")) {
             throw CustomResponseException.CustomException(403, "This action special for Admin");
@@ -123,6 +129,7 @@ public class AdminServise {
         userRepo.save(target);
     }
 
+    @Transactional
     public List<GlobalDataResponse.Postes> getPostes(UserAccount user) {
         if (!user.getRole().equals("ADMIN")) {
             throw CustomResponseException.CustomException(403, "This action special for Admin");
@@ -132,7 +139,7 @@ public class AdminServise {
                     .id(p.getId())
                     .authore(p.getUser().getUsername())
                     .descreption(p.getDescription())
-                    .status(p.isHide())
+                    .hide(p.isHide())
                     .build();
         }).toList();
     }
@@ -145,6 +152,7 @@ public class AdminServise {
         posteRepo.deleteById(postId);
     }
 
+    @Transactional
     public void activePoste(UserAccount user, UUID poatId) {
         if (!user.getRole().equals("ADMIN")) {
             throw CustomResponseException.CustomException(403, "This action special for Admin");
@@ -152,8 +160,10 @@ public class AdminServise {
         Postes post = posteUtils.findPostById(poatId);
         post.setHide(false);
         posteRepo.save(post);
+
     }
 
+    @Transactional
     public void banePoste(UserAccount user, UUID poatId) {
         if (!user.getRole().equals("ADMIN")) {
             throw CustomResponseException.CustomException(403, "This action special for Admin");

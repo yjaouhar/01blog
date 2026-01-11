@@ -1,6 +1,8 @@
 import { Component, EventEmitter, inject, Output, output, signal } from '@angular/core';
 import { max } from 'rxjs';
 import { PostService } from '../../services/post.service';
+import { Post } from '../../model/post.type';
+import { LoadingService } from '../../services/loading.service';
 interface MediaFile {
   url: string;
   type: 'image' | 'video';
@@ -15,8 +17,9 @@ interface MediaFile {
 
 export class PostCreateComponent {
   readonly MAX_FILE_SIZE = 100 * 1024 * 1024; // 50MB
-  @Output() hide = new EventEmitter<boolean>()
+  @Output() hide = new EventEmitter<Post|null>()
   postService = inject(PostService);
+  loadService = inject(LoadingService);
   content = signal("");
   file = signal<File[]>([])
   mediaFiles = signal<MediaFile[]>([]);
@@ -44,9 +47,11 @@ export class PostCreateComponent {
     const formData = new FormData();
     formData.append("data", new Blob([JSON.stringify(data)], { type: "application/json" }));
     this.file().forEach(f => formData.append('file', f));
+    this.loadService.show()
     this.postService.creatPost(formData).subscribe({
       next: res => {
-        this.hide.emit(true)
+        this.hide.emit(res.data)
+  
       }
     })
 
@@ -93,7 +98,7 @@ export class PostCreateComponent {
   }
 
   close() {
-    this.hide.emit(true)
+    this.hide.emit(null)
   }
 
   cropImageToSquare(file: File, size = 150): Promise<Blob> {

@@ -18,9 +18,11 @@
                 <tr>
                     <td class="text-center">
                         @if (r.type === 'post') {
-                        <i class="bi bi-file-post text-primary fs-4"></i>
+                        <i class="bi bi-file-post text-primary fs-4"
+                            [routerLink]="['/poste',r.targetId]"></i>
                         } @else {
-                        <i class="bi bi-person-fill text-primary fs-4"></i>
+                        <i class="bi bi-person-fill text-primary fs-4"
+                            [routerLink]="['/profile',r.target]"></i>
                         }
                     </td>
                     <td>
@@ -47,18 +49,20 @@
 
                             <div class="d-flex gap-3">
                                 @if (r.status==='RESOLVED') {
-                                <i
-                                    class="text-success">solved</i>
+                                <p
+                                    class="text-success">solved</p>
                                 }@else {
                                 <i
                                     class="bi bi-ban m-2  "
-                                    [title]="'Hide'+r.type"
+                                    [title]="'bane '+r.type"
                                     (click)="changeSelectedPost(r,'hide')"></i>
 
                                 <i class="bi bi-trash-fill text-danger m-2"
                                     data-bs-toggle="tooltip"
                                     [title]="'Delete '+r.type"
                                     (click)="changeSelectedPost(r,'delet')"></i>
+                                <p class="btn btn-danger"
+                                    (click)="changeSelectedPost(r,'reject')">reject</p>
                                 }
 
                             </div>
@@ -70,11 +74,11 @@
             </tbody>
         </table>
         @if (showHideConfirmation()) {
-        <app-bane message="Do you want to bane"
+        <app-bane message="Do you want to bane this target"
             (react)="banTarget($event)"></app-bane>
         }
         @if (showDeletConfirmation()) {
-        <app-confermation message="Do you want to delet"
+        <app-confermation message="Do you want to delet this target"
             (react)="deleteTarget($event)"></app-confermation>
         }
     </div>

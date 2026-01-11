@@ -1,11 +1,8 @@
 package com._blog.app.repository;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import com._blog.app.entities.Subscribers;
@@ -18,12 +15,12 @@ public interface SubscriberRepo extends JpaRepository<Subscribers, UUID> {
 
     List<Subscribers> findByUser(UserAccount user);
 
-   Optional< List<Subscribers>> findByTarget(UserAccount target);
+//    Optional< List<Subscribers>> findByTarget(UserAccount target);
 
 
-    Page<Subscribers> findByUser(UserAccount user, Pageable pageable);
+    // List<Subscribers> findByUser(UserAccount user);
 
-    Page<Subscribers> findByTarget(UserAccount target, Pageable pageable);
+    List<Subscribers> findByTarget(UserAccount target);
     
     long countByTarget(UserAccount target);
 

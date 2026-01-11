@@ -13,9 +13,8 @@ declare var bootstrap: any;
   styleUrl: './register.css',
 })
 export class Register {
-  constructor(
-    private router: Router
-  ) { }
+
+  router = inject(Router)
   authService = inject(AuthService);
   utils = inject(UtilsService);
   avatar = signal<File | null>(null);

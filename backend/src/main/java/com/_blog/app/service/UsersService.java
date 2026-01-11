@@ -4,9 +4,6 @@ import java.util.List;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import com._blog.app.entities.Subscribers;
@@ -32,11 +29,10 @@ public class UsersService {
     @Autowired
     NotificationService notificationService;
 
-    public GlobalDataResponse<List<GlobalDataResponse.UserResponse>> getUsers(UserAccount currentUser) {
-        Page<UserAccount> usersPage = userRepo.findByIdNot(currentUser.getId(),
-                PageRequest.of(0, 10, Sort.by(Sort.Direction.ASC, "username")));
+    public List<GlobalDataResponse.UserResponse> getUsers(UserAccount currentUser) {
+        List<UserAccount> usersPage = userRepo.findByIdNot(currentUser.getId());
 
-        List<GlobalDataResponse.UserResponse> users = usersPage.getContent().stream().map(u -> {
+        return usersPage.stream().filter(u -> u.isActive()).map(u -> {
             Long totalPost = postRepo.countByUserId(u.getId());
             boolean followed = subscriberRepo.existsByUserId_IdAndTarget_Id(currentUser.getId(), u.getId());
             return GlobalDataResponse.UserResponse.builder()
@@ -49,13 +45,12 @@ public class UsersService {
                     .followed(followed)
                     .build();
         }).toList();
-        return new GlobalDataResponse<>(users, usersPage.getNumber(), usersPage.getTotalPages(), usersPage.hasNext());
+
     }
 
-    public GlobalDataResponse<List<GlobalDataResponse.UserResponse>> explor(UUID currentUserId, String keyword, int page, int size) {
-        Page<UserAccount> allusers = userRepo.searchByFullName(currentUserId, "%" + keyword.toLowerCase() + "%",
-                PageRequest.of(page, size));
-        List<GlobalDataResponse.UserResponse> users = allusers.getContent().stream().map(u -> {
+    public List<GlobalDataResponse.UserResponse> explor(UUID currentUserId, String keyword, int page, int size) {
+        List<UserAccount> allusers = userRepo.searchByFullName(currentUserId, "%" + keyword.toLowerCase() + "%");
+        return allusers.stream().filter(u -> u.isActive()).map(u -> {
             boolean isfollowed = subscriberRepo.existsByUserId_IdAndTarget_Id(currentUserId, u.getId());
             Long totalPost = postRepo.countByUserId(u.getId());
             return GlobalDataResponse.UserResponse.builder()
@@ -67,13 +62,16 @@ public class UsersService {
                     .followed(isfollowed)
                     .build();
         }).toList();
-        return new GlobalDataResponse<>(users, allusers.getNumber(), allusers.getTotalPages(), allusers.hasNext());
     }
 
     @Transactional
     public String subscribHandel(UserAccount currentUser, UserAccount targetUser) {
         if (currentUser.getId().equals(targetUser.getId())) {
             throw CustomResponseException.CustomException(400, "can't follow yourself");
+        }
+        if (!targetUser.isActive()) {
+            throw CustomResponseException.CustomException(403,
+                    "this user is bane");
         }
         if (subscriberRepo.existsByUserId_IdAndTarget_Id(currentUser.getId(), targetUser.getId())) {
             subscriberRepo.deleteByUser_IdAndTarget_Id(currentUser.getId(), targetUser.getId());
@@ -83,8 +81,7 @@ public class UsersService {
         subscribers.setTarget(targetUser);
         subscribers.setUser(currentUser);
         subscriberRepo.save(subscribers);
-        String content = currentUser.getUsername() + " started follwing you ";
-        notificationService.insertNotification(targetUser, content);
+        
         return "follow";
 
     }

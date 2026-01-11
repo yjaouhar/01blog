@@ -6,7 +6,7 @@ import { AppFooter } from "../../componentes/app-footer/app-footer";
 import { filter } from 'rxjs';
 import { HomeService } from '../../services/home.service';
 import { PosteComponent } from "../../componentes/poste.component/poste-component";
-import { Post, PostModel } from '../../model/post.type';
+import { Post } from '../../model/post.type';
 import { LoadingService } from '../../services/loading.service';
 import { Loading } from "../../componentes/loading/loading";
 import { PostCreateComponent } from "../../componentes/post-create-component/post-create-component";
@@ -28,11 +28,9 @@ export class Layout implements OnInit {
   loadingService = inject(LoadingService)
   router = inject(Router)
   utils = inject(UtilsService);
-  authService = inject(AuthService);
   isHomePage = signal(this.router.url === "/");
-  loding = signal(true);
   start = signal(true);
-  postes = signal<PostModel<Post> | null>(null)
+  postes = signal<Post[]>([])
   ngOnInit(): void {
     this.router.events.pipe(
       filter(event => event instanceof NavigationEnd)
@@ -51,12 +49,16 @@ export class Layout implements OnInit {
     this.homeService.getPodteData().subscribe({
       next: res => {
         this.start.set(false)
-        console.log("++++++", res.data);
         this.postes.set(res.data)
       },
       complete: () => {
         this.loadingService.hide()
       }
     });
+  }
+  addPost(post: Post) {
+    console.log("2 : ", post);
+    this.postes.update(p => [post, ...p]);
+    this.loadingService.hide()
   }
 }

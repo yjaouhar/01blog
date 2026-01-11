@@ -3,8 +3,9 @@ import { environment } from '../../environments/enveronment';
 import { HttpClient } from '@angular/common/http';
 import { GlobalResponce } from '../model/globalResponce.type';
 import { catchError, throwError } from 'rxjs';
-import { AdminPost, Post, PostModel } from '../model/post.type';
-import { Reports, Stats, Users } from '../model/reportes.type';
+import { AdminPost } from '../model/post.type';
+import {  Stats, Users } from '../model/reportes.type';
+
 
 @Injectable({
   providedIn: 'root',
@@ -17,12 +18,21 @@ export class AdminService {
       catchError(err => throwError(() => err))
     )
   }
+
   getUsers() {
     return this.http.get<GlobalResponce<Users[]>>(`${environment.apiUrl}/api/admin/users`).pipe(
       catchError(err => throwError(() => err))
     )
   };
 
+  getPostes() {
+    return this.http.get<GlobalResponce<AdminPost[]>>(`${environment.apiUrl}/api/admin/postes`).pipe(
+      catchError(err => throwError(() => err))
+    )
+  };
+
+
+  // CRUD for usres
 
   deletUser(id: string) {
     return this.http.delete<GlobalResponce<string>>(`${environment.apiUrl}/api/admin/user/${id}`).pipe(
@@ -41,28 +51,8 @@ export class AdminService {
   }
 
 
-  getReports() {
-    return this.http.get<GlobalResponce<Reports[]>>(`${environment.apiUrl}/api/admin/report`).pipe(
-      catchError(err => throwError(() => err))
-    )
-  };
-  deletReport(id: string) {
-    return this.http.delete<GlobalResponce<string>>(`${environment.apiUrl}/api/admin/report/${id}`).pipe(
-      catchError(err => throwError(() => err))
-    )
-  };
-  relevReport(id: string) {
-    return this.http.patch<GlobalResponce<string>>(`${environment.apiUrl}/api/admin/report`, { targetId: id }).pipe(
-      catchError(err => throwError(() => err))
-    )
-  };
 
-  getPostes() {
-    return this.http.get<GlobalResponce<AdminPost[]>>(`${environment.apiUrl}/api/admin/postes`).pipe(
-      catchError(err => throwError(() => err))
-    )
-  };
-
+  // CRUD for Postes
   deletPost(id: string) {
     return this.http.delete<GlobalResponce<string>>(`${environment.apiUrl}/api/admin/poste/${id}`).pipe(
       catchError(err => throwError(() => err))

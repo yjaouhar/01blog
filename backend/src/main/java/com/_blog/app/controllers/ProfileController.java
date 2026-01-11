@@ -57,14 +57,12 @@ public class ProfileController {
     }
 
     @GetMapping("postes/{profileId}")
-    public ResponseEntity<GlobalResponse<?>> post(@PathVariable UUID profileId,
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size) {
+    public ResponseEntity<GlobalResponse<?>> post(@PathVariable UUID profileId) {
         JwtUserPrincipal principal = UserUtils.getPrincipal();
         UserAccount currentUser = userUtils.findUserById(principal.getId());
         UserAccount profileUser = userUtils.findUserById(profileId);
         return new ResponseEntity<>(
-                new GlobalResponse<>(profileService.getProfilePoste(profileUser, currentUser, page, size)),
+                new GlobalResponse<>(profileService.getProfilePoste(profileUser, currentUser)),
                 HttpStatus.OK);
     }
 
@@ -77,8 +75,9 @@ public class ProfileController {
         UserAccount profileUser = userUtils.findUserById(profileId);
         // GlobalDataResponse followers = 
         return new ResponseEntity<>(
-                new GlobalResponse<>(profileService.followers(currentUser, profileUser, page, size)), HttpStatus.OK);
+                new GlobalResponse<>(profileService.followers(currentUser, profileUser)), HttpStatus.OK);
     }
+
     @GetMapping("/following/{profileId}")
     public ResponseEntity<GlobalResponse<?>> following(@PathVariable UUID profileId,
             @RequestParam(defaultValue = "0") int page,
@@ -86,6 +85,6 @@ public class ProfileController {
         JwtUserPrincipal principal = UserUtils.getPrincipal();
         UserAccount currentUser = userUtils.findUserById(principal.getId());
         UserAccount profileUser = userUtils.findUserById(profileId);
-        return new ResponseEntity<>(new GlobalResponse<>(profileService.following(currentUser, profileUser, page, size)), HttpStatus.OK);
+        return new ResponseEntity<>(new GlobalResponse<>(profileService.following(currentUser, profileUser)), HttpStatus.OK);
     }
 }

@@ -1,9 +1,7 @@
 import { Component, inject, Input, OnInit, signal } from '@angular/core';
-import { DiscoverModel, User } from '../../model/discover.type';
-import { ConfirmComponent } from '../confirm-component/confirm-component';
+import { User } from '../../model/discover.type';
 import { RouterLink } from '@angular/router';
 import { environment } from '../../../environments/enveronment';
-import { Loading } from "../loading/loading";
 import { DiscoverService } from '../../services/discover.service';
 import { Confermation } from "../confermation/confermation";
 import { UtilsService } from '../../services/utils.service';
@@ -17,7 +15,7 @@ import { LoadingService } from '../../services/loading.service';
   styleUrl: './list-users-component.css',
 })
 export class ListUsersComponent {
-  @Input() users: DiscoverModel | null = null;
+  @Input() users: User[]  = [];
   @Input() loadData = false;
   @Input() showSercheBare = false;
   url = environment?.apiUrl;
@@ -28,7 +26,7 @@ export class ListUsersComponent {
   selectedUser = signal<User | null>(null)
   serched = signal(false);
   toggleSubscribe(user: User) {
-    this.users!.data = this.users!.data.map(u => {
+    this.users = this.users.map(u => {
       if (u.id === user.id) {
         return { ...u, followed: !user.followed }
       }

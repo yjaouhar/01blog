@@ -1,6 +1,7 @@
 package com._blog.app.service;
 
 import java.util.List;
+import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -8,9 +9,7 @@ import org.springframework.stereotype.Service;
 import com._blog.app.dtos.ReportRequest;
 import com._blog.app.entities.Report;
 import com._blog.app.entities.UserAccount;
-import com._blog.app.repository.PosteRepo;
 import com._blog.app.repository.ReportRepo;
-import com._blog.app.repository.UserRepo;
 import com._blog.app.shared.CustomResponseException;
 import com._blog.app.shared.GlobalDataResponse;
 import com._blog.app.utils.PosteUtils;
@@ -28,33 +27,36 @@ public class ReportService {
     @Autowired
     private PosteUtils posteUtils;
 
-    @Autowired
-    private PosteRepo posteRepo;
-
-    @Autowired
-    private UserRepo userRepo;
 
     public List<GlobalDataResponse.Report> allReport() {
         return reportRepo.findAll().stream().map(r -> {
             String typ;
             String target;
+            UUID targetId;
+
             if (r.getReportedPost() != null) {
                 typ = "post";
                 target = r.getReportedPost().getDescription();
+                targetId = r.getReportedPost().getId();
             } else {
                 typ = "user";
                 target = r.getReportedUser().getUsername();
+                targetId = r.getReportedUser().getId();
+
             }
             return GlobalDataResponse.Report.builder()
                     .id(r.getId())
                     .time(r.getCreatedAt())
                     .type(typ)
+                    .targetId(targetId)
                     .reporter(r.getReporter().getUsername())
                     .target(target)
                     .reason(r.getReason())
                     .status(r.getStatus().toString()).build();
         }).toList();
+
     }
+
 
     public void report(ReportRequest reportRequest, UserAccount reporter) {
 
@@ -86,6 +88,4 @@ public class ReportService {
         reportRepo.save(report);
     }
 
-    public void reactForReport(ReportRequest reportRequest, UserAccount reporter) {
-    }
 }

@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject, Input, signal, SimpleChanges } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
-import { Media, Post, PostModel } from '../../model/post.type';
+import { Media, Post } from '../../model/post.type';
 import { environment } from '../../../environments/enveronment';
 import { PostService } from '../../services/post.service';
 declare var bootstrap: any;

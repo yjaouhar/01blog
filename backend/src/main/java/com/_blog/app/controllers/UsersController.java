@@ -30,14 +30,14 @@ public class UsersController {
     @GetMapping
     public ResponseEntity<GlobalResponse<?>> users() {
         JwtUserPrincipal principal = UserUtils.getPrincipal();
-        UserAccount user = userUtils.findUserByUsername(principal.getUsername());
+        UserAccount user = userUtils.findUserById(principal.getId());
         return new ResponseEntity<>(new GlobalResponse<>(usersService.getUsers(user)), HttpStatus.OK);
     }
 
     @GetMapping("/serche/{keyword}")
     public ResponseEntity<GlobalResponse<?>> serche(@PathVariable String keyword, @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int siz) {
         JwtUserPrincipal principal = UserUtils.getPrincipal();
-        UserAccount user = userUtils.findUserByUsername(principal.getUsername());
+        UserAccount user = userUtils.findUserById(principal.getId());
         return new ResponseEntity<>(new GlobalResponse<>(usersService.explor(user.getId(), keyword, page, siz)), HttpStatus.OK);
     }
 

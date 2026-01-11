@@ -28,6 +28,7 @@ export class Profile implements OnInit {
     this.prosfileService.getUserProfile(this.username()).subscribe({
       next: res => {
         this.profileDetails = res.data;
+        
       },
       error: err => {
         this.resevData.set(true)

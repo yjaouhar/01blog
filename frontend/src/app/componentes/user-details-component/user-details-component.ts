@@ -10,10 +10,10 @@ import { environment } from '../../../environments/enveronment';
 import { UtilsService } from '../../services/utils.service';
 import { Report } from "../report/report";
 import { ProfileService } from '../../services/user-profile.service';
-import { Post, PostModel } from '../../model/post.type';
+import { Post } from '../../model/post.type';
 import { PosteComponent } from "../poste.component/poste-component";
 import { ListUsersComponent } from "../list-users-component/list-users-component";
-import { DiscoverModel } from '../../model/discover.type';
+import { User } from '../../model/discover.type';
 
 @Component({
   selector: 'app-user-details-component',
@@ -33,9 +33,9 @@ export class UserDetailsComponent implements OnChanges {
   utils = inject(UtilsService);
   discoverService = inject(DiscoverService);
   profileService = inject(ProfileService);
-  postes = signal<PostModel<Post> | null>(null);
-  followers = signal<DiscoverModel | null>(null);
-  following = signal<DiscoverModel | null>(null);
+  postes = signal<Post[]>([]);
+  followers = signal<User[]>([]);
+  following = signal<User[]>([]);
   showConfermation = signal(false);
   showEditeComponent = signal(false)
   loadFollowers = signal(false);
@@ -101,7 +101,7 @@ export class UserDetailsComponent implements OnChanges {
     this.discoverService.subscribe(this.profileDetails.id).subscribe({
       next: () => {
         this.profileDetails.reacted = !this.profileDetails.reacted
-        this.profileDetails.followers = true ? this.profileDetails.followers + 1 : this.profileDetails.followers - 1;
+        this.profileDetails.following = this.profileDetails.reacted ? this.profileDetails.following + 1 : this.profileDetails.following - 1;
       }
     })
 

@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { GlobalResponce } from '../model/globalResponce.type';
 import { catchError, map, throwError } from 'rxjs';
-import { Media, Post, PostModel } from '../model/post.type';
+import { Media, Post } from '../model/post.type';
 import { environment } from '../../environments/enveronment';
 import { CommentModal } from '../model/comment.type';
 
@@ -12,16 +12,16 @@ import { CommentModal } from '../model/comment.type';
 export class PostService {
   http = inject(HttpClient)
 
-    getPoste(id : string) {
-      return this.http.get<GlobalResponce<PostModel<Post>>>(`http://localhost:8080/api/post/${id}`).pipe(
-        catchError(
-          err => {
-            return throwError(() => err)
-          }
-        )
-      );
-  
-    }
+  getPoste(id: string) {
+    return this.http.get<GlobalResponce<Post>>(`http://localhost:8080/api/post/${id}`).pipe(
+      catchError(
+        err => {
+          return throwError(() => err)
+        }
+      )
+    );
+
+  }
 
   likePoste(postId: string) {
     return this.http.post(`${environment.apiUrl}/api/post/like/${postId}`, {}).pipe(
@@ -54,9 +54,9 @@ export class PostService {
     );
   }
 
-  
+
   creatPost(form: FormData) {
-    return this.http.post<GlobalResponce<string>>(`${environment.apiUrl}/api/post`, form).pipe(
+    return this.http.post<GlobalResponce<Post>>(`${environment.apiUrl}/api/post`, form).pipe(
       catchError(err => throwError(() => err))
     );
   }

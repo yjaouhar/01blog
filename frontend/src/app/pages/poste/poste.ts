@@ -1,8 +1,7 @@
 import { Component, inject, OnInit, signal } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { PostService } from '../../services/post.service';
-import { Post, PostModel } from '../../model/post.type';
-import { NotFound } from "../not-found/not-found";
+import { Post } from '../../model/post.type';
 import { NotResorce } from "../../componentes/not-resorce/not-resorce";
 import { PosteComponent } from "../../componentes/poste.component/poste-component";
 
@@ -18,17 +17,15 @@ export class Poste implements OnInit {
   postService = inject(PostService);
   postId = signal('')
   resevData = signal(false);
-  poste = signal<PostModel<Post> | null>(null)
+  poste = signal<Post[]>([])
 
   ngOnInit(): void {
     this.route.paramMap.subscribe(params => {
       this.postId.set(params.get('postId') ?? '')
     });
     this.postService.getPoste(this.postId()).subscribe({
-      next: res => {
-        console.log("**** ", res.data);
-        
-        this.poste.set(res.data);
+      next: res => {        
+        this.poste.set([res.data]);
       },
       error: err => {
         this.resevData.set(true)

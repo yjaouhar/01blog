@@ -1,5 +1,5 @@
 import { Component, inject, OnInit, signal } from '@angular/core';
-import { DiscoverModel } from '../../model/discover.type';
+import { User } from '../../model/discover.type';
 import { DiscoverService } from '../../services/discover.service';
 import { ListUsersComponent } from "../../componentes/list-users-component/list-users-component";
 import { LoadingService } from '../../services/loading.service';
@@ -13,7 +13,7 @@ import { LoadingService } from '../../services/loading.service';
 export class Discover implements OnInit {
   discoverServices = inject(DiscoverService)
   loadingService = inject(LoadingService)
-  users = signal<DiscoverModel | null>(null);
+  users = signal<User[]>([]);
   loadUSers = signal(false)
   ngOnInit(): void {
     this.loadingService.show

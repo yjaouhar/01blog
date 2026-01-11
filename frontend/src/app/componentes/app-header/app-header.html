@@ -20,25 +20,38 @@
             <!-- Scrollable modal -->
             @if(showCreatPostPop()){
             <app-post-create-component
-                (hide)="toggelShowCreatPostPop(!$event)"></app-post-create-component>
+                (hide)="addNewPost($event)"></app-post-create-component>
             }
             <!-- User Actions Section -->
             <div class="d-flex align-items-center gap-5">
                 <div class="dropdown d-inline-block">
                     <button type="button" class="btn-notification"
-                        data-bs-toggle="dropdown" aria-expanded="false">
+                        data-bs-toggle="dropdown" aria-expanded="false"
+                        data-bs-auto-close="outside">
                         <i class="bi bi-bell"></i>
-                        <!-- Notification Badge (Show when there are notifications) -->
+                        @if (newNotif()) {
                         <span class="notification-badge"></span>
+                        }
                     </button>
                     <ul
                         class="dropdown-menu dropdown-menu-end notification-dropdown">
-                        <li><a class="dropdown-item" href="#">New message
-                                received</a></li>
-                        <li><a class="dropdown-item" href="#">Your post was
-                                liked</a></li>
-                        <li><a class="dropdown-item" href="#">New
-                                follower</a></li>
+                        @for (n of notif(); track n.id) {
+                        <li
+                            class="notification-item"
+                            [ngClass]="{ 'read': n.read, 'unread': !n.read }"
+                            (click)="toggel(n.id)">
+                            <p class="content">{{ n.content }}</p>
+
+                            <div class="meta">
+                                <small>{{ utils.timeAgo(n.creatAt) }}</small>
+                            </div>
+                        </li>
+                        }@empty {
+                        <div
+                            style="display: flex;justify-content: space-around;height: 40px;align-items: center;">
+                            <i class="bi bi-bell-slash fs-4"></i>
+                        </div>
+                        }
                     </ul>
                 </div>
 

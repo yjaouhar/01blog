@@ -1,5 +1,6 @@
 package com._blog.app.repository;
 
+import java.util.List;
 import java.util.UUID;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -19,6 +20,9 @@ public interface ReportRepo extends JpaRepository<Report, UUID> {
             FROM Report r
             WHERE r.status = :status
     """)
-    long countActiveReport(@Param("status") Report.Status status) ;
+    long countActiveReport(@Param("status") Report.Status status);
 
+    List<Report> findAllByReportedPostId(UUID reportedPostId);
+
+    List<Report> findAllByReportedUserId(UUID reportedUserId);
 }

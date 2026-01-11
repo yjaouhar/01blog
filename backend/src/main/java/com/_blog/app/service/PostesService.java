@@ -9,9 +9,6 @@ import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -49,51 +46,39 @@ public class PostesService {
     @Autowired
     private NotificationService notificationService;
 
-    // private static final Logger logger = LoggerFactory.getLogger(PostesService.class);
-    public GlobalDataResponse<List<GlobalDataResponse.PostResponse>> homePostes(UserAccount user, int page, int size) {
-        List<GlobalDataResponse.PostResponse> posts = new ArrayList<>();
-        Page<Postes> postsPage = Page.empty();
-        try {
-            // all user following from me
-            List<Subscribers> followinTarget = subscriberRepo.findByUser(user);
-            // njib target mn row li ana dyr lihom follow 
-            // useres li ghnjib lihomm postat
-            List<UserAccount> postUserTarget = new ArrayList<>(
-                    followinTarget.stream().map(Subscribers::getTarget).toList());
-            // kanzid rasi bax njib postat dyali
-            postUserTarget.add(user);
-            postsPage = posteRepo.findByUserIn(postUserTarget, PageRequest.of(page, size,
-                    Sort.by(Sort.Direction.DESC, "createdAt")));
+    public List<GlobalDataResponse.PostResponse> homePostes(UserAccount user) {
 
-            System.out.println("jaw postat mn db ");
+        List<Subscribers> followinTarget = subscriberRepo.findByUser(user);
+        List<UserAccount> postUserTarget = new ArrayList<>(
+                followinTarget.stream().map(Subscribers::getTarget).filter(u -> u.isActive()).toList());
 
-            posts = postsPage.getContent().stream().map(post -> {
-                boolean liked = likeRepo.existsByUserIdAndPostId(user.getId(), post.getId());
-                long totaLike = likeRepo.countByPostId(post.getId());
-                long totalComment = commentRepo.countByPostId(post.getId());
-                return GlobalDataResponse.PostResponse.builder().id(post.getId()).authore(post.getUser().getUsername())
-                        .avatar(post.getUser().getAvatar()).createTime(post.getCreatedAt())
-                        .descreption(post.getDescription()).media(post.getMedia()).totalComment(totalComment)
-                        .totalLike(totaLike).liked(liked)
-                        .build();
-            }).toList();
-            System.out.println("post jaw ---> " + posts.size());
-        } catch (Exception e) {
-            System.out.println("post error ---> " + e.getMessage());
-            throw e;
-        }
+        postUserTarget.add(user);
+        List<Postes> postsPage = posteRepo.findByUserIn(postUserTarget).stream().filter(p -> !p.isHide()).toList();
 
-        return new GlobalDataResponse<>(posts, postsPage.getNumber(),
-                postsPage.getTotalPages(), postsPage.hasNext());
+        List<GlobalDataResponse.PostResponse> posts = postsPage.stream().map(post -> {
+            boolean liked = likeRepo.existsByUserIdAndPostId(user.getId(), post.getId());
+            long totaLike = likeRepo.countByPostId(post.getId());
+            long totalComment = commentRepo.countByPostId(post.getId());
+            return GlobalDataResponse.PostResponse.builder().id(post.getId()).authore(post.getUser().getUsername())
+                    .avatar(post.getUser().getAvatar()).createTime(post.getCreatedAt())
+                    .descreption(post.getDescription()).media(post.getMedia()).totalComment(totalComment)
+                    .totalLike(totaLike).liked(liked)
+                    .build();
+        }).toList();
+
+        return posts;
     }
 
-    public GlobalDataResponse<List<GlobalDataResponse.PostResponse>> getPostes(UserAccount user, UUID id) {
+    public GlobalDataResponse.PostResponse getPostes(UserAccount user, UUID id) {
         Optional<Postes> poste = posteRepo.findById(id);
         Postes post = poste.orElseThrow();
+        if (post.isHide()) {
+            throw CustomResponseException.CustomException(403, "this post is hide");
+        }
         boolean liked = likeRepo.existsByUserIdAndPostId(user.getId(), post.getId());
         long totaLike = likeRepo.countByPostId(post.getId());
         long totalComment = commentRepo.countByPostId(post.getId());
-        List<GlobalDataResponse.PostResponse> list = List.of(GlobalDataResponse.PostResponse.builder().
+        return GlobalDataResponse.PostResponse.builder().
                 id(post.getId()).
                 authore(post.getUser().getUsername()).
                 avatar(post.getUser().getAvatar()).
@@ -103,12 +88,11 @@ public class PostesService {
                 totalComment(totalComment).
                 totalLike(totaLike).
                 liked(liked)
-                .build());
-        return new GlobalDataResponse<>(list, 0, 0, false);
-
+                .build();
     }
 
-    public void creatPoste(PosteCreationRequest postRequest, UserAccount currentUser, List<MultipartFile> file) {
+    @Transactional
+    public GlobalDataResponse.PostResponse creatPoste(PosteCreationRequest postRequest, UserAccount currentUser, List<MultipartFile> file) {
 
         List<GlobalDataResponse.Media> media = new ArrayList<>();
         if (file != null && !file.isEmpty()) {
@@ -120,13 +104,15 @@ public class PostesService {
         }
         Postes post = new Postes(postRequest.description(), media, currentUser);
 
-        subscriberRepo.findByTarget(currentUser)
-                .ifPresent(followers -> followers.forEach(follower -> {
-            String content = currentUser.getUsername() + " shared a new post";
-            notificationService.insertNotification(follower.getUser(), content);
-        }));
+        subscriberRepo.findByTarget(currentUser).forEach(follower -> {
+            if (follower.getUser().isActive()) {
+                String content = currentUser.getUsername() + " shared a new post";
+                notificationService.insertNotification(follower.getUser(), content);
+            }
+        });
         post.setCreatedAt(LocalDateTime.now());
         posteRepo.save(post);
+        return getPostes(currentUser, post.getId());
 
     }
 
@@ -137,6 +123,9 @@ public class PostesService {
         if (!posteUtils.haveAccess(post, currentUser)) {
             throw CustomResponseException.CustomException(403,
                     "can't have access for delete post");
+        }
+        if (post.isHide()) {
+            throw CustomResponseException.CustomException(403, "this post is hide");
         }
         List<GlobalDataResponse.Media> mediaPostes = post.getMedia();
         posteRepo.deleteById(post.getId());
@@ -151,13 +140,16 @@ public class PostesService {
 
     }
 
+    @Transactional
     public List<GlobalDataResponse.Media> updatePost(PosteUpdateRequest updateRequest, List<MultipartFile> file, UserAccount currentUser) {
         Postes post = posteUtils.findPostById(updateRequest.postId());
 
         if (!posteUtils.haveAccess(post, currentUser)) {
             throw CustomResponseException.CustomException(403, "You can't update this post");
         }
-
+        if (post.isHide()) {
+            throw CustomResponseException.CustomException(403, "this post is hide");
+        }
         if (updateRequest.description() != null && !updateRequest.description().isBlank()) {
             post.setDescription(updateRequest.description());
         }
@@ -188,6 +180,9 @@ public class PostesService {
     @Transactional
     public String likePost(UUID postId, UserAccount currentUser) {
         Postes post = posteUtils.findPostById(postId);
+        if (post.isHide()) {
+            throw CustomResponseException.CustomException(403, "this post is hide");
+        }
         if (likeRepo.existsByUserIdAndPostId(currentUser.getId(), post.getId())) {
             likeRepo.deleteByUserIdAndPostId(currentUser.getId(), post.getId());
             return "diselike";
@@ -196,16 +191,17 @@ public class PostesService {
             like.setUser(currentUser);
             like.setPost(post);
             likeRepo.save(like);
-            String content = currentUser.getUsername() + " Liked your post titled '" + "'" + post.getDescription();
-            notificationService.insertNotification(post.getUser(), content);
         }
         return "Like";
     }
 
     public List<GlobalDataResponse.Comment> getComment(UUID postId, UserAccount currentUser) {
-
+        Postes post = posteUtils.findPostById(postId);
+        if (post.isHide()) {
+            throw CustomResponseException.CustomException(403, "this post is hide");
+        }
         List<Comment> comments = commentRepo.findAllByUserIdAndPostId(currentUser.getId(), postId);
-        return comments.stream().map(c -> {
+        return comments.stream().filter(u -> u.getUser().isActive()).map(c -> {
             String avatar = c.getUser().getAvatar();
             String authore = c.getUser().getUsername();
             return GlobalDataResponse.Comment.builder()
@@ -220,13 +216,14 @@ public class PostesService {
 
     public GlobalDataResponse.Comment commentPost(CommentPosteRequest commentPosteRequest, UserAccount currentUser) {
         Postes post = posteUtils.findPostById(commentPosteRequest.postId());
+        if (post.isHide()) {
+            throw CustomResponseException.CustomException(403, "this post is hide");
+        }
         Comment comment = new Comment();
         comment.setContente(commentPosteRequest.description());
         comment.setPost(post);
         comment.setUser(currentUser);
         commentRepo.save(comment);
-        String content = currentUser.getUsername() + " comment your post titled '" + "'" + post.getDescription();
-        notificationService.insertNotification(post.getUser(), content);
         return GlobalDataResponse.Comment.builder()
                 .id(comment.getId())
                 .authore(comment.getUser().getUsername())
@@ -239,11 +236,9 @@ public class PostesService {
     @Transactional
     public void deletComment(UUID commentId, UserAccount currentUser) {
         Comment comment = posteUtils.findComentById(commentId);
-
         if (!posteUtils.haveAccess(comment, currentUser)) {
             throw CustomResponseException.CustomException(403, "You can't delet this comment");
         }
-
         commentRepo.deleteById(comment.getId());
     }
 

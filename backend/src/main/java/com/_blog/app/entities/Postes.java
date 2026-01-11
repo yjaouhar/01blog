@@ -50,6 +50,7 @@ public class Postes {
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "user_id", nullable = false)
     private UserAccount user;
+    
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Liks> likes = new ArrayList<>();
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)

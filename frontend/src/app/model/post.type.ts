@@ -1,9 +1,4 @@
-export interface PostModel<T> {
-    data: T[];
-    currentPage: number;
-    totalPages: number;
-    hasNext: boolean;
-}
+
 export interface Post {
     id: string;
     authore: string;
@@ -26,5 +21,5 @@ export interface AdminPost {
     id: string
     authore: string;
     descreption: string;
-    status: boolean;
+    hide: boolean;
 }
