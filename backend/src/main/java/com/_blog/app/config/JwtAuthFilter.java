@@ -37,11 +37,6 @@ public class JwtAuthFilter extends OncePerRequestFilter {
     UserUtils userUtils;
     private final Map<String, Bucket> buckets = new ConcurrentHashMap<>();
 
-    private Bucket createBucket() {
-        return Bucket.builder()
-                .addLimit(Bandwidth.simple(50, Duration.ofMinutes(1)))
-                .build();
-    }
     private static final List<String> EXEMPT_ROUTES = List.of(
             "/api/auth/login",
             "/api/auth/register",
@@ -49,27 +44,36 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             "/api/auth/logout"
     );
 
+    private Bucket createBucket() {
+        return Bucket.builder()
+                .addLimit(Bandwidth.simple(50, Duration.ofMinutes(1)))
+                .build();
+    }
+
     @Override
     protected void doFilterInternal(HttpServletRequest request,
             HttpServletResponse response,
             FilterChain filterChain)
             throws ServletException, IOException {
-        String key = request.getRemoteAddr(); // دابا IP فقط
 
-        Bucket bucket = buckets.computeIfAbsent(key, k -> createBucket());
-
-        if (bucket.tryConsume(1)) {
-            filterChain.doFilter(request, response);
-        } else {
-            response.setStatus(429);
-            response.getWriter().write("Too many requests");
-        }
         String path = request.getRequestURI();
 
         if (EXEMPT_ROUTES.stream().anyMatch(path::equals)) {
             filterChain.doFilter(request, response);
             return;
         }
+        String key = request.getRemoteAddr(); // دابا IP فقط
+
+        Bucket bucket = buckets.computeIfAbsent(key, k -> createBucket());
+        if (!bucket.tryConsume(1)) {
+            CustomResponseException.returnError(
+                    response,
+                    "Too many requests",
+                    429
+            );
+            return;
+        }
+
         Cookie[] cookies = request.getCookies();
         String accessToken = null;
 
@@ -102,13 +106,9 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             filterChain.doFilter(request, response);
 
         } catch (ExpiredJwtException e) {
-            // response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Token expired");
             CustomResponseException.returnError(response, "Token expired", HttpServletResponse.SC_UNAUTHORIZED);
         } catch (JwtException e) {
-            // response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Invalid token");
             CustomResponseException.returnError(response, "Invalid token", HttpServletResponse.SC_UNAUTHORIZED);
-        } finally {
-            SecurityContextHolder.clearContext();
         }
     }
 }
