@@ -48,14 +48,17 @@ public class AuthService {
             user.setBirthday(registerRequest.birthday());
             user.setEmail(registerRequest.email());
             user.setPassword(hashedPassword);
-            user.setFirstName(registerRequest.firstName());
-            user.setLastName(registerRequest.lastName());
+            user.setFirstName(registerRequest.firstName().toLowerCase());
+            user.setLastName(registerRequest.lastName().toLowerCase());
             user.setGender(registerRequest.gender());
             user.setRole("USER");
+            if (registerRequest.bio() != null) {
+                user.setBio(registerRequest.bio());
+            }
             if (registerRequest.username() == null) {
                 user.setUsername(utils.generatUsername(user));
             } else {
-                user.setUsername(registerRequest.username());
+                user.setUsername(registerRequest.username().toLowerCase());
             }
             if (file != null && !file.isEmpty()) {
                 if (file.getSize() > 2 * (1024 * 1024)) {
@@ -85,10 +88,11 @@ public class AuthService {
     public UserAccount login(LoginRequest request) {
 
         Optional<UserAccount> existUser;
+        System.out.println("*** " + request.email());
         if (request.email().contains("@")) {
             existUser = userRepo.findByEmail(request.email());
         } else {
-            existUser = userRepo.findByUsername(request.email());
+            existUser = userRepo.findByUsername(request.email().toLowerCase());
         }
         UserAccount user = existUser.orElseThrow(() -> new CustomResponseException(401, "Invalid Credentials"));
         if (!encoder.matches(request.password(), user.getPassword())) {

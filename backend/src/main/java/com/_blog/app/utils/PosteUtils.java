@@ -44,10 +44,10 @@ public class PosteUtils {
                 .orElseThrow(() -> CustomResponseException.CustomException(404, "post not found"));
     }
 
-    public Comment findComentById(UUID id) {
-        return commentRepo.findById(id)
-                .orElseThrow(() -> CustomResponseException.CustomException(404, "comment not found"));
-    }
+    // public Comment findComentById(UUID id) {
+    //     return commentRepo.findById(id)
+    //             .orElseThrow(() -> CustomResponseException.CustomException(404, "comment not found"));
+    // }
 
     public boolean haveAccess(Comment comment, UserAccount user) {
         return comment.getUser().getId().equals(user.getId()) || user.getRole().equals("ADMIN");

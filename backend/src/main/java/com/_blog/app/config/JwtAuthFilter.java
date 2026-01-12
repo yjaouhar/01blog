@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.time.Duration;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,8 +16,8 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import com._blog.app.entities.UserAccount;
 import com._blog.app.model.JwtUserPrincipal;
+import com._blog.app.repository.UserRepo;
 import com._blog.app.shared.CustomResponseException;
-import com._blog.app.utils.UserUtils;
 
 import io.github.bucket4j.Bandwidth;
 import io.github.bucket4j.Bucket;
@@ -34,7 +35,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
     @Autowired
     private JwtHelper jwtHelper;
     @Autowired
-    UserUtils userUtils;
+    UserRepo userRepo;
     private final Map<String, Bucket> buckets = new ConcurrentHashMap<>();
 
     private static final List<String> EXEMPT_ROUTES = List.of(
@@ -62,17 +63,6 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             filterChain.doFilter(request, response);
             return;
         }
-        String key = request.getRemoteAddr(); // دابا IP فقط
-
-        Bucket bucket = buckets.computeIfAbsent(key, k -> createBucket());
-        if (!bucket.tryConsume(1)) {
-            CustomResponseException.returnError(
-                    response,
-                    "Too many requests",
-                    429
-            );
-            return;
-        }
 
         Cookie[] cookies = request.getCookies();
         String accessToken = null;
@@ -92,11 +82,26 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
         try {
             JwtUserPrincipal principal = jwtHelper.isTokenValid(accessToken);
-            UserAccount user = userUtils.findUserById(principal.getId());
-            if (!user.isActive()) {
+            Optional<UserAccount> user = userRepo.findById(principal.getId());
+            if (user.isEmpty()) {
+                CustomResponseException.returnError(response, "user not found", HttpServletResponse.SC_UNAUTHORIZED);
+                return;
+            }
+            if (!user.get().isActive()) {
                 CustomResponseException.returnError(response, "user is bane", HttpServletResponse.SC_UNAUTHORIZED);
                 return;
             }
+            String key = user.get().getId().toString(); // دابا IP فقط
+            Bucket bucket = buckets.computeIfAbsent(key, k -> createBucket());
+            if (!bucket.tryConsume(1)) {
+                CustomResponseException.returnError(
+                        response,
+                        "Too many requests",
+                        429
+                );
+                return;
+            }
+
             UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(
                     principal,
                     null,

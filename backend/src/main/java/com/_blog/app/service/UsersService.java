@@ -1,10 +1,12 @@
 package com._blog.app.service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com._blog.app.entities.Subscribers;
 import com._blog.app.entities.UserAccount;
@@ -13,8 +15,6 @@ import com._blog.app.repository.SubscriberRepo;
 import com._blog.app.repository.UserRepo;
 import com._blog.app.shared.CustomResponseException;
 import com._blog.app.shared.GlobalDataResponse;
-
-import jakarta.transaction.Transactional;
 
 @Service
 public class UsersService {
@@ -73,15 +73,17 @@ public class UsersService {
             throw CustomResponseException.CustomException(403,
                     "this user is bane");
         }
-        if (subscriberRepo.existsByUserId_IdAndTarget_Id(currentUser.getId(), targetUser.getId())) {
-            subscriberRepo.deleteByUser_IdAndTarget_Id(currentUser.getId(), targetUser.getId());
+        Optional<Subscribers> subOp = subscriberRepo.findByUserId_IdAndTarget_Id(currentUser.getId(),
+                targetUser.getId());
+        if (subOp.isPresent()) {
+            subscriberRepo.delete(subOp.get());;
             return "unfollow";
         }
         Subscribers subscribers = new Subscribers();
         subscribers.setTarget(targetUser);
         subscribers.setUser(currentUser);
         subscriberRepo.save(subscribers);
-        
+
         return "follow";
 
     }

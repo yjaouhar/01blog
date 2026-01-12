@@ -16,6 +16,10 @@ public interface UserRepo extends JpaRepository<UserAccount, UUID> {
 
     boolean existsByUsername(String username);
 
+    @Override
+    // @Lock(LockModeType.PESSIMISTIC_WRITE)
+    Optional<UserAccount> findById(UUID id);
+
     Optional<UserAccount> findByEmail(String email);
 
     Optional<UserAccount> findByUsername(String username);
@@ -44,6 +48,7 @@ ORDER BY u.firstName ASC
     WHERE u.role <> :role
 """)
     long countUsersExceptRole(@Param("role") String role);
+
     @Query("""
     SELECT  u FROM UserAccount u
     WHERE u.role <> :role

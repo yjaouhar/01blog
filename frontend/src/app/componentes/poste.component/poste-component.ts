@@ -6,10 +6,11 @@ import { CommonModule } from '@angular/common';
 import { LikeDirective } from "../../directive/like-directive";
 import { PostService } from '../../services/post.service';
 import { LoadingService } from '../../services/loading.service';
+import { NotResorce } from "../not-resorce/not-resorce";
 
 @Component({
   selector: 'app-poste-component',
-  imports: [CommentComponent, PostTemplateComponent, CommonModule, LikeDirective],
+  imports: [CommentComponent, PostTemplateComponent, CommonModule, LikeDirective, NotResorce],
   standalone: true,
   templateUrl: './poste-component.html',
   styleUrl: './poste-component.css',

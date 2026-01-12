@@ -124,11 +124,12 @@ export class Register {
     const reader = new FileReader();
     reader.onload = (e: any) => {
       const url = e.target.result;
-      // set src
+      // set sr
+
       this.cropImage.nativeElement.src = url;
 
       // reset transforms
-      this.scale = 1;
+      this.scale = 0.5;
       this.posX = 0;
       this.posY = 0;
 
@@ -136,14 +137,12 @@ export class Register {
       this.cropImage.nativeElement.onload = () => {
         this.imgNaturalWidth = this.cropImage.nativeElement.naturalWidth;
         this.imgNaturalHeight = this.cropImage.nativeElement.naturalHeight;
-
-        // Fit image initially to cover viewport (cover behavior)
-        const vp = this.viewport.nativeElement.clientWidth; // square
+        // 
+        const vp = 320; // square
         const scaleX = vp / this.imgNaturalWidth;
         const scaleY = vp / this.imgNaturalHeight;
         // choose max to cover whole viewport
         this.scale = Math.max(scaleX, scaleY);
-
         // center image
         const renderedW = this.imgNaturalWidth * this.scale;
         const renderedH = this.imgNaturalHeight * this.scale;
@@ -166,6 +165,7 @@ export class Register {
 
   applyTransform() {
     const el = this.cropImage.nativeElement;
+
     el.style.transform = `translate(${this.posX}px, ${this.posY}px) scale(${this.scale})`;
   }
 

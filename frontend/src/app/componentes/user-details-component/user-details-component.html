@@ -76,7 +76,7 @@
                 (react)="unfollow($event)"></app-confermation>
             }
         </div>
-        @if (!utils.isBlank(profileDetails.bio??'')) {
+        @if (!utils.isBlank(profileDetails.bio)) {
         <div class="bio-box">
             <i class="bi bi-feather text-secondary"></i>
             <small class="bio-text">{{ profileDetails.bio }}</small>

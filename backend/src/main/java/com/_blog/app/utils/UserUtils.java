@@ -46,7 +46,7 @@ public class UserUtils {
             int uniq = rand.nextInt(100) + 1;
             username = username + uniq;
         }
-        return username;
+        return username.toLowerCase();
     }
 
     public static JwtUserPrincipal getPrincipal() {

@@ -11,6 +11,7 @@ import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import com._blog.app.dtos.EditProfileRequest;
@@ -29,7 +30,6 @@ import com._blog.app.shared.GlobalDataResponse;
 import com._blog.app.shared.GlobalDataResponse.PostResponse;
 import com._blog.app.utils.UserUtils;
 
-import jakarta.transaction.Transactional;
 
 @Service
 public class ProfileService {
@@ -106,7 +106,8 @@ public class ProfileService {
     @Transactional
     public void editInfo(EditProfileRequest editRequest, UserAccount currentUser, MultipartFile file) {
 
-        UserAccount profileUser = userUtils.findUserById(editRequest.profileId());
+        UserAccount profileUser = userRepo.findById(editRequest.profileId())
+                .orElseThrow(() -> CustomResponseException.CustomException(404, "user not found"));
 
         if (!currentUser.getId().equals(profileUser.getId())) {
             throw CustomResponseException.CustomException(403, "You can't have access to edit profile");

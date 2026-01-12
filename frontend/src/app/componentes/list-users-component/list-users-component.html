@@ -1,6 +1,4 @@
-@if (users && !utils.NotEmpty(users) && loadData ) {
-<app-not-resorce message="No Useres Found" type="user"></app-not-resorce>
-}
+
 <div class="container mt-4 p-3">
     @if (showSercheBare) {
     <div class="input-group mb-3">
@@ -12,7 +10,7 @@
     </div>
     }
     <div class="user-list">
-        @if (!utils.NotEmpty(users) && serched()) {
+        @if (!utils.NotEmpty(users) && serched() ||!utils.NotEmpty(users) && loadData  ) {
         <app-not-resorce message="No Usere Found" type="user"></app-not-resorce>
         }@else {
         @for (user of users; track user?.id ) {

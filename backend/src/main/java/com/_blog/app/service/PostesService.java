@@ -10,6 +10,7 @@ import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import com._blog.app.dtos.CommentPosteRequest;
@@ -28,8 +29,6 @@ import com._blog.app.shared.CustomResponseException;
 import com._blog.app.shared.GlobalDataResponse;
 import com._blog.app.utils.PosteUtils;
 
-import jakarta.transaction.Transactional;
-
 @Service
 public class PostesService {
 
@@ -47,7 +46,6 @@ public class PostesService {
     private NotificationService notificationService;
 
     public List<GlobalDataResponse.PostResponse> homePostes(UserAccount user) {
-
         List<Subscribers> followinTarget = subscriberRepo.findByUser(user);
         List<UserAccount> postUserTarget = new ArrayList<>(
                 followinTarget.stream().map(Subscribers::getTarget).filter(u -> u.isActive()).toList());
@@ -69,6 +67,7 @@ public class PostesService {
         return posts;
     }
 
+    @Transactional(readOnly = true)
     public GlobalDataResponse.PostResponse getPostes(UserAccount user, UUID id) {
         Optional<Postes> poste = posteRepo.findById(id);
         Postes post = poste.orElseThrow();
@@ -118,7 +117,7 @@ public class PostesService {
 
     @Transactional
     public void deletPost(UUID postId, UserAccount currentUser) {
-        Postes post = posteUtils.findPostById(postId);
+        Postes post = posteRepo.findByIdForUpdate(postId).orElseThrow(() -> CustomResponseException.CustomException(404, "post not found"));
 
         if (!posteUtils.haveAccess(post, currentUser)) {
             throw CustomResponseException.CustomException(403,
@@ -142,7 +141,7 @@ public class PostesService {
 
     @Transactional
     public List<GlobalDataResponse.Media> updatePost(PosteUpdateRequest updateRequest, List<MultipartFile> file, UserAccount currentUser) {
-        Postes post = posteUtils.findPostById(updateRequest.postId());
+        Postes post = posteRepo.findByIdForUpdate(updateRequest.postId()).orElseThrow(() -> CustomResponseException.CustomException(404, "post not found"));;
 
         if (!posteUtils.haveAccess(post, currentUser)) {
             throw CustomResponseException.CustomException(403, "You can't update this post");
@@ -179,24 +178,26 @@ public class PostesService {
 
     @Transactional
     public String likePost(UUID postId, UserAccount currentUser) {
-        Postes post = posteUtils.findPostById(postId);
+        Postes post = posteRepo.findById(postId).orElseThrow(() -> CustomResponseException.CustomException(404, "post not found"));
         if (post.isHide()) {
             throw CustomResponseException.CustomException(403, "this post is hide");
         }
-        if (likeRepo.existsByUserIdAndPostId(currentUser.getId(), post.getId())) {
-            likeRepo.deleteByUserIdAndPostId(currentUser.getId(), post.getId());
-            return "diselike";
+        Optional<Liks> likeOp = likeRepo.findByUserIdAndPostId(currentUser.getId(), postId);
+        if (likeOp.isPresent()) {
+            likeRepo.delete(likeOp.get());
         } else {
             Liks like = new Liks();
             like.setUser(currentUser);
             like.setPost(post);
             likeRepo.save(like);
         }
+
         return "Like";
     }
 
+    @Transactional(readOnly = true)
     public List<GlobalDataResponse.Comment> getComment(UUID postId, UserAccount currentUser) {
-        Postes post = posteUtils.findPostById(postId);
+        Postes post = posteRepo.findById(postId).orElseThrow(() -> CustomResponseException.CustomException(404, "post not found"));
         if (post.isHide()) {
             throw CustomResponseException.CustomException(403, "this post is hide");
         }
@@ -214,6 +215,7 @@ public class PostesService {
         }).toList();
     }
 
+    @Transactional
     public GlobalDataResponse.Comment commentPost(CommentPosteRequest commentPosteRequest, UserAccount currentUser) {
         Postes post = posteUtils.findPostById(commentPosteRequest.postId());
         if (post.isHide()) {
@@ -235,7 +237,7 @@ public class PostesService {
 
     @Transactional
     public void deletComment(UUID commentId, UserAccount currentUser) {
-        Comment comment = posteUtils.findComentById(commentId);
+        Comment comment = commentRepo.findById(commentId).orElseThrow(() -> CustomResponseException.CustomException(404, "comment not found"));
         if (!posteUtils.haveAccess(comment, currentUser)) {
             throw CustomResponseException.CustomException(403, "You can't delet this comment");
         }

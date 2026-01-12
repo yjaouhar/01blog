@@ -6,6 +6,7 @@ import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com._blog.app.dtos.ReportsReactionRequest;
 import com._blog.app.entities.Postes;
@@ -18,7 +19,6 @@ import com._blog.app.shared.CustomResponseException;
 import com._blog.app.shared.GlobalDataResponse;
 import com._blog.app.utils.PosteUtils;
 
-import jakarta.transaction.Transactional;
 
 @Service
 public class AdminServise {

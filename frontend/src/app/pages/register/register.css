@@ -1,7 +1,7 @@
 .card {
     max-width: 600px;
     margin: auto;
-    overflow-y: auto;
+    /* overflow-y: auto; */
 }
 
 label {
@@ -11,15 +11,17 @@ label {
 .text-danger {
     font-size: 0.85rem;
 }
-.form-control{
+
+.form-control {
     resize: none;
 }
+
 button {
     margin-top: 10px;
 }
 
 .form {
-    max-height: 600px;
+    /* max-height: 600px; */
 }
 
 .crop-wrapper {
@@ -38,6 +40,7 @@ button {
     touch-action: none;
     /* for touch drag */
     border-radius: 8px;
+    cursor: move;
 }
 
 .crop-img {
@@ -68,4 +71,10 @@ button {
     left: 15%;
     mix-blend-mode: multiply;
     border: 2px dashed rgba(255, 255, 255, 0.5);
+}
+
+.form-container {
+    overflow-y: auto;
+    max-height: 600px;
+    overflow-x: hidden;
 }

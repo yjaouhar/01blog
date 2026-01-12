@@ -29,6 +29,9 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
             } else if (error.status === 403) {
                 router.navigate(['/forbidden']);
                 return throwError(() => error);
+            } else if (error.status === 404) {
+                router.navigate(['/not-found']);
+                return throwError(() => error);
             } else if (error.status !== 401) {
                 return throwError(() => error);
             }

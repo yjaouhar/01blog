@@ -107,6 +107,6 @@ export class UtilsService {
     return arr && arr !== null && arr.length > 0;
   }
   isBlank(str: string) {
-    return !str.trim()
+    return str && !str.trim()
   }
 }
