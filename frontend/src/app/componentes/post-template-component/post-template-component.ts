@@ -11,15 +11,17 @@ import { LoadingService } from '../../services/loading.service';
 import { Confermation } from '../confermation/confermation';
 import { AuthService } from '../../services/auth.service';
 import { CommonModule } from '@angular/common';
+import { RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-post-template-component',
-  imports: [EditePostComponent, ReportComponent, Confermation, CommonModule],
+  imports: [EditePostComponent, ReportComponent, Confermation, CommonModule , RouterLink],
   templateUrl: './post-template-component.html',
   styleUrl: './post-template-component.css',
 })
 export class PostTemplateComponent {
   @Input() post: Post | null = null;
+  @Input() hidReaction: boolean = false;
   utils = inject(UtilsService);
   postService = inject(PostService);
   loadingService = inject(LoadingService)
@@ -38,15 +40,17 @@ export class PostTemplateComponent {
     this.loadingService.show()
     this.postService.deletPost(this.post.id).subscribe({
       next: res => {
-        console.log("post deleted : ", res);
         this.remove.emit(this.post?.id);
         this.loadingService.hide()
+      },
+      error: err => {
+        this.loadingService.hide()
+
+        throw err
       }
     });
   }
   showDelet() {
-    console.log("$");
-
     this.showConfermation.set(true)
   }
   active(index: number) {

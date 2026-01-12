@@ -7,10 +7,12 @@ import { Confermation } from "../confermation/confermation";
 import { UtilsService } from '../../services/utils.service';
 import { NotResorce } from "../not-resorce/not-resorce";
 import { LoadingService } from '../../services/loading.service';
+import { AuthService } from '../../services/auth.service';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-list-users-component',
-  imports: [RouterLink, Confermation, NotResorce],
+  imports: [RouterLink, Confermation, NotResorce, CommonModule],
   templateUrl: './list-users-component.html',
   styleUrl: './list-users-component.css',
 })
@@ -22,6 +24,7 @@ export class ListUsersComponent {
   discoverService = inject(DiscoverService);
   loadingService = inject(LoadingService)
   utils = inject(UtilsService);
+  authService = inject(AuthService)
   showConfermation = signal(false);
   selectedUser = signal<User | null>(null)
   serched = signal(false);
@@ -40,6 +43,11 @@ export class ListUsersComponent {
     this.discoverService.subscribe(user.id).subscribe({
       next: () => {
         this.toggleSubscribe(user)
+      },
+      error: err => {
+        this.loadingService.hide()
+
+        throw err
       },
       complete: () => {
         this.loadingService.hide()
@@ -72,6 +80,11 @@ export class ListUsersComponent {
         next: res => {
           this.users = res.data;
           this.loadingService.hide()
+        },
+        error: err => {
+          this.loadingService.hide()
+
+          throw err
         }
       })
       return
@@ -80,6 +93,11 @@ export class ListUsersComponent {
       next: res => {
         this.users = res.data;
         this.loadingService.hide()
+      },
+      error: err => {
+        this.loadingService.hide()
+
+        throw err
       }
     })
   }

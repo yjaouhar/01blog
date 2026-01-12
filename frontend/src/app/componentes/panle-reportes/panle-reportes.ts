@@ -35,6 +35,11 @@ export class PanleReportes implements OnInit {
         this.loadData.set(true)
         this.loadingService.hide();
 
+      },
+      error: err => {
+        this.loadingService.hide()
+
+        throw err
       }
     })
   }
@@ -63,6 +68,11 @@ export class PanleReportes implements OnInit {
         next: res => {
           this.resolved()
           this.loadingService.hide();
+        },
+        error: err => {
+          this.loadingService.hide()
+
+          throw err
         }
       })
 
@@ -82,6 +92,11 @@ export class PanleReportes implements OnInit {
         next: res => {
           this.resolved()
           this.loadingService.hide();
+        },
+        error: err => {
+          this.loadingService.hide()
+
+          throw err
         }
       })
     }
@@ -97,6 +112,11 @@ export class PanleReportes implements OnInit {
       next: res => {
         this.resolved()
         this.loadingService.hide();
+      },
+      error: err => {
+        this.loadingService.hide()
+
+        throw err
       }
     })
   }

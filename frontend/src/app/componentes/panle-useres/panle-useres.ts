@@ -36,6 +36,10 @@ export class PanleUseres implements OnInit {
         this.loadData.set(true)
         this.loadingService.hide();
 
+      }, error: err => {
+        this.loadingService.hide()
+
+        throw err
       }
     })
   }
@@ -61,6 +65,10 @@ export class PanleUseres implements OnInit {
         this.loadingService.hide();
 
 
+      },
+      error: err => {
+        this.loadingService.hide()
+        throw err
       }
     })
   }
@@ -79,6 +87,11 @@ export class PanleUseres implements OnInit {
           this.refreshFilter()
           this.loadingService.hide();
 
+        },
+        error: err => {
+          this.loadingService.hide()
+
+          throw err
         }
       })
     }
@@ -92,6 +105,11 @@ export class PanleUseres implements OnInit {
           this.users.update(user => user.filter(u => u.id !== this.selectedUser()?.id));
           this.refreshFilter();
           this.loadingService.hide();
+        },
+        error: err => {
+          this.loadingService.hide()
+
+          throw err
         }
       })
     }

@@ -17,7 +17,7 @@ interface MediaFile {
 
 export class PostCreateComponent {
   readonly MAX_FILE_SIZE = 100 * 1024 * 1024; // 50MB
-  @Output() hide = new EventEmitter<Post|null>()
+  @Output() hide = new EventEmitter<Post | null>()
   postService = inject(PostService);
   loadService = inject(LoadingService);
   content = signal("");
@@ -35,11 +35,13 @@ export class PostCreateComponent {
     if (!this.content().trim()) {
       this.hasError.set(true)
       this.messagError.set("content requerd")
+      return
     }
 
     if (this.content().trim().length > 500) {
       this.hasError.set(true)
       this.messagError.set("content must 500 caracter")
+      return
     }
     const data = {
       description: this.content().trim()
@@ -50,8 +52,14 @@ export class PostCreateComponent {
     this.loadService.show()
     this.postService.creatPost(formData).subscribe({
       next: res => {
+        this.loadService.hide()
         this.hide.emit(res.data)
-  
+
+      },
+      error: err => {
+        this.loadService.hide()
+
+        throw err
       }
     })
 

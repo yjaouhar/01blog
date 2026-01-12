@@ -34,7 +34,6 @@ export class PosteComponent implements OnInit {
     this.like.set(true)
     this.postService.likePoste(post.id).subscribe({
       next: res => {
-        console.log("like success : ", res);
         this.postesData = this.postesData.map(p => {
           if (p.id === post.id) {
             p.totalLike = p.liked ? p.totalLike - 1 : p.totalLike + 1;
@@ -45,6 +44,18 @@ export class PosteComponent implements OnInit {
         })
         this.like.set(false)
         this.loadingService.hide()
+      },
+      error: err => {
+        this.loadingService.hide()
+        if (err?.status === 429) {
+          setTimeout(() => {
+            this.like.set(false)
+          }, 10000)
+        } else {
+          this.like.set(false)
+        }
+
+        throw err
       }
     })
   }
@@ -56,3 +67,4 @@ export class PosteComponent implements OnInit {
     this.showComment.set(false)
   }
 }
+

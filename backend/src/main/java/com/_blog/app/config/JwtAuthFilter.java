@@ -58,7 +58,6 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             throws ServletException, IOException {
 
         String path = request.getRequestURI();
-
         if (EXEMPT_ROUTES.stream().anyMatch(path::equals)) {
             filterChain.doFilter(request, response);
             return;

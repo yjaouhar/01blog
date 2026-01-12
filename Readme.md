@@ -34,6 +34,10 @@
 - View user reports and take moderation actions
 - Admin panel with clean UI
 
+- **login :** `admin` 
+
+ - **passord :** `admin123`
+
 ### General
 - Responsive and interactive UI (Angular + Bootstrap or Angular Material)
 - Real-time updates or refresh-based for comments
@@ -67,13 +71,13 @@ docker run --name my-postgres \
   -e POSTGRES_USER=admin \
   -e POSTGRES_PASSWORD=admin123 \
   -e POSTGRES_DB=blogdb \
-  -p 5432:5432 \
+  -p 9876:5432 \
   -d postgres:15
 ```
 
 3. Access PostgreSQL (Optional, using VS Code or pgAdmin):
 - **Host:** `localhost`
-- **Port:** `5432`
+- **Port:** `9876`
 - **Username:** `admin`
 - **Password:** `admin123`
 - **Database:** `blogdb`
@@ -99,7 +103,7 @@ cd backend
 
 2. Configure `application.properties` (database connection):
 ```properties
-spring.datasource.url=jdbc:postgresql://localhost:5432/blogdb
+spring.datasource.url=jdbc:postgresql://localhost:9876/blogdb
 spring.datasource.username=admin
 spring.datasource.password=admin123
 spring.jpa.hibernate.ddl-auto=update

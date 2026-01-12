@@ -59,6 +59,11 @@ export class AppHeader implements OnInit {
         }))
         this.checkForNew()
         this.loadService.hide()
+      },
+      error: err => {
+        this.loadService.hide()
+
+        throw err
       }
     })
   }

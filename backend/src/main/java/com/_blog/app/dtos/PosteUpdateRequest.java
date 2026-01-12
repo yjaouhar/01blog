@@ -7,7 +7,7 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
 public record PosteUpdateRequest(
-        @Size(max = 200, message = "First Name must be between 4 and 20 characters")
+        @Size(max = 500, message = "Description must 500 characters")
         String description,
         List<String> removedMediaIds,
         @NotNull(message = "post_id is required")

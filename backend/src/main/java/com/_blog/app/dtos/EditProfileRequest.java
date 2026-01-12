@@ -11,7 +11,6 @@ public record EditProfileRequest(
         @NotNull(message = "profile id is required")
         UUID profileId,
         @Email
-        @Size(max = 255)
         String email,
         @Size(min = 4, max = 15)
         @Pattern(regexp = "^[A-Za-z][A-Za-z0-9_]*$", message = "Nickname must start with a letter and contain only letters, numbers or underscores")

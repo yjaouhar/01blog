@@ -2,10 +2,24 @@
         cursor: pointer;
     }
 
-/* .media-wrapper {
+    /* .media-wrapper {
     flex: 0 0 auto;
     item ma ytkbarsh w ma ytdrarch
     display: flex;
     align-items: center;
     justify-content: center;
 } */
+    .avatar-user {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background-color: #007bff;
+        color: #fff;
+        border: none;
+        font-size: large;
+        font-weight: bold;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+    }

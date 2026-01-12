@@ -1,4 +1,4 @@
-
+@if (authService.user$ | async ; as currentUser) {
 <div class="container mt-4 p-3">
     @if (showSercheBare) {
     <div class="input-group mb-3">
@@ -10,11 +10,12 @@
     </div>
     }
     <div class="user-list">
-        @if (!utils.NotEmpty(users) && serched() ||!utils.NotEmpty(users) && loadData  ) {
+        @if (!utils.NotEmpty(users) && serched() ||!utils.NotEmpty(users) &&
+        loadData ) {
         <app-not-resorce message="No Usere Found" type="user"></app-not-resorce>
         }@else {
         @for (user of users; track user?.id ) {
-        <div
+        <div        
             class="user-item d-flex align-items-center justify-content-between p-2">
 
             <div class="user-info d-flex align-items-center">
@@ -35,7 +36,7 @@
                     </div>
                 </a>
             </div>
-
+            @if (currentUser.id!==user.id) {
             <div>
                 @if (user.followed) {
                 <button
@@ -47,6 +48,7 @@
                     (click)="follow(user)"> Follow </button>
                 }
             </div>
+            }
 
         </div>
 
@@ -61,4 +63,4 @@
 
     </div>
 </div>
-<!-- } -->
+}

@@ -34,6 +34,11 @@ export class PanlePostes implements OnInit {
         this.filteredPost.set(res.data)
         this.loadData.set(true)
         this.loadingService.hide();
+      },
+      error: err => {
+        this.loadingService.hide()
+
+        throw err
       }
     })
   }
@@ -64,6 +69,11 @@ export class PanlePostes implements OnInit {
           this.refreshFilter()
           this.loadingService.hide();
 
+        },
+        error: err => {
+          this.loadingService.hide()
+
+          throw err
         }
       })
     }
@@ -83,6 +93,11 @@ export class PanlePostes implements OnInit {
           this.refreshFilter()
           this.loadingService.hide();
 
+        },
+        error: err => {
+          this.loadingService.hide()
+
+          throw err
         }
       })
     }
@@ -97,6 +112,11 @@ export class PanlePostes implements OnInit {
           this.refreshFilter();
           this.loadingService.hide();
 
+        },
+        error: err => {
+          this.loadingService.hide()
+
+          throw err
         }
       })
     }

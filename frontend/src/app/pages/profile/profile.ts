@@ -17,18 +17,21 @@ export class Profile implements OnInit {
 
   private route = inject(ActivatedRoute);
   prosfileService = inject(ProfileService);
-  username = signal('')
+  // username = signal('')
   resevData = signal(false);
   profileDetails!: ProfileModel;
 
   ngOnInit(): void {
     this.route.paramMap.subscribe(params => {
-      this.username.set(params.get('username') ?? '')
+      this.loadProfile(params.get('username') ?? '')
     });
-    this.prosfileService.getUserProfile(this.username()).subscribe({
+  }
+
+  loadProfile(username: string) {
+    this.prosfileService.getUserProfile(username).subscribe({
       next: res => {
         this.profileDetails = res.data;
-        
+
       },
       error: err => {
         this.resevData.set(true)
@@ -37,9 +40,8 @@ export class Profile implements OnInit {
       complete: () => {
         this.resevData.set(true)
       }
-    
-    });
 
+    });
   }
 
 

@@ -40,6 +40,11 @@ export class CommentComponent implements OnInit {
         this.comments.set(res.data)
         this.loadingService.hide()
         this.loadData.set(true)
+      },
+      error: err => {
+        this.loadingService.hide()
+
+        throw err
       }
     })
   }
@@ -57,7 +62,7 @@ export class CommentComponent implements OnInit {
       this.errorMessage.set("Description Empty")
       return
     }
-    if (this.commentText.trim().length > 500) {
+    if (this.commentText.trim().length >= 500) {
       this.showError.set(true)
       this.errorMessage.set("Description cannot exceed 500 characters")
       return
@@ -70,6 +75,11 @@ export class CommentComponent implements OnInit {
           this.comments.update(arr => [res?.data, ...arr])
         }
         this.loadingService.hide()
+      },
+      error: err => {
+        this.loadingService.hide()
+
+        throw err
       }
     });
     this.commentText = ''
@@ -90,6 +100,11 @@ export class CommentComponent implements OnInit {
           return true
         }))
         this.loadingService.hide()
+      },
+      error: err => {
+        this.loadingService.hide()
+
+        throw err
       }
     })
   }
@@ -113,4 +128,5 @@ export class CommentComponent implements OnInit {
   closeComponent() {
     this.close.emit()
   }
+
 }

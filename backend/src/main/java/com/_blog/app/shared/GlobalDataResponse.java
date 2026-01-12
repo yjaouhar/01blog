@@ -62,6 +62,7 @@ public class GlobalDataResponse<T> {
     @Builder
     public static class LoginResponse {
 
+        private UUID id;
         private String username;
         private String avatar;
         private String role;

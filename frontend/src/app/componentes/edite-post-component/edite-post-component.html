@@ -22,6 +22,12 @@
                     formControlName="userInput"
                     (change)="onDescChange()"
                     style="border-radius: 12px;" />
+                @if (form.get('userInput')?.touched &&
+                form.get('userInput')?.invalid ) {
+                <div class="text-danger small">
+                    Description  must be between 2 and 500 characters
+                </div>
+                }
 
                 <!-- BUTTONS delete / upload -->
                 <div class="d-flex justify-content-between mb-3">

@@ -72,7 +72,6 @@ public class GlobalExceptionResponse {
         return new ResponseEntity<>(new GlobalResponse<>(errors), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
-    // MissingServletRequestPartException
     @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
     public ResponseEntity<GlobalResponse<?>> handelHttpRequestMethodNotSupportedException(Exception ex) {
         List<GlobalResponse.ErrorItem> errors = List.of(new GlobalResponse.ErrorItem("Methode not Allow"));
@@ -81,8 +80,6 @@ public class GlobalExceptionResponse {
 
     @ExceptionHandler(HttpMediaTypeNotSupportedException.class)
     public ResponseEntity<GlobalResponse<?>> handleUnsupportedMediaType(HttpMediaTypeNotSupportedException ex) {
-
-        System.out.println("******** " + String.format("%s --- %s ", ex.hashCode(), ex.getMessage()));
         List<GlobalResponse.ErrorItem> errors = List.of(new GlobalResponse.ErrorItem(
                 "Content-Type not supported. Use application/json or multipart/form-data"));
         return new ResponseEntity<>(new GlobalResponse<>(errors), HttpStatus.UNSUPPORTED_MEDIA_TYPE);

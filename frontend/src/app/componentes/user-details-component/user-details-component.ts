@@ -101,7 +101,7 @@ export class UserDetailsComponent implements OnChanges {
     this.discoverService.subscribe(this.profileDetails.id).subscribe({
       next: () => {
         this.profileDetails.reacted = !this.profileDetails.reacted
-        this.profileDetails.following = this.profileDetails.reacted ? this.profileDetails.following + 1 : this.profileDetails.following - 1;
+        this.profileDetails.followers = this.profileDetails.reacted ? this.profileDetails.followers + 1 : this.profileDetails.followers - 1;
       }
     })
 

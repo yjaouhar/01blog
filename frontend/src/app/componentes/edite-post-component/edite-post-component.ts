@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject, Input, signal, SimpleChanges } from '@angular/core';
-import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Media, Post } from '../../model/post.type';
 import { environment } from '../../../environments/enveronment';
 import { PostService } from '../../services/post.service';
@@ -27,7 +27,7 @@ export class EditePostComponent {
   posteService = inject(PostService)
   constructor(private fb: FormBuilder) {
     this.form = this.fb.group({
-      userInput: ['']
+      userInput: new FormControl('', [Validators.required, Validators.minLength(2), Validators.maxLength(500)])
     });
   }
   ngAfterViewInit() {
@@ -100,6 +100,10 @@ export class EditePostComponent {
     return ""
   }
   onSubmit() {
+    if (this.form.invalid) {
+      this.form.markAllAsTouched();
+      return;
+    }
     const newDesc: string = this.form.value.userInput;
     if (!newDesc.trim() || (this.post.descreption === newDesc && !this.hasChange)) {
       this.messagError.set('You must select a file and change the description!');

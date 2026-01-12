@@ -82,6 +82,7 @@ public class AuthController {
         response.addHeader(HttpHeaders.SET_COOKIE, UserUtils.generatCookie("refreshToken", refToken, Duration.ofDays(7)));
         response.addHeader(HttpHeaders.SET_COOKIE, UserUtils.generatCookie("access_token", accessToken, Duration.ofMinutes(15)));
         return new ResponseEntity<>(new GlobalResponse<>(GlobalDataResponse.LoginResponse.builder()
+                .id(user.getId())
                 .username(user.getUsername())
                 .avatar(user.getAvatar())
                 .role(user.getRole())
@@ -117,6 +118,7 @@ public class AuthController {
         response.addHeader(HttpHeaders.SET_COOKIE, UserUtils.generatCookie("refreshToken", newRefToken, Duration.ofDays(7)));
         response.addHeader(HttpHeaders.SET_COOKIE, UserUtils.generatCookie("access_token", newAccess, Duration.ofMinutes(15)));
         return new ResponseEntity<>(new GlobalResponse<>(GlobalDataResponse.LoginResponse.builder()
+                .id(user.getId())
                 .username(user.getUsername())
                 .avatar(user.getAvatar())
                 .role(user.getRole())
@@ -144,6 +146,7 @@ public class AuthController {
             return new ResponseEntity<>(new GlobalResponse<>(List.of(new GlobalResponse.ErrorItem("user is bane"))), HttpStatus.FORBIDDEN);
         }
         return new ResponseEntity<>(new GlobalResponse<>(GlobalDataResponse.LoginResponse.builder()
+                .id(user.getId())
                 .username(user.getUsername())
                 .avatar(user.getAvatar())
                 .role(user.getRole())
