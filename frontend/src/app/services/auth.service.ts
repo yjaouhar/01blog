@@ -19,9 +19,13 @@ export class AuthService {
   private refreshInProgress = false;
   private userSubject = new BehaviorSubject<User | null>(null);
   user$ = this.userSubject.asObservable();
+  login = false;
 
   setUser(user: User) {
     this.userSubject.next(user);
+  }
+  isLogine() {
+    return this.login;
   }
   register(formData: FormData): Observable<Response> {
 
@@ -40,11 +44,13 @@ export class AuthService {
   logine(basicAuth: BasicAuthType): Observable<Response> {
     return this.http.post<GlobalResponce<User>>(`${environment.apiUrl}/api/auth/login`, basicAuth, { withCredentials: true }).pipe(
       map((res) => {
-        console.log("logine", res.data);
+        // console.log("logine", res.data);
         this.setUser(res.data);
+        this.login = true
         return { success: true, message: [] }
       }),
       catchError((err) => {
+        this.login = false
         if (err.status === 400 || err.status === 401) {
           return of({ success: false, message: err.error.errors })
         }
@@ -59,6 +65,7 @@ export class AuthService {
       })
     ).subscribe({
       next: () => {
+        this.login = false
         this.router.navigate(['/login']);
       }
     });
@@ -68,6 +75,7 @@ export class AuthService {
     return this.http.get<GlobalResponce<User>>(`${environment.apiUrl}/api/auth/me`, { withCredentials: true }).pipe(
       map(res => {
         this.setUser(res.data);
+        this.login = true
         return res
       })
     )
@@ -84,6 +92,7 @@ export class AuthService {
     ).pipe(
       map(res => {
         this.setUser(res.data);
+        this.login = true
         return res;
       }),
       finalize(() => this.refreshInProgress = false));

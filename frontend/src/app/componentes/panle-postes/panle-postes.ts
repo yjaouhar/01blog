@@ -30,7 +30,7 @@ export class PanlePostes implements OnInit {
     this.loadingService.show();
     this.adminService.getPostes().subscribe({
       next: res => {
-        console.log("postes : ", res);
+        // console.log("postes : ", res);
         this.postes.set(res.data);
         this.filteredPost.set(res.data)
         this.loadData.set(true)

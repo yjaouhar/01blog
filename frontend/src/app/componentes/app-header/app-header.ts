@@ -32,8 +32,6 @@ export class AppHeader implements OnInit {
     this.authService.logout();
   }
   getNotification() {
-    console.log("###");
-
     this.homeService.getNotification().subscribe({
       next: res => {
         this.notif.set(res.data)

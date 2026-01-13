@@ -17,6 +17,7 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
     const authReq = req.clone({ withCredentials: true });;
     return next(authReq).pipe(
         catchError(error => {
+            // console.log("Interceptore : ", error);
 
             let message = "";
             if (error?.error?.errors?.length > 0) {

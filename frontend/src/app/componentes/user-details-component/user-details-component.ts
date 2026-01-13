@@ -61,7 +61,7 @@ export class UserDetailsComponent implements OnChanges {
   getFollowing() {
     this.profileService.getFollowing(this.profileDetails.id).subscribe({
       next: res => {
-        console.log("get Following ==> :", res.data);
+        // console.log("get Following ==> :", res.data);
 
         this.following.set(res.data);
         this.loadFollowing.set(true)
@@ -71,7 +71,7 @@ export class UserDetailsComponent implements OnChanges {
   getFollowers() {
     this.profileService.getFollowers(this.profileDetails.id).subscribe({
       next: res => {
-        console.log("get Followers ==> :", res.data);
+        // console.log("get Followers ==> :", res.data);
         this.followers.set(res.data);
         this.loadFollowers.set(true)
       }

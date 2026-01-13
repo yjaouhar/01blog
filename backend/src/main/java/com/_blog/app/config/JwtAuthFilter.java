@@ -74,7 +74,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                 }
             }
         }
-        if (accessToken == null) {
+        if (accessToken == null || accessToken.isBlank()) {
             CustomResponseException.returnError(response, "Missing access token", HttpServletResponse.SC_UNAUTHORIZED);
             return;
         }
@@ -110,8 +110,10 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             filterChain.doFilter(request, response);
 
         } catch (ExpiredJwtException e) {
+            System.out.println("=======> Exp " + e.getMessage());
             CustomResponseException.returnError(response, "Token expired", HttpServletResponse.SC_UNAUTHORIZED);
         } catch (JwtException e) {
+            System.out.println("=======> Invalid " + e.getMessage());
             CustomResponseException.returnError(response, "Invalid token", HttpServletResponse.SC_UNAUTHORIZED);
         }
     }

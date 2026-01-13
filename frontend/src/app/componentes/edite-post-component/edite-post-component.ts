@@ -125,7 +125,7 @@ export class EditePostComponent {
 
     this.posteService.editePost(formData).subscribe({
       next: res => {
-        console.log("post edited : ", res);
+        // console.log("post edited : ", res);
         this.post.media = res.data as any;
         if (this.post.descreption !== newDesc) {
           this.post.descreption = newDesc

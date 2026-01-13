@@ -148,7 +148,7 @@ export class EditProfileModal {
     formData.append('file', this.currentMediaFile!);
     this.profileSrvice.updateProfile(formData).subscribe({
       next: res => {
-        console.log("====> profiele updated ✅ !! ", res);
+        // console.log("====> profiele updated ✅ !! ", res);
       }
     })
     this.close()

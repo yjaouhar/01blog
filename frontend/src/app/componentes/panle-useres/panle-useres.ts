@@ -128,7 +128,7 @@ export class PanleUseres implements OnInit {
     this.filterByStatus(status);
   }
   filterByStatus(event: string) {
-    console.log("----> stat : ", event);
+    // console.log("----> stat : ", event);
 
     if (!event.trim()) {
       this.filteredUser.update(() => this.users())

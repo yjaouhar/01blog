@@ -34,7 +34,7 @@ export class Register {
 
 
   submit() {
-    console.log("***********");
+    // console.log("***********");
 
     const registerData = this.registerForm;
     if (registerData.invalid) {
@@ -83,7 +83,7 @@ export class Register {
     })
   }
   typing() {
-    console.log("-00000000000000---");
+    // console.log("-00000000000000---");
 
     this.hasError.set(false)
   }
