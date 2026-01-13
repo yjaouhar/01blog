@@ -71,9 +71,9 @@ public class PostesService {
     public GlobalDataResponse.PostResponse getPostes(UserAccount user, UUID id) {
         Optional<Postes> poste = posteRepo.findById(id);
         Postes post = poste.orElseThrow();
-        if (post.isHide()) {
-            throw CustomResponseException.CustomException(403, "this post is hide");
-        }
+        // if (post.isHide()) {
+        //     throw CustomResponseException.CustomException(403, "this post is hide");
+        // }
         boolean liked = likeRepo.existsByUserIdAndPostId(user.getId(), post.getId());
         long totaLike = likeRepo.countByPostId(post.getId());
         long totalComment = commentRepo.countByPostId(post.getId());
@@ -123,7 +123,7 @@ public class PostesService {
             throw CustomResponseException.CustomException(403,
                     "can't have access for delete post");
         }
-        if (post.isHide()) {
+        if (post.isHide() && !currentUser.getRole().equals("ADMIN")) {
             throw CustomResponseException.CustomException(403, "this post is hide");
         }
         List<GlobalDataResponse.Media> mediaPostes = post.getMedia();
@@ -179,7 +179,7 @@ public class PostesService {
     @Transactional
     public String likePost(UUID postId, UserAccount currentUser) {
         Postes post = posteRepo.findById(postId).orElseThrow(() -> CustomResponseException.CustomException(404, "post not found"));
-        if (post.isHide()) {
+        if (post.isHide() && !currentUser.getRole().equals("ADMIN")) {
             throw CustomResponseException.CustomException(403, "this post is hide");
         }
         Optional<Liks> likeOp = likeRepo.findByUserIdAndPostId(currentUser.getId(), postId);
@@ -198,7 +198,7 @@ public class PostesService {
     @Transactional(readOnly = true)
     public List<GlobalDataResponse.Comment> getComment(UUID postId, UserAccount currentUser) {
         Postes post = posteRepo.findById(postId).orElseThrow(() -> CustomResponseException.CustomException(404, "post not found"));
-        if (post.isHide()) {
+        if (post.isHide() && !currentUser.getRole().equals("ADMIN")) {
             throw CustomResponseException.CustomException(403, "this post is hide");
         }
         List<Comment> comments = commentRepo.findAllByUserIdAndPostId(currentUser.getId(), postId);
@@ -218,7 +218,7 @@ public class PostesService {
     @Transactional
     public GlobalDataResponse.Comment commentPost(CommentPosteRequest commentPosteRequest, UserAccount currentUser) {
         Postes post = posteUtils.findPostById(commentPosteRequest.postId());
-        if (post.isHide()) {
+        if (post.isHide() && !currentUser.getRole().equals("ADMIN")) {
             throw CustomResponseException.CustomException(403, "this post is hide");
         }
         Comment comment = new Comment();

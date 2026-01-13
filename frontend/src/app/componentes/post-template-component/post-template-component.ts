@@ -19,7 +19,7 @@ import { RouterLink } from '@angular/router';
   templateUrl: './post-template-component.html',
   styleUrl: './post-template-component.css',
 })
-export class PostTemplateComponent {
+export class PostTemplateComponent  {
   @Input() post: Post | null = null;
   @Input() hidReaction: boolean = false;
   utils = inject(UtilsService);
