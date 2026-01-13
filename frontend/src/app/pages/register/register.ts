@@ -39,6 +39,9 @@ export class Register {
       this.registerForm.markAllAsTouched();
       return;
     }
+    if (this.hasError()) {
+      return
+    }
     const formData = new FormData();
     if (!registerData.value.username?.trim()) {
       registerData.value.username = null;
@@ -110,6 +113,8 @@ export class Register {
 
     const file = event.target.files?.[0];
     if (!file) return;
+
+
     if (!file.type?.startsWith("image/")) {
       this.hasError.set(true);
       this.messagError.set("Avatar must be an image!")
