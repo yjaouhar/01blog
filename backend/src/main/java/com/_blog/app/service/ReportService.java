@@ -65,12 +65,19 @@ public class ReportService {
         if (reportRequest.reportedUser() != null && reportRequest.reportedPost() != null) {
             throw CustomResponseException.CustomException(400, "You can only report either a user or a post, not both");
         }
+        UserAccount currentUser = userUtils.findUserById(UserUtils.getPrincipal().getId());
         Report report = new Report();
         if (reportRequest.reportedUser() != null) {
             UserAccount user = userUtils.findUserById(reportRequest.reportedUser());
             if (!user.isActive()) {
                 throw CustomResponseException.CustomException(403, "this user is bane");
 
+            }
+            if (user.getId().equals(currentUser.getId())) {
+                throw CustomResponseException.CustomException(403, "can not report your profile");
+            }
+            if (user.getRole().equals("ADMIN")) {
+                throw CustomResponseException.CustomException(403, "can not report admin");
             }
             boolean exist = reportRepo.existsByReporterIdAndReportedUserId(reporter.getId(),
                     reportRequest.reportedUser());
@@ -83,7 +90,12 @@ public class ReportService {
             Postes post = posteUtils.findPostById(reportRequest.reportedPost());
             if (post.isHide()) {
                 throw CustomResponseException.CustomException(403, "this post is hide");
-
+            }
+            if (post.getUser().getId().equals(currentUser.getId())) {
+                throw CustomResponseException.CustomException(403, "can not report your post");
+            }
+            if (post.getUser().getRole().equals("ADMIN")) {
+                throw CustomResponseException.CustomException(403, "can not report admin post");
             }
             boolean exist = reportRepo.existsByReporterIdAndReportedPostId(reporter.getId(),
                     reportRequest.reportedPost());

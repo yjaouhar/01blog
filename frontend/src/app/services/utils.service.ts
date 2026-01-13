@@ -1,5 +1,6 @@
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { ProfileModel } from '../model/profileInfo.type';
+import { NavigationEnd, Router } from '@angular/router';
 
 type Result = {
   valid: boolean;
@@ -9,7 +10,7 @@ type Result = {
   providedIn: 'root',
 })
 export class UtilsService {
-
+  router = inject(Router)
   ValidProfileUpdate(
     username: string, name: string, gender: string, bio: string,
     email: string, age: string, hasChange: boolean, profDetails: ProfileModel
@@ -103,7 +104,7 @@ export class UtilsService {
   }
 
   NotEmpty<T>(arr: T[] | null) {
-    
+
     return arr && arr !== null && arr.length > 0;
   }
   isBlank(str: string) {

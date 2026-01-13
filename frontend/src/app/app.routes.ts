@@ -12,8 +12,8 @@ import { NotFound } from './pages/not-found/not-found';
 import { Poste } from './pages/poste/poste';
 
 export const routes: Routes = [
-    { path: 'register', component: Register },
-    { path: 'login', component: Login },
+    { path: 'register', component: Register, canActivate: [authGuard], data: { roles: ['USER', 'ADMIN'] } },
+    { path: 'login', component: Login, canActivate: [authGuard], data: { roles: ['USER', 'ADMIN'] } },
     {
         path: '', component: Layout, canActivate: [authGuard], data: { roles: ['USER', 'ADMIN'] },
         children: [

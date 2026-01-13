@@ -149,7 +149,6 @@ export class EditProfileModal {
     this.profileSrvice.updateProfile(formData).subscribe({
       next: res => {
         console.log("====> profiele updated ✅ !! ", res);
-
       }
     })
     this.close()

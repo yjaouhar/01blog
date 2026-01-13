@@ -21,14 +21,15 @@ public record RegisterRequest(
         @NotBlank(message = "Gender is required")
         @Pattern(regexp = "male|female", message = "Gender must be 'male' or 'female'")
         String gender,
-        @Length(max = 200)
+        @Length(max = 200, message = "bio must be 200 characters")
         String bio,
         @Size(min = 4, max = 15, message = "Nickname must be between 4 and 15 characters")
-        @Pattern(regexp = "^[A-Za-z][A-Za-z0-9_]*$", message = "Nickname must start with a letter and contain only letters, numbers or underscores")
+        @Pattern(regexp = "^[A-Za-z][A-Za-z0-9_]*$", message = "username must start with a letter and contain only letters, numbers or underscores")
         @jakarta.annotation.Nullable
         String username,
         @NotBlank(message = "Email is required")
         @Email(message = "Email is invalid")
+        @Pattern(regexp = "^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$", message = "Email is invalid")
         @Size(max = 50, message = "Email must be less than 50 characters")
         String email,
         @NotBlank(message = "Password is required")

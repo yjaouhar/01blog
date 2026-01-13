@@ -31,7 +31,7 @@ public class AuthService {
     private final BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
 
     public void createUser(RegisterRequest registerRequest, MultipartFile file) {
-        if (userRepo.existsByEmail(registerRequest.email())) {
+        if (userRepo.existsByEmail(registerRequest.email().toLowerCase())) {
             throw CustomResponseException.CustomException(400, "Email already exists");
         }
         if (registerRequest.username() != null && userRepo.existsByUsername(registerRequest.username())) {
@@ -46,7 +46,7 @@ public class AuthService {
 
             UserAccount user = new UserAccount();
             user.setBirthday(registerRequest.birthday());
-            user.setEmail(registerRequest.email());
+            user.setEmail(registerRequest.email().toLowerCase());
             user.setPassword(hashedPassword);
             user.setFirstName(registerRequest.firstName().toLowerCase());
             user.setLastName(registerRequest.lastName().toLowerCase());
@@ -88,9 +88,9 @@ public class AuthService {
     public UserAccount login(LoginRequest request) {
 
         Optional<UserAccount> existUser;
-        System.out.println("*** " + request.email());
+
         if (request.email().contains("@")) {
-            existUser = userRepo.findByEmail(request.email());
+            existUser = userRepo.findByEmail(request.email().toLowerCase());
         } else {
             existUser = userRepo.findByUsername(request.email().toLowerCase());
         }

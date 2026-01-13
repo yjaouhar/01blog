@@ -8,7 +8,8 @@
           <div class="col-md-6 mb-3">
             <label>First Name</label>
             <span class="ms-2 text-danger">*</span>
-            <input type="text" class="form-control" formControlName="firstName">
+            <input type="text" class="form-control" formControlName="firstName"
+              (keyup)="typing()">
             @if (registerForm.get('firstName')?.touched &&
             registerForm.get('firstName')?.invalid ) {
             <div class="text-danger small">
@@ -21,7 +22,8 @@
           <div class="col-md-6 mb-3">
             <label>Last Name</label>
             <span class="ms-2 text-danger">*</span>
-            <input type="text" class="form-control" formControlName="lastName">
+            <input type="text" class="form-control" formControlName="lastName"
+              (keyup)="typing()">
             @if (registerForm.get('lastName')?.touched &&
             registerForm.get('lastName')?.invalid) {
             <div
@@ -36,7 +38,8 @@
         <div class="mb-3">
           <label>Gender</label>
           <span class="ms-2 text-danger">*</span>
-          <select class="form-select" formControlName="gender">
+          <select class="form-select" formControlName="gender"
+            (change)="typing()">
             <option value>Choose...</option>
             <option value="male">Male</option>
             <option value="female">Female</option>
@@ -69,7 +72,7 @@
         <div class="mb-3">
           <label>Bio</label>
           <textarea class="form-control" rows="3"
-            formControlName="bio"></textarea>
+            formControlName="bio" (keyup)="typing()"></textarea>
           @if (registerForm.get('bio')?.touched &&
           registerForm.get('bio')?.invalid) {
           <div
@@ -82,7 +85,7 @@
         <!-- Username -->
         <div class="mb-3">
           <label>Username</label>
-          <input type="text" class="form-control" formControlName="username">
+          <input type="text" class="form-control" formControlName="username"  (keyup)="typing()">
           @if (registerForm.get('username')?.touched &&
           registerForm.get('username')?.invalid) {
           <div
@@ -96,7 +99,7 @@
         <div class="mb-3">
           <label>Email</label>
           <span class="ms-2 text-danger">*</span>
-          <input type="email" class="form-control" formControlName="email">
+          <input type="email" class="form-control" formControlName="email"  (keyup)="typing()">
           @if (registerForm.get('email')?.touched &&
           registerForm.get('email')?.invalid) {
           <div
@@ -111,7 +114,7 @@
           <label>Password</label>
           <span class="ms-2 text-danger">*</span>
           <input type="password" class="form-control"
-            formControlName="password">
+            formControlName="password"  (keyup)="typing()">
           @if (registerForm.get('password')?.touched &&
           registerForm.get('password')?.invalid) {
           <div

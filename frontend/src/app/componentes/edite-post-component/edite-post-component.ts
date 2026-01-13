@@ -50,12 +50,12 @@ export class EditePostComponent {
     if (!input.files?.length) return;
 
     const file = input.files[0];
-    const type = file.type.startsWith('image') ? 'image' : 'video';
-    if (type !== "image" && type !== "video") {
+    if (!file.type.startsWith('image') && !file.type.startsWith('video')) {
       this.hasError.set(true)
       this.messagError.set(`Only image/video allowed`)
       return
     }
+    const type = file.type.startsWith('image') ? 'image' : 'video';
     // max size in bytes(5MB for image, 20MB for video)
     const maxSize = type == "image" ? 8 * 1024 * 1024 : 20 * 1024 * 1024;
     if (file.size > maxSize) {

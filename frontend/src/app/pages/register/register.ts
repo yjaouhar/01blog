@@ -34,6 +34,8 @@ export class Register {
 
 
   submit() {
+    console.log("***********");
+
     const registerData = this.registerForm;
     if (registerData.invalid) {
       this.registerForm.markAllAsTouched();
@@ -80,6 +82,11 @@ export class Register {
 
     })
   }
+  typing() {
+    console.log("-00000000000000---");
+
+    this.hasError.set(false)
+  }
   changeBirthaday(event: Event) {
     const birthday = event.target as HTMLInputElement
     UtilsService
@@ -87,6 +94,7 @@ export class Register {
       this.birthdayError.update(() => true);
     } else {
       this.birthdayError.update(() => false);
+      this.hasError.set(false)
     }
   }
 
