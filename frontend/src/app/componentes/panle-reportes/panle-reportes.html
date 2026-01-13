@@ -81,6 +81,10 @@
         <app-confermation message="Do you want to delet this target"
             (react)="deleteTarget($event)"></app-confermation>
         }
+          @if (showReject()) {
+        <app-confermation message="Do you want to reject this report"
+            (react)="reject($event)"></app-confermation>
+        }
     </div>
     @if (loadData() && !utils.NotEmpty(reports())) {
     <app-not-resorce message="No Report found"></app-not-resorce>

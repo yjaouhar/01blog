@@ -24,6 +24,7 @@ export class PanleReportes implements OnInit {
   utils = inject(UtilsService)
   showDeletConfirmation = signal(false);
   showHideConfirmation = signal(false);
+  showReject = signal(false);
   selectedTarget = signal<Reports | null>(null);
   reports = signal<Reports[]>([])
   loadData = signal(false)
@@ -51,7 +52,7 @@ export class PanleReportes implements OnInit {
     } else if (type === 'delet') {
       this.showDeletConfirmation.set(true)
     } else {
-      this.reject()
+      this.showReject.set(true);
     }
   }
 
@@ -95,30 +96,32 @@ export class PanleReportes implements OnInit {
         },
         error: err => {
           this.loadingService.hide()
-
           throw err
         }
       })
     }
   }
-  reject() {
-    this.loadingService.show();
-    const request = {
-      reportId: this.selectedTarget()?.id!,
-      remove: false,
-      status: false,
-    }
-    this.reportService.react(request).subscribe({
-      next: res => {
-        this.resolved()
-        this.loadingService.hide();
-      },
-      error: err => {
-        this.loadingService.hide()
-
-        throw err
+  reject(conferm: boolean) {
+    this.showReject.set(false)
+    if (conferm && this.selectedTarget()) {
+      this.loadingService.show();
+      const request = {
+        reportId: this.selectedTarget()?.id!,
+        remove: false,
+        status: false,
       }
-    })
+      this.reportService.react(request).subscribe({
+        next: res => {
+          this.resolved()
+          this.loadingService.hide();
+        },
+        error: err => {
+          this.loadingService.hide()
+
+          throw err
+        }
+      })
+    }
   }
 
   resolved() {

@@ -24,6 +24,7 @@ export class PanleUseres implements OnInit {
   selectedUser = signal<Users | null>(null)
   showDeletConfirmatiom = signal(false);
   showBanConfirmatiom = signal(false)
+  showActivetion = signal(false)
   loadData = signal(false)
   stat = signal('');
   url = environment.apiUrl;
@@ -43,6 +44,10 @@ export class PanleUseres implements OnInit {
       }
     })
   }
+  selectActiveUser(user: Users) {
+    this.showActivetion.set(true)
+    this.selectedUser.set(user)
+  }
   selectBaneUser(user: Users) {
     this.showBanConfirmatiom.set(true)
     this.selectedUser.set(user)
@@ -51,26 +56,29 @@ export class PanleUseres implements OnInit {
     this.showDeletConfirmatiom.set(true)
     this.selectedUser.set(user)
   }
-  activeUser(usere: Users) {
-    this.loadingService.show();
-    this.adminService.activeUser(usere.id).subscribe({
-      next: () => {
-        this.users.update(user => user.map(u => {
-          if (u.id === usere.id) {
-            return { ...u, status: true }
-          }
-          return u;
-        }));
-        this.refreshFilter()
-        this.loadingService.hide();
+  activeUser(conferm: boolean) {
+    this.showActivetion.set(false)
+    if (conferm && this.selectedUser()) {
+      this.loadingService.show();
+      this.adminService.activeUser(this.selectedUser()!.id).subscribe({
+        next: () => {
+          this.users.update(user => user.map(u => {
+            if (u.id === this.selectedUser()!.id) {
+              return { ...u, status: true }
+            }
+            return u;
+          }));
+          this.refreshFilter()
+          this.loadingService.hide();
 
 
-      },
-      error: err => {
-        this.loadingService.hide()
-        throw err
-      }
-    })
+        },
+        error: err => {
+          this.loadingService.hide()
+          throw err
+        }
+      })
+    }
   }
   banUser(conferm: boolean) {
     this.showBanConfirmatiom.set(false)

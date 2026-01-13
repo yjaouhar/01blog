@@ -87,6 +87,10 @@
                 }
             </tbody>
         </table>
+        @if (showActiveConfirmation()) {
+        <app-bane message="Do you want to Active this post?"
+            (react)="activePost($event)"></app-bane>
+        }
         @if (showHideConfirmation()) {
         <app-bane message="Do you want to hide this post?"
             (react)="hidePost($event)"></app-bane>

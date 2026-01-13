@@ -79,7 +79,7 @@
                         }@else {
                         <i
                             class="bi bi-check-circle-fill op text-success me-3"
-                            title="active" (click)="activeUser(u)"></i>
+                            title="active" (click)="selectActiveUser(u)"></i>
                         }
                         <i class="op bi bi-trash-fill text-danger me-3"
                             title="delet"
@@ -99,6 +99,10 @@
             </tbody>
 
         </table>
+        @if (showActivetion()) {
+                 <app-bane message="Do you want to Active this user?"
+            (react)="activeUser($event)"></app-bane>
+        }
         @if (showBanConfirmatiom()) {
         <app-bane message="Do you want to bane this user?"
             (react)="banUser($event)"></app-bane>

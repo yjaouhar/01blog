@@ -9,13 +9,12 @@ export class CustomeErroreHandlerService implements ErrorHandler {
   errorPoopService = inject(ErrorePopService);
 
   handleError(error: any): void {
-    console.log('==> Custom Error Handler:', error, error.status);
     let userMessage = 'Something went wrong, please try again.';
     let errorCatch = false;
     if (Array.isArray(error?.error?.errors)) {
       userMessage = error?.error?.errors.map((m: any) => '* ' + (m?.message ?? String(m))).join('\n');
       errorCatch = true
-    } else if (typeof error?.error?.errors ==="string") {
+    } else if (typeof error?.error?.errors === "string") {
       errorCatch = true
       userMessage = error?.error
     }

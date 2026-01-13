@@ -23,6 +23,7 @@ export class PanlePostes implements OnInit {
   selectedPost = signal<AdminPost | null>(null)
   showDeletConfirmation = signal(false);
   showHideConfirmation = signal(false);
+  showActiveConfirmation = signal(false);
   loadData = signal(false)
   stat = signal('');
   ngOnInit(): void {
@@ -50,12 +51,13 @@ export class PanlePostes implements OnInit {
     } else if (type === "delet") {
       this.showDeletConfirmation.set(true)
     } else {
-      this.activePost();
+      this.showActiveConfirmation.set(true)
     }
   }
 
-  activePost() {
-    if (this.selectedPost()) {
+  activePost(conferm: boolean) {
+    this.showActiveConfirmation.set(false)
+    if (conferm && this.selectedPost()) {
       this.loadingService.show();
       this.adminService.activePost(this.selectedPost()?.id!).subscribe({
         next: (res) => {

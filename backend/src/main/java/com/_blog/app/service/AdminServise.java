@@ -57,6 +57,9 @@ public class AdminServise {
                 }
                 allReports = reportRepo.findAllByReportedPostId(report.getReportedPost().getId());
             } else if (report.getReportedUser() != null) {
+                if (report.getReportedUser().getRole().equals("ADMIN")) {
+                    throw  CustomResponseException.CustomException(403, "this account for admin");
+                }
                 if (reportsActionRequest.remove()) {
                     userRepo.delete(report.getReportedUser());
                 } else {
