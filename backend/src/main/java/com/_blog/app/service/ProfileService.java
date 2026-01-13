@@ -50,7 +50,7 @@ public class ProfileService {
     private ReportRepo reportRepo;
 
     public List<PostResponse> getProfilePoste(UserAccount profileUser, UserAccount currentUser) {
-        List<Postes> postPage = postRepo.findAllByUser(profileUser);
+        List<Postes> postPage = postRepo.findAllByUserOrderByCreatedAtDesc(profileUser);
         if (!profileUser.isActive()) {
             throw CustomResponseException.CustomException(403, "this user is bane");
         }

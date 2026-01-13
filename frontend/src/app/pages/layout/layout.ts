@@ -35,12 +35,18 @@ export class Layout implements OnInit {
     this.router.events.pipe(
       filter(event => event instanceof NavigationEnd)
     ).subscribe((event: NavigationEnd) => {
-      this.isHomePage.set(event.urlAfterRedirects === '/');
-    });
+      if (event.urlAfterRedirects === '/') {
+        this.isHomePage.set(true);
+        this.getPost()
+      } else {
+        this.isHomePage.set(false);
+      }
 
+    });
     if (this.isHomePage()) {
       this.getPost()
     }
+
   }
 
 
@@ -51,13 +57,16 @@ export class Layout implements OnInit {
         this.start.set(false)
         this.postes.set(res.data)
       },
+      error: err => {
+        this.loadingService.hide()
+        throw err
+      },
       complete: () => {
         this.loadingService.hide()
       }
     });
   }
   addPost(post: Post) {
-    console.log("2 : ", post);
     this.postes.update(p => [post, ...p]);
     this.loadingService.hide()
   }

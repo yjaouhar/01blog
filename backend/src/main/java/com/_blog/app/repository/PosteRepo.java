@@ -17,21 +17,21 @@ import jakarta.persistence.LockModeType;
 
 public interface PosteRepo extends JpaRepository<Postes, UUID> {
 
-    List<Postes> findAllByUser(UserAccount user);
+    List<Postes> findAllByUserOrderByCreatedAtDesc(UserAccount user);
 
     @EntityGraph(attributePaths = {"user"})
-    List<Postes> findByUserIn(List<UserAccount> users);
+    List<Postes> findByUserInOrderByCreatedAtDesc(List<UserAccount> users);
 
     long countByUserId(UUID userId);
 
     @Lock(LockModeType.PESSIMISTIC_WRITE)
     @Query("select p from Postes p where p.id = :id")
-    Optional<Postes> findByIdForUpdate( @Param("id") UUID postId);
+    Optional<Postes> findByIdForUpdate(@Param("id") UUID postId);
 
-    @Override
-    Optional<Postes> findById(UUID postId);
+    // @Override
+    // Optional<Postes> findById(UUID postId);
 
     long countByHideTrue();
 
-    List<Postes> findAllByHideTrue();
+    List<Postes> findAllByHideTrueOrderByCreatedAtDesc();
 }

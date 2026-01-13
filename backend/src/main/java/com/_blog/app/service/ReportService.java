@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com._blog.app.dtos.ReportRequest;
+import com._blog.app.entities.Postes;
 import com._blog.app.entities.Report;
 import com._blog.app.entities.UserAccount;
 import com._blog.app.repository.ReportRepo;
@@ -26,7 +27,6 @@ public class ReportService {
 
     @Autowired
     private PosteUtils posteUtils;
-
 
     public List<GlobalDataResponse.Report> allReport() {
         return reportRepo.findAll().stream().map(r -> {
@@ -57,7 +57,6 @@ public class ReportService {
 
     }
 
-
     public void report(ReportRequest reportRequest, UserAccount reporter) {
 
         if (reportRequest.reportedUser() == null && reportRequest.reportedPost() == null) {
@@ -68,6 +67,11 @@ public class ReportService {
         }
         Report report = new Report();
         if (reportRequest.reportedUser() != null) {
+            UserAccount user = userUtils.findUserById(reportRequest.reportedUser());
+            if (!user.isActive()) {
+                throw CustomResponseException.CustomException(403, "this user is bane");
+
+            }
             boolean exist = reportRepo.existsByReporterIdAndReportedUserId(reporter.getId(),
                     reportRequest.reportedUser());
             if (exist) {
@@ -76,6 +80,11 @@ public class ReportService {
             report.setReportedUser(userUtils.findUserById(reportRequest.reportedUser()));
         }
         if (reportRequest.reportedPost() != null) {
+            Postes post = posteUtils.findPostById(reportRequest.reportedPost());
+            if (post.isHide()) {
+                throw CustomResponseException.CustomException(403, "this post is hide");
+
+            }
             boolean exist = reportRepo.existsByReporterIdAndReportedPostId(reporter.getId(),
                     reportRequest.reportedPost());
             if (exist) {

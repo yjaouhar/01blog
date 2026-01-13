@@ -29,10 +29,18 @@
             <!-- @if (comments().length>0) { -->
             @for (comment of comments(); track $index) {
             <div class="comment d-flex align-items-start gap-2 mb-3">
+                @if(comment.avatar){
                 <img [src]="url+comment.avatar"
                     alt="User"
                     class="rounded-circle border"
-                    width="40" height="40">
+                    width="40" height="40"
+                    [routerLink]="['/profile',comment.authore]">
+                }@else {
+                <div class="avatar-user"
+                    [routerLink]="['/profile',comment.authore]">
+                    {{post.authore.at(0)?.toLocaleUpperCase()}}
+                </div>
+                }
 
                 <div
                     class="comment-content bg-light p-2 px-3 rounded-3 flex-grow-1">
@@ -58,8 +66,6 @@
                     </div>
                 </div>
             </div>
-            }@empty {
-            <app-spinner style="margin: auto;"></app-spinner>
             }
             }
             <!-- } -->

@@ -48,7 +48,6 @@ public class PosteUtils {
     //     return commentRepo.findById(id)
     //             .orElseThrow(() -> CustomResponseException.CustomException(404, "comment not found"));
     // }
-
     public boolean haveAccess(Comment comment, UserAccount user) {
         return comment.getUser().getId().equals(user.getId()) || user.getRole().equals("ADMIN");
     }
@@ -68,12 +67,12 @@ public class PosteUtils {
                     throw CustomResponseException.CustomException(400, "Only image/video allowed");
                 }
                 type = fileType;
-            } 
-            if (type.equals("image")){
+            }
+            if (type.equals("image")) {
                 if (file.getSize() > 8 * (1024 * 1024)) {
                     throw CustomResponseException.CustomException(400, "post too large");
                 }
-            }else if (type.equals("video")){
+            } else if (type.equals("video")) {
                 if (file.getSize() > 20 * (1024 * 1024)) {
                     throw CustomResponseException.CustomException(400, "video too large");
                 }
@@ -84,7 +83,7 @@ public class PosteUtils {
             if (!dir.exists()) {
                 dir.mkdirs();
             }
-            String fileName = System.currentTimeMillis() + "_" + file.getOriginalFilename();
+            String fileName = System.currentTimeMillis() + "_" + file.getOriginalFilename().replaceAll(" ", "_");
             try {
                 Path filePath = Paths.get(uploadDir + fileName);
                 Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
@@ -92,7 +91,7 @@ public class PosteUtils {
                 logger.error("Error saving media file", ex);
                 throw CustomResponseException.CustomException(500, "Failed to save media file");
             }
-    
+
             mediaData.add(new MediaData("/uploads/postes/" + fileName, type));
         }
 
@@ -103,6 +102,7 @@ public class PosteUtils {
     @Setter
     @AllArgsConstructor
     public class MediaData {
+
         private String filePath;
         private String type;
     }

@@ -8,10 +8,11 @@ import { Notification } from '../../model/notification.type';
 import { UtilsService } from '../../services/utils.service';
 import { LoadingService } from '../../services/loading.service';
 import { Post } from '../../model/post.type';
+import { RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-app-header',
-  imports: [PostCreateComponent, CommonModule],
+  imports: [PostCreateComponent, CommonModule, RouterLink],
   templateUrl: './app-header.html',
   styleUrl: './app-header.css',
 })
@@ -25,15 +26,20 @@ export class AppHeader implements OnInit {
   notif = signal<Notification[]>([])
   newNotif = signal(false);
   ngOnInit(): void {
+    this.getNotification()
+  }
+  logout() {
+    this.authService.logout();
+  }
+  getNotification() {
+    console.log("###");
+
     this.homeService.getNotification().subscribe({
       next: res => {
         this.notif.set(res.data)
         this.checkForNew()
       }
     })
-  }
-  logout() {
-    this.authService.logout();
   }
   showCreatPostPop = signal(false);
   toggelShowCreatPostPop(show: boolean) {

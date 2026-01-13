@@ -7,7 +7,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import com._blog.app.entities.Notification;
 
-public interface  NotificationRepo extends JpaRepository<Notification, UUID> {
-    
-List<Notification> findAllByReseverId(UUID reseverId );
+public interface NotificationRepo extends JpaRepository<Notification, UUID> {
+
+    List<Notification> findAllByReseverIdOrderByCreatAtDesc(UUID reseverId);
 }

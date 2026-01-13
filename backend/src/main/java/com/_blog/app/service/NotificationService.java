@@ -28,10 +28,10 @@ public class NotificationService {
     }
 
     public List<NotificationResponse> getNotification(UserAccount resever) {
-        List<Notification> notificationPage = notificationRepo.findAllByReseverId(resever.getId());
+        List<Notification> notificationPage = notificationRepo.findAllByReseverIdOrderByCreatAtDesc(resever.getId());
         return notificationPage.stream()
                 .map(notif -> {
-                    return  GlobalDataResponse.NotificationResponse.builder()
+                    return GlobalDataResponse.NotificationResponse.builder()
                             .id(notif.getId())
                             .content(notif.getContent())
                             .read(notif.isRead())

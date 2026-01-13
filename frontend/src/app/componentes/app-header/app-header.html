@@ -28,7 +28,7 @@
                     <button type="button" class="btn-notification"
                         data-bs-toggle="dropdown" aria-expanded="false"
                         data-bs-auto-close="outside">
-                        <i class="bi bi-bell"></i>
+                        <i class="bi bi-bell" (click)="getNotification()"></i>
                         @if (newNotif()) {
                         <span class="notification-badge"></span>
                         }
@@ -57,10 +57,12 @@
 
                 @if (user.avatar) {
                 <img [src]="url+user.avatar" alt="User Avatar"
-                    class="btn-user" width="50" height="50">
+                    class="btn-user" width="50" height="50"
+                    [routerLink]="['/profile',user.username]">
                 }@else {
                 <button type="button"
-                    class="btn  btn-user">{{user.username.at(0)?.toLocaleUpperCase()}}</button>
+                    class="btn  btn-user"
+                    [routerLink]="['/profile',user.username]">{{user.username.at(0)?.toLocaleUpperCase()}}</button>
                 }
                 <button type="button" class="btn btn-danger btn-logout"
                     (click)="logout()">

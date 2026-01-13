@@ -8,7 +8,7 @@
                 <!-- <img [src]="url+post.avatar" alt="Profile"
                     class="rounded-circle"
                     width="40" height="40"> -->
-                <a [routerLink]="['/profile', user.username]"
+                <a [routerLink]="['/profile', post.authore]"
                     class="user-link d-flex align-items-center text-decoration-none">
                     @if (post.avatar!==null) {
                     <img [src]="url+post.avatar"

@@ -46,12 +46,13 @@ public class PostesService {
     private NotificationService notificationService;
 
     public List<GlobalDataResponse.PostResponse> homePostes(UserAccount user) {
+
         List<Subscribers> followinTarget = subscriberRepo.findByUser(user);
         List<UserAccount> postUserTarget = new ArrayList<>(
                 followinTarget.stream().map(Subscribers::getTarget).filter(u -> u.isActive()).toList());
 
         postUserTarget.add(user);
-        List<Postes> postsPage = posteRepo.findByUserIn(postUserTarget).stream().filter(p -> !p.isHide()).toList();
+        List<Postes> postsPage = posteRepo.findByUserInOrderByCreatedAtDesc(postUserTarget).stream().filter(p -> !p.isHide()).toList();
 
         List<GlobalDataResponse.PostResponse> posts = postsPage.stream().map(post -> {
             boolean liked = likeRepo.existsByUserIdAndPostId(user.getId(), post.getId());
@@ -71,9 +72,7 @@ public class PostesService {
     public GlobalDataResponse.PostResponse getPostes(UserAccount user, UUID id) {
         Optional<Postes> poste = posteRepo.findById(id);
         Postes post = poste.orElseThrow();
-        // if (post.isHide()) {
-        //     throw CustomResponseException.CustomException(403, "this post is hide");
-        // }
+ 
         boolean liked = likeRepo.existsByUserIdAndPostId(user.getId(), post.getId());
         long totaLike = likeRepo.countByPostId(post.getId());
         long totalComment = commentRepo.countByPostId(post.getId());
@@ -118,7 +117,6 @@ public class PostesService {
     @Transactional
     public void deletPost(UUID postId, UserAccount currentUser) {
         Postes post = posteRepo.findByIdForUpdate(postId).orElseThrow(() -> CustomResponseException.CustomException(404, "post not found"));
-
         if (!posteUtils.haveAccess(post, currentUser)) {
             throw CustomResponseException.CustomException(403,
                     "can't have access for delete post");
@@ -196,7 +194,7 @@ public class PostesService {
     }
 
     @Transactional(readOnly = true)
-    public List<GlobalDataResponse.Comment> getComment(UUID postId, UserAccount currentUser) {
+    public List<GlobalDataResponse.Comment> getComment( UUID postId, UserAccount currentUser) {
         Postes post = posteRepo.findById(postId).orElseThrow(() -> CustomResponseException.CustomException(404, "post not found"));
         if (post.isHide() && !currentUser.getRole().equals("ADMIN")) {
             throw CustomResponseException.CustomException(403, "this post is hide");

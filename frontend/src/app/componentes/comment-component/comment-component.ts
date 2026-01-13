@@ -11,10 +11,11 @@ import { environment } from '../../../environments/enveronment';
 import { Confermation } from "../confermation/confermation";
 import { LoadingService } from '../../services/loading.service';
 import { Spinner } from "../spinner/spinner";
+import { RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-comment-component',
-  imports: [CommonModule, FormsModule, PostTemplateComponent, NotResorce, Confermation, Confermation, Spinner],
+  imports: [CommonModule, FormsModule, PostTemplateComponent, NotResorce, Confermation, Confermation, RouterLink],
   standalone: true,
   templateUrl: './comment-component.html',
   styleUrl: './comment-component.css',
@@ -32,7 +33,7 @@ export class CommentComponent implements OnInit {
   showError = signal(false);
   errorMessage = signal('');
   showConfermation = signal(false);
-  loadData= signal(false)
+  loadData = signal(false)
   ngOnInit(): void {
     this.loadingService.show()
     this.postServices.getComment(this.post.id).subscribe({
@@ -75,6 +76,8 @@ export class CommentComponent implements OnInit {
           this.comments.update(arr => [res?.data, ...arr])
         }
         this.loadingService.hide()
+        this.commentText = ''
+        this.post.totalComment = this.post.totalComment + 1
       },
       error: err => {
         this.loadingService.hide()
@@ -82,8 +85,7 @@ export class CommentComponent implements OnInit {
         throw err
       }
     });
-    this.commentText = ''
-    this.post.totalComment = this.post.totalComment + 1
+
 
   }
   deletComment() {
