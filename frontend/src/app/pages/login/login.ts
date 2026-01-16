@@ -22,11 +22,12 @@ export class Login implements OnInit {
     password: new FormControl('', [Validators.required]),
   })
   ngOnInit(): void {
-    if (this.authService.user$) {
-      this.router.navigate(['/'])
-      return
-    }
-    // this.show.set(true)
+    // if (this.authService.user$) {
+    //   this.router.navigate(['/'])
+    //   return
+    // }
+    // console.log("Is login : ", this.authService.isLogine());
+
   }
   submit() {
     const loginForm = this.loginForm;

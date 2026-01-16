@@ -1,8 +1,8 @@
 import { HttpInterceptorFn } from '@angular/common/http';
-import { inject, PLATFORM_ID } from '@angular/core';
+import { inject } from '@angular/core';
 import { AuthService } from '../services/auth.service';
 import { Router } from '@angular/router';
-import { catchError, map, switchMap, throwError } from 'rxjs';
+import { catchError, switchMap, throwError } from 'rxjs';
 
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
     const authService = inject(AuthService);
@@ -14,26 +14,10 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
         req.url.includes('/auth/refresh')) {
         return next(req);
     }
-    const authReq = req.clone({ withCredentials: true });;
+    const authReq = req.clone({ withCredentials: true });
     return next(authReq).pipe(
         catchError(error => {
-            // console.log("Interceptore : ", error);
-
-            let message = "";
-            if (error?.error?.errors?.length > 0) {
-                message = error?.error?.errors[0]?.message
-            }
-            const m = message === 'Missing access token' || message === 'Token expired';
-            if (error.status === 401 && !m) {
-                router.navigate(['/login']);
-                return throwError(() => error);
-            } else if (error.status === 403) {
-                router.navigate(['/forbidden']);
-                return throwError(() => error);
-            } else if (error.status === 404) {
-                router.navigate(['/not-found']);
-                return throwError(() => error);
-            } else if (error.status !== 401) {
+            if (error.status !== 401) {
                 return throwError(() => error);
             }
             return authService.refreshToken().pipe(
@@ -42,7 +26,6 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
                     return next(retryReq);
                 }),
                 catchError(err => {
-                    router.navigate(['/login']);
                     return throwError(() => err);
                 })
             );

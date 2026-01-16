@@ -19,14 +19,29 @@ export class AuthService {
   private refreshInProgress = false;
   private userSubject = new BehaviorSubject<User | null>(null);
   user$ = this.userSubject.asObservable();
-  login = false;
+  private loggedIn = false;
+  private initialized = false;
 
+  markLoggedIn() {
+    this.loggedIn = true;
+    this.initialized = true;
+  }
+
+  markLoggedOut() {
+    this.loggedIn = false;
+    this.initialized = true;
+  }
   setUser(user: User) {
     this.userSubject.next(user);
   }
-  isLogine() {
-    return this.login;
+  isInitialized() {
+    return this.initialized;
   }
+
+  isLogine() {
+    return this.loggedIn;
+  }
+
   register(formData: FormData): Observable<Response> {
 
     return this.http.post<GlobalResponce<string>>(`${environment.apiUrl}/api/auth/register`, formData).pipe(
@@ -46,11 +61,11 @@ export class AuthService {
       map((res) => {
         // console.log("logine", res.data);
         this.setUser(res.data);
-        this.login = true
+        this.markLoggedIn()
         return { success: true, message: [] }
       }),
       catchError((err) => {
-        this.login = false
+        this.markLoggedOut()
         if (err.status === 400 || err.status === 401) {
           return of({ success: false, message: err.error.errors })
         }
@@ -65,7 +80,7 @@ export class AuthService {
       })
     ).subscribe({
       next: () => {
-        this.login = false
+        this.markLoggedOut();
         this.router.navigate(['/login']);
       }
     });
@@ -75,7 +90,7 @@ export class AuthService {
     return this.http.get<GlobalResponce<User>>(`${environment.apiUrl}/api/auth/me`, { withCredentials: true }).pipe(
       map(res => {
         this.setUser(res.data);
-        this.login = true
+        this.markLoggedIn()
         return res
       })
     )
@@ -85,14 +100,13 @@ export class AuthService {
       return EMPTY;
     }
     this.refreshInProgress = true;
-
     return this.http.post<GlobalResponce<User>>(
       `${environment.apiUrl}/api/auth/refresh`,
       {}, { withCredentials: true }
     ).pipe(
       map(res => {
         this.setUser(res.data);
-        this.login = true
+        this.markLoggedIn()
         return res;
       }),
       finalize(() => this.refreshInProgress = false));
