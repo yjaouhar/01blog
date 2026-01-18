@@ -71,8 +71,9 @@ public class PostesService {
     @Transactional(readOnly = true)
     public GlobalDataResponse.PostResponse getPostes(UserAccount user, UUID id) {
         Optional<Postes> poste = posteRepo.findById(id);
-        Postes post = poste.orElseThrow();
- 
+        Postes post = poste.orElseThrow(()->CustomResponseException.CustomException(404,
+                "This Poste not found"));
+
         boolean liked = likeRepo.existsByUserIdAndPostId(user.getId(), post.getId());
         long totaLike = likeRepo.countByPostId(post.getId());
         long totalComment = commentRepo.countByPostId(post.getId());
@@ -128,9 +129,9 @@ public class PostesService {
         posteRepo.deleteById(post.getId());
         if (mediaPostes != null && !mediaPostes.isEmpty()) {
             for (GlobalDataResponse.Media media : mediaPostes) {
-                File f = new File(".." + media.getMediaUrl()); // kayna t9dr tzid path root
+                File f = new File(".." + media.getMediaUrl()); 
                 if (f.exists()) {
-                    f.delete(); // delete file
+                    f.delete(); 
                 }
             }
         }
@@ -141,7 +142,7 @@ public class PostesService {
     public List<GlobalDataResponse.Media> updatePost(PosteUpdateRequest updateRequest, List<MultipartFile> file, UserAccount currentUser) {
         Postes post = posteRepo.findByIdForUpdate(updateRequest.postId()).orElseThrow(() -> CustomResponseException.CustomException(404, "post not found"));;
 
-        if (!posteUtils.haveAccess(post, currentUser)) {
+        if (!post.getUser().getId().equals(currentUser.getId())) {
             throw CustomResponseException.CustomException(403, "You can't update this post");
         }
         if (post.isHide()) {
@@ -194,12 +195,12 @@ public class PostesService {
     }
 
     @Transactional(readOnly = true)
-    public List<GlobalDataResponse.Comment> getComment( UUID postId, UserAccount currentUser) {
+    public List<GlobalDataResponse.Comment> getComment(UUID postId, UserAccount currentUser) {
         Postes post = posteRepo.findById(postId).orElseThrow(() -> CustomResponseException.CustomException(404, "post not found"));
         if (post.isHide() && !currentUser.getRole().equals("ADMIN")) {
             throw CustomResponseException.CustomException(403, "this post is hide");
         }
-        List<Comment> comments = commentRepo.findAllByUserIdAndPostId(currentUser.getId(), postId);
+        List<Comment> comments = commentRepo.findAllByPostId(postId);
         return comments.stream().filter(u -> u.getUser().isActive()).map(c -> {
             String avatar = c.getUser().getAvatar();
             String authore = c.getUser().getUsername();

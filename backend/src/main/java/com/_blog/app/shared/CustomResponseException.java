@@ -17,6 +17,7 @@ public class CustomResponseException extends RuntimeException {
     private final String message;
 
     public static CustomResponseException CustomException(int code, String message) {
+
         return new CustomResponseException(code, message);
     }
 

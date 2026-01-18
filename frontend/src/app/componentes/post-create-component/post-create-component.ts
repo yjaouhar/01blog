@@ -73,14 +73,12 @@ export class PostCreateComponent {
     const file = input.files[0];
 
 
-
-
     if (!file.type.startsWith('image') && !file.type.startsWith('video')) {
       this.hasError.set(true)
       this.messagError.set(`Only image/video allowed`)
       return
     }
-    const type = file.type.startsWith('image') || file.type.startsWith('video') ? 'image' : 'video';
+    const type = file.type.startsWith('image') ? 'image' : 'video';
     const maxSize = type == "image" ? 8 * 1024 * 1024 : 20 * 1024 * 1024;
     if (file.size > maxSize) {
       this.hasError.set(true);

@@ -101,12 +101,12 @@ public class AuthController {
 
         if (oldToken.getExpiryDate().isBefore(LocalDateTime.now())) {
             refreshTokenRepo.delete(oldToken);
-            return new ResponseEntity<>(new GlobalResponse<>(List.of(new GlobalResponse.ErrorItem("Refresh token expired"))), HttpStatus.FORBIDDEN);
+            return new ResponseEntity<>(new GlobalResponse<>(List.of(new GlobalResponse.ErrorItem("Refresh token expired"))), HttpStatus.UNAUTHORIZED);
         }
         refreshTokenRepo.delete(oldToken);
         UserAccount user = oldToken.getUser();
         if (!user.isActive()) {
-            return new ResponseEntity<>(new GlobalResponse<>(List.of(new GlobalResponse.ErrorItem("user is bane"))), HttpStatus.FORBIDDEN);
+            return new ResponseEntity<>(new GlobalResponse<>(List.of(new GlobalResponse.ErrorItem("user is bane"))), HttpStatus.UNAUTHORIZED);
         }
         String newRefToken = jwtHelper.generateRefreshToken();
         RefreshToken refreshToken = new RefreshToken(newRefToken, user, LocalDateTime.now().plusDays(7));

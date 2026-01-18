@@ -1,5 +1,6 @@
 import { ErrorHandler, inject, Injectable } from '@angular/core';
 import { ErrorePopService } from './errore-pop.service';
+import { Router } from '@angular/router';
 
 @Injectable({
   providedIn: 'root',
@@ -7,17 +8,25 @@ import { ErrorePopService } from './errore-pop.service';
 export class CustomeErroreHandlerService implements ErrorHandler {
 
   errorPoopService = inject(ErrorePopService);
-
+  router = inject(Router)
   handleError(error: any): void {
     let userMessage = 'Something went wrong, please try again.';
     let errorCatch = false;
     if (Array.isArray(error?.error?.errors)) {
-      userMessage = error?.error?.errors.map((m: any) => '* ' + (m?.message ?? String(m))).join('\n');
+      userMessage = error?.error?.errors.map((m: any) => (m?.message ?? String(m))).join('\n');
       errorCatch = true
     } else if (typeof error?.error?.errors === "string") {
       errorCatch = true
       userMessage = error?.error
     }
+    if (error?.status === 401) {
+      this.router.navigate(["/login"])
+      return
+    }
+    if (error?.status === 403 && userMessage === 'user is bane') {
+      this.router.navigate(["/login"])
+    }
+
     if (!errorCatch) {
       if (error?.status === 400) {
         userMessage = 'Bad request, please check your input.';
@@ -31,7 +40,6 @@ export class CustomeErroreHandlerService implements ErrorHandler {
         userMessage = 'Server error, please try again later.';
       }
     }
-
     this.errorPoopService.showError(userMessage);
   }
 

@@ -32,7 +32,6 @@ export class ProfileService {
     return this.http.post<GlobalResponce<string>>(`${environment.apiUrl}/api/report`, body)
       .pipe(
         catchError(err => {
-          // console.log("catch Error in report : ", err);
           return throwError(() => err)
         })
       );

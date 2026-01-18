@@ -18,8 +18,8 @@ export const routes: Routes = [
         path: '', component: Layout, canActivate: [authGuard], data: { roles: ['USER', 'ADMIN'] },
         children: [
             { path: 'discover', component: Discover, canActivate: [authGuard], data: { roles: ['USER', 'ADMIN'] } },
-            { path: 'poste/:postId', component: Poste, canActivate: [authGuard], data: { roles: ['USER', 'ADMIN'] } },
             { path: 'profile/:username', component: Profile, canActivate: [authGuard], data: { roles: ['USER', 'ADMIN'] } },
+            { path: 'poste/:postId', component: Poste, canActivate: [authGuard], data: { roles: ['ADMIN'] } },
             { path: 'admin-panel', component: AdminPanel, canActivate: [authGuard], data: { roles: ['ADMIN'] } },
 
         ]

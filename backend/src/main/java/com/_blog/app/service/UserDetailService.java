@@ -16,8 +16,8 @@ import com._blog.app.shared.CustomResponseException;
 @Component
 public class UserDetailService implements UserDetailsService {
      @Autowired
-  private UserRepo userRepo;
-
+     private UserRepo userRepo;
+  
   @Override
   public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
     Optional<UserAccount> account = userRepo.findByUsername(username);

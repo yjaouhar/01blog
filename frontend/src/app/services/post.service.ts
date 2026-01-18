@@ -64,8 +64,6 @@ export class PostService {
   editePost(form: FormData) {
     return this.http.patch<GlobalResponce<Media[]>>(`${environment.apiUrl}/api/post`, form).pipe(
       catchError(err => {
-        // console.log("catch Error : ", err);
-
         return throwError(() => err)
       })
     );
@@ -73,8 +71,6 @@ export class PostService {
   deletPost(postId: string) {
     return this.http.delete<GlobalResponce<string>>(`${environment.apiUrl}/api/post/${postId}`).pipe(
       catchError(err => {
-        // console.log("catch Error : ", err);
-
         return throwError(() => err)
       })
     );
@@ -88,8 +84,6 @@ export class PostService {
     return this.http.post<GlobalResponce<string>>(`${environment.apiUrl}/api/report`, body)
       .pipe(
         catchError(err => {
-          console.log("catch Error in report : ", err);
-
           return throwError(() => err)
         })
       );

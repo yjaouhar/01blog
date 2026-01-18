@@ -6,12 +6,11 @@ import { AdminService } from '../../services/admin.service';
 import { Users } from '../../model/reportes.type';
 import { environment } from '../../../environments/enveronment';
 import { UtilsService } from '../../services/utils.service';
-import { NotResorce } from "../not-resorce/not-resorce";
 import { LoadingService } from '../../services/loading.service';
 
 @Component({
   selector: 'app-panle-useres',
-  imports: [RouterLink, Bane, Confermation, NotResorce],
+  imports: [RouterLink, Bane, Confermation],
   templateUrl: './panle-useres.html',
   styleUrl: './panle-useres.css',
 })
@@ -128,8 +127,6 @@ export class PanleUseres implements OnInit {
     this.filterByStatus(status);
   }
   filterByStatus(event: string) {
-    // console.log("----> stat : ", event);
-
     if (!event.trim()) {
       this.filteredUser.update(() => this.users())
     } else {

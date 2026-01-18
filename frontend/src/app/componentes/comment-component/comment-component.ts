@@ -12,6 +12,7 @@ import { Confermation } from "../confermation/confermation";
 import { LoadingService } from '../../services/loading.service';
 import { Spinner } from "../spinner/spinner";
 import { RouterLink } from '@angular/router';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-comment-component',
@@ -23,6 +24,7 @@ import { RouterLink } from '@angular/router';
 export class CommentComponent implements OnInit {
   @Input() post!: Post;
   @Output() close = new EventEmitter();
+  auth = inject(AuthService);
   postServices = inject(PostService);
   utils = inject(UtilsService);
   loadingService = inject(LoadingService)
@@ -37,7 +39,7 @@ export class CommentComponent implements OnInit {
   ngOnInit(): void {
     this.loadingService.show()
     this.postServices.getComment(this.post.id).subscribe({
-      next: res => {
+      next: res => {        
         this.comments.set(res.data)
         this.loadingService.hide()
         this.loadData.set(true)

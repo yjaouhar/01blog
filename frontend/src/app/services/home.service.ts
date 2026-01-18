@@ -17,7 +17,6 @@ export class HomeService {
     return this.http.get<GlobalResponce<Post[]>>(`${this.url}/api/post`).pipe(
       catchError(
         err => {
-          // console.log("error in get post : ", err);
           return throwError(() => err)
         }
       )

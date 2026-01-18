@@ -59,7 +59,6 @@ export class AuthService {
   logine(basicAuth: BasicAuthType): Observable<Response> {
     return this.http.post<GlobalResponce<User>>(`${environment.apiUrl}/api/auth/login`, basicAuth, { withCredentials: true }).pipe(
       map((res) => {
-        // console.log("logine", res.data);
         this.setUser(res.data);
         this.markLoggedIn()
         return { success: true, message: [] }

@@ -42,7 +42,7 @@ public class GlobalExceptionResponse {
     @ExceptionHandler(CustomResponseException.class)
     public ResponseEntity<GlobalResponse<?>> handelCustomExcepion(CustomResponseException ex) {
         List<GlobalResponse.ErrorItem> errors = List.of(new GlobalResponse.ErrorItem(ex.getMessage()));
-        return new ResponseEntity<>(new GlobalResponse<>(errors), HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(new GlobalResponse<>(errors), HttpStatus.valueOf(ex.getCode()));
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)

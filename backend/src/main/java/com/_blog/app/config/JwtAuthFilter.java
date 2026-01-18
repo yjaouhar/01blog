@@ -90,7 +90,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                 CustomResponseException.returnError(response, "user is bane", HttpServletResponse.SC_UNAUTHORIZED);
                 return;
             }
-            String key = user.get().getId().toString(); // دابا IP فقط
+            String key = user.get().getId().toString(); 
             Bucket bucket = buckets.computeIfAbsent(key, k -> createBucket());
             if (!bucket.tryConsume(1)) {
                 CustomResponseException.returnError(
@@ -110,10 +110,8 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             filterChain.doFilter(request, response);
 
         } catch (ExpiredJwtException e) {
-            System.out.println("=======> Exp " + e.getMessage());
             CustomResponseException.returnError(response, "Token expired", HttpServletResponse.SC_UNAUTHORIZED);
         } catch (JwtException e) {
-            System.out.println("=======> Invalid " + e.getMessage());
             CustomResponseException.returnError(response, "Invalid token", HttpServletResponse.SC_UNAUTHORIZED);
         }
     }

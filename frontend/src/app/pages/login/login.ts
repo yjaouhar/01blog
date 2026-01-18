@@ -11,24 +11,16 @@ import { CommonModule } from '@angular/common';
   templateUrl: './login.html',
   styleUrl: './login.css',
 })
-export class Login implements OnInit {
+export class Login {
   authService = inject(AuthService);
   router = inject(Router)
-  // show = signal(false)
   hasError = signal(false);
   messagError = signal('')
   loginForm = new FormGroup({
     username: new FormControl('', [Validators.required]),
     password: new FormControl('', [Validators.required]),
   })
-  ngOnInit(): void {
-    // if (this.authService.user$) {
-    //   this.router.navigate(['/'])
-    //   return
-    // }
-    // console.log("Is login : ", this.authService.isLogine());
-
-  }
+ 
   submit() {
     const loginForm = this.loginForm;
     if (loginForm.invalid) {

@@ -13,9 +13,7 @@ import jakarta.persistence.LockModeType;
 
 public interface CommentRepo extends JpaRepository<Comment, UUID> {
 
-    boolean existsByUserIdAndPostId(UUID userId, UUID postId);
 
-    void deleteByUserIdAndPostId(UUID userId, UUID postId);
 
     long countByPostId(UUID postId);
 
@@ -23,5 +21,5 @@ public interface CommentRepo extends JpaRepository<Comment, UUID> {
     @Lock(LockModeType.PESSIMISTIC_WRITE)
     Optional<Comment> findById(UUID commentId);
 
-    List<Comment> findAllByUserIdAndPostId(UUID userId, UUID postId);
+    List<Comment> findAllByPostId(UUID postId);
 }

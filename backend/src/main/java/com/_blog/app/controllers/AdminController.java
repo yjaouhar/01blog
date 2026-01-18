@@ -18,6 +18,7 @@ import com._blog.app.dtos.ReportsReactionRequest;
 import com._blog.app.entities.UserAccount;
 import com._blog.app.model.JwtUserPrincipal;
 import com._blog.app.service.AdminServise;
+import com._blog.app.service.PostesService;
 import com._blog.app.service.ReportService;
 import com._blog.app.shared.GlobalResponse;
 import com._blog.app.utils.UserUtils;
@@ -34,6 +35,9 @@ public class AdminController {
     private ReportService reportService;
     @Autowired
     private UserUtils userUtils;
+
+    @Autowired
+    private PostesService postesService;
 
     @GetMapping("/stats")
     public ResponseEntity<GlobalResponse<?>> stats() {
@@ -85,7 +89,7 @@ public class AdminController {
     public ResponseEntity<GlobalResponse<?>> deletPoste(@PathVariable UUID posteId) {
         JwtUserPrincipal principal = UserUtils.getPrincipal();
         UserAccount currentUser = userUtils.findUserById(principal.getId());
-        adminSercive.deletPoste(currentUser, posteId);
+        postesService.deletPost(posteId, currentUser);
         return new ResponseEntity<>(new GlobalResponse<>("post Delet success"), HttpStatus.OK);
     }
 
@@ -120,8 +124,5 @@ public class AdminController {
         return new ResponseEntity<>(new GlobalResponse<>(adminSercive.handleReport(reportsActionRequest, admin)),
                 HttpStatus.OK);
     }
-
-
-
 
 }

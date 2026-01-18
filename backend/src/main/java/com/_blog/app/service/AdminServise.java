@@ -1,5 +1,6 @@
 package com._blog.app.service;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -18,7 +19,6 @@ import com._blog.app.repository.UserRepo;
 import com._blog.app.shared.CustomResponseException;
 import com._blog.app.shared.GlobalDataResponse;
 import com._blog.app.utils.PosteUtils;
-
 
 @Service
 public class AdminServise {
@@ -58,7 +58,7 @@ public class AdminServise {
                 allReports = reportRepo.findAllByReportedPostId(report.getReportedPost().getId());
             } else if (report.getReportedUser() != null) {
                 if (report.getReportedUser().getRole().equals("ADMIN")) {
-                    throw  CustomResponseException.CustomException(403, "this account for admin");
+                    throw CustomResponseException.CustomException(403, "this account for admin");
                 }
                 if (reportsActionRequest.remove()) {
                     userRepo.delete(report.getReportedUser());
@@ -111,7 +111,15 @@ public class AdminServise {
         if (!user.getRole().equals("ADMIN")) {
             throw CustomResponseException.CustomException(403, "This action special for Admin");
         }
-        userRepo.deleteById(target.getId());
+        if (target != null) {
+            userRepo.deleteById(target.getId());
+            if (!target.getAvatar().isBlank()) {
+                File f = new File(".." + target.getAvatar());
+                if (f.exists()) {
+                    f.delete();
+                }
+            }
+        }
     }
 
     @Transactional
@@ -152,6 +160,7 @@ public class AdminServise {
         if (!user.getRole().equals("ADMIN")) {
             throw CustomResponseException.CustomException(403, "This action special for Admin");
         }
+
         posteRepo.deleteById(postId);
     }
 
